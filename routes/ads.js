@@ -1,14 +1,30 @@
 const { Router } = require('express');
 const ads = Router();
 
-ads.get('/', (req, res) => {
-  res.send('get ads');
-})
+const { ad } = require('../databases/db');
 
-//To create an ad
-ads.post('/create', (req, res) => {
-  //TODO: La lógica para la inserción del usuario en la tabla con Sequelize
-  res.send('ad creada papu');
-})
+ads.get('/', async (req, res) => {
+  const ads = await ad.findAll();
+  res.status(200).json(ads);
+});
+
+ads.post('/', async (req, res) => {
+  const upAd = await ad.create(req.body);
+  res.status(201).json(upAd);
+});
+
+ads.put('/:adId', async (req, res) => {
+  await ad.update(req.body, { 
+    where: { id: req.params.adId }
+  });
+  res.status(200).json('Modified');
+});
+
+ads.delete('/:adId', async (req, res) => {
+  await ad.destroy({
+    where: { id: req.params.adId }
+  });
+  res.status(200).json('Deleted');
+});
 
 module.exports = ads;

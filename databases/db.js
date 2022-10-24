@@ -1,13 +1,13 @@
 const Sequelize = require('sequelize');
 
-const AdsModel = require('./models/ads');
+const AdsModel = require('../models/adsModel');
 
-const db = new Sequelize('ads', 'root', 'fN09KxrhYV2w!K*P', {
-	host: '127.0.0.1',
+const db = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD, {
+	host: process.env.DBHOST,
 	dialect: 'mysql'
 });
 
-const Ad = AdsModel(db, Sequelize);
+const ad = AdsModel(db, Sequelize);
 
 db.sync({ force: false })
 	.then(() => {
@@ -15,5 +15,5 @@ db.sync({ force: false })
 	});
 
 module.exports = {
-	Ad
+	ad
 };
