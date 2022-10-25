@@ -12,7 +12,7 @@ const apiRouter = require('./routes/api');
 // Para crear el servidor
 const app= express();
 
-require('./dataBase');
+require('./databases/db');
 
 //Para recibir peticiones
 app.use(bodyParser.json());
@@ -21,5 +21,5 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use('/api',apiRouter);
 
 app.listen(3000, ()=>{
-    console.log('Servidor en orbita');
+    console.log('Servidor activo en el puerto 3000');
 });
