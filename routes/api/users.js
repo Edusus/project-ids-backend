@@ -3,7 +3,7 @@ const router = require('express').Router();
 const { User }= require('../../dataBase');
 
 router.get('/', async (req,res)=>{
-
+    //paginacion
     const {page = 0, size = 10} = req.query;
 
     let options = {
