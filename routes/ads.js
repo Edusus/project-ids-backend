@@ -8,6 +8,13 @@ ads.get('/', async (req, res) => {
   res.status(200).json(ads);
 });
 
+ads.get('/:adId', async (req, res) => {
+  const reqAd = await ad.findAll({
+    where: { id: req.params.adId }
+  });
+  res.status(200).json(reqAd);
+});
+
 ads.post('/', async (req, res) => {
   const upAd = await ad.create(req.body);
   res.status(201).json(upAd);
