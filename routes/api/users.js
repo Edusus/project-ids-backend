@@ -10,7 +10,6 @@ router.get('/', async (req,res)=>{
         limit: +size,
         offset: (+page) * (+size)
     };
-
     const users = await User.findAll(options);
     res.status(200).json({message: 'Lista de usuarios', users });
 });
