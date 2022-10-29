@@ -2,7 +2,7 @@ const { User } = require('../databases/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const authconfig = require('../config/auth');
-const {check,  validationResult} = require('express-validator');
+
 
 
 module.exports = {
