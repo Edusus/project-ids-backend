@@ -1,6 +1,8 @@
 const Sequelize = require('sequelize');
 
 const UserModel =require('./../models/users');
+const ChromeModel = require('./../models/chromes');
+
 
 const sequelize = new Sequelize('offside','root','',{
     host:'127.0.0.1',
@@ -8,6 +10,8 @@ const sequelize = new Sequelize('offside','root','',{
 });
 
 const User = UserModel(sequelize,Sequelize);
+const Chrome = ChromeModel(sequelize,Sequelize);
+
 
 sequelize.sync({force:false})
     .then(()=>{
@@ -15,5 +19,5 @@ sequelize.sync({force:false})
     })
 
 module.exports ={
-    User
+    User, Chrome
 }
