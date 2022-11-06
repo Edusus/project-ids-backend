@@ -42,8 +42,12 @@ ads.get('/paginated/get', async (req, res) => {
 });
 
 ads.post('/', async (req, res) => {
-  const upAd = await ad.create(req.body);
-  res.status(201).json(upAd);
+  try {
+    const upAd = await ad.create(req.body);
+    res.status(201).json(upAd);
+  } catch (error) {
+    console.error(error);
+  }
 });
 
 ads.put('/:adId', async (req, res) => {
