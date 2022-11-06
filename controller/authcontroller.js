@@ -2,8 +2,7 @@ const { User } = require('../databases/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const authconfig = require('../config/auth');
-
-
+var nodemailer = require('nodemailer');
 
 module.exports = {
     
@@ -75,5 +74,57 @@ module.exports = {
              res.status(500).json(err);
          });
          
+    },
+    
+    //Forgot password
+    forgotPassword(req, res) {
+        let {name} = req.body;
+
+          User.findOne({
+            where: {
+                name: name
+            }
+        }).then(user => {
+
+             if (!user){
+                res.status(404).json({message: "Usuario no existe"});
+             } else {
+
+                let transporter = nodemailer.createTransport({
+                  host: 'smtp.ethereal.email',
+                  port: 587,
+                    auth: {
+                      user: 'bell.grant68@ethereal.email',
+                      pass: 'xDVwRwjdGSNJZ5GArT'
+                    }
+                  });
+                  
+                  let mensaje = "Hola desde nodejs...";
+                  
+                  let mailOptions = {
+                    from: "'Offside server' <bell.grant68@ethereal.email>",
+                    to: 'davidsalcedo388@gmail.com ',
+                    subject: 'Offside recovery',
+                    text: mensaje
+                  };
+                  
+                  transporter.sendMail(mailOptions, function(error, info){
+                    if (error) {
+                      console.log(error);
+                      res.status(500).json({ message: 'fallo no se pq' })
+                    } else {
+                      console.log('Email enviado: ' + info.response);
+                      res.status(200).json({ message: 'Correo enviado' })
+                    }
+                  });
+
+             }
+
+        }).catch(err => {
+            res.status(500).json(err);
+            console.log(err);
+        });
+         
     }
+
 }

@@ -18,7 +18,7 @@ require('./databases/db');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 
-app.use('/api',apiRouter);
+app.use('/',apiRouter);
 
 app.listen(3000, ()=>{
     console.log('Servidor activo en el puerto 3000');

@@ -9,6 +9,18 @@ module.exports=(sequelize,type)=>{
             type:type.STRING,
             allowNull:false
         },
+        team:{
+            type:type.STRING,
+            allowNull:false
+        },
+        country:{
+            type:type.STRING,
+            allowNull:false
+        },
+        position:{
+            type:type.STRING,
+            allowNull:false
+        },
         img:{
             type:type.BLOB,
             allowNull:false
