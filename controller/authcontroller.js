@@ -2,7 +2,9 @@ const { User } = require('../databases/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const authconfig = require('../config/auth');
-var nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer');
+const mg = require('nodemailer-mailgun-transport');
+
 
 module.exports = {
     
@@ -78,45 +80,62 @@ module.exports = {
     
     //Forgot password
     forgotPassword(req, res) {
-        let {name} = req.body;
+        let {email} = req.body;
 
+           if (!(email)){
+            res.status(404).json({message: "Campo vacio"});
+           } else {
           User.findOne({
             where: {
-                name: name
+                email: email
             }
         }).then(user => {
 
              if (!user){
-                res.status(404).json({message: "Usuario no existe"});
+                res.status(404).json({message: "Usuario con este correo no encontrado"});
              } else {
 
                 let transporter = nodemailer.createTransport({
-                  host: 'smtp.ethereal.email',
+                  host: "smtp.ethereal.email",
                   port: 587,
                     auth: {
-                      user: 'bell.grant68@ethereal.email',
-                      pass: 'xDVwRwjdGSNJZ5GArT'
+                      user: 'tre.waelchi6@ethereal.email',
+                      pass: 'eCfmXYbMBYTjUVqgHq'
                     }
                   });
-                  
-                  let mensaje = "Hola desde nodejs...";
+
+                  //Creando el token de recuperacion
+                  let token = jwt.sign({id: user}, authconfig.secret, {
+                    expiresIn: '10m'
+                });
+
+                
+ 
+                  const linkVerification = `http://localhost:3000/new-password/${token}`
+                  let mensaje = 'Ingrese al link '+ linkVerification;
                   
                   let mailOptions = {
-                    from: "'Offside server' <bell.grant68@ethereal.email>",
-                    to: 'davidsalcedo388@gmail.com ',
-                    subject: 'Offside recovery',
+                    from: "salcedoplan20@gmail.com",
+                    to: user.email,
+                    subject: 'Offside_recovery',
                     text: mensaje
                   };
-                  
+
                   transporter.sendMail(mailOptions, function(error, info){
                     if (error) {
                       console.log(error);
                       res.status(500).json({ message: 'fallo no se pq' })
                     } else {
                       console.log('Email enviado: ' + info.response);
-                      res.status(200).json({ message: 'Correo enviado' })
+                      res.status(250).json({ message: 'Correo enviado', user: user,
+                      token: token })
                     }
                   });
+
+                res.json({
+                  user: user,
+                  token: token
+                })  
 
              }
 
@@ -124,7 +143,8 @@ module.exports = {
             res.status(500).json(err);
             console.log(err);
         });
-         
-    }
+      }     
+    },
+
 
 }

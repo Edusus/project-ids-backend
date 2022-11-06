@@ -20,7 +20,7 @@ module.exports = (req, res, next) => {
                 res.status(500).json({ msg: "Ha ocurrido un problema al decodificar el token", err });
             } else {
                 req.user = decoded;
-                next();
+                next(req.user);
             }
 
         })
