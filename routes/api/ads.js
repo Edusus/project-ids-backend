@@ -56,7 +56,7 @@ adsRouter.get('/:adId', async (req, res) => {
 
 adsRouter.post('/', async (req, res) => {
   try {
-    const upAd = await ad.create(req.body, { fields: allowedFields});
+    const upAd = await ad.create(req.body, { fields: allowedFields });
     res.status(201).json(upAd);
   } catch (error) {
     console.error(error);

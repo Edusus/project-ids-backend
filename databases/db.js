@@ -13,7 +13,7 @@ sequelize.sync({alter: true})
 		console.log('Syncronized tables');
 	})
   .catch((err) => {
-    console.error(err.toJSON());
+    console.error(err);
   });
 
 module.exports = {
