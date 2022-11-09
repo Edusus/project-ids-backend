@@ -1,18 +1,20 @@
-const Sequelize = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
+const adsModel = require('../models/adsModel');
 
-const AdsModel = require('../models/adsModel');
-
-const db = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD, {
+const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD, {
 	host: process.env.DBHOST,
 	dialect: 'mysql'
 });
 
-const ad = AdsModel(db, Sequelize);
+const ad = adsModel(sequelize, DataTypes);
 
-db.sync({ force: false })
+sequelize.sync({alter: true})
 	.then(() => {
 		console.log('Syncronized tables');
-	});
+	})
+  .catch((err) => {
+    console.error(err.toJSON());
+  });
 
 module.exports = {
 	ad
