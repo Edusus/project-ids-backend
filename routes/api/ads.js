@@ -38,7 +38,7 @@ adsRouter.get('/search', async (req, res) => {
     };
     const { count, rows } = await ad.findAndCountAll(options);
     httpGetResponse(res, {
-      totalAds: Math.min(count, rows.length),
+      totalAds: count,
       pageNumber: pageAsNumber,
       pageSize: sizeAsNumber,
       ads: rows
