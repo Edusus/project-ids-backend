@@ -15,6 +15,15 @@ router.get('/', async (req,res)=>{
     res.status(200).json({message: 'Lista de usuarios', users });
 });
 
+//endpoint para recuperar el mayor id
+router.get('/maxid', async (req, res) => {
+  const maxid = await Chrome.max("id");
+  res.status(200).json({
+    message: 'El mayor id es ' + maxid, 
+    id: maxid
+  });
+});
+
 //endpoint para crear cromos
 router.post('/', async (req,res)=>{
     const chrome = await Chrome.create(req.body);
@@ -22,17 +31,17 @@ router.post('/', async (req,res)=>{
 });
 
 //endpoint para editar cromos
-router.put('/:playerName', async (req,res)=>{
+router.put('/:playerId', async (req,res)=>{
     await Chrome.update(req.body,{
-        where:{ playerName: req.params.playerName}
+        where:{ id: req.params.playerId }
     });
     res.json({ success:'Se ha modificado'});
 });
 
 //endpoint para borrar cromos
-router.delete('/:playerName', async (req,res)=>{
+router.delete('/:playerId', async (req,res)=>{
     await Chrome.destroy({
-        where:{ playerName: req.params.playerName}
+        where:{ id: req.params.playerId }
     });
     res.json({ success:'Se ha eliminado'});
 });
