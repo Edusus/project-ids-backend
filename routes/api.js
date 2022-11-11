@@ -1,7 +1,7 @@
 const { Router } = require('express');
-const adsRouter = require('./api/ads')
+const adsRouter = require('./api/ads');
 const router = Router();
 
-router.use('/ads', adsRouter)
+router.use('/ads', adsRouter);
 
 module.exports = router;

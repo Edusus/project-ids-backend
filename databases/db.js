@@ -8,7 +8,7 @@ const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.
 
 const ad = adsModel(sequelize, DataTypes);
 
-sequelize.sync({alter: true})
+sequelize.sync()
 	.then(() => {
 		console.log('Syncronized tables');
 	})
