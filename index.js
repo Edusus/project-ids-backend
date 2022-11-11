@@ -1,12 +1,7 @@
-//Instalaciones
-/*
-npm i body-parser
-npm i sequelize
-npm i mysql2
-*/ 
-//IMportaciones
+require('dotenv').config();
+
 const express = require ('express');
-const bodyParser = require ('body-parser');
+const cors = require('cors');
 const apiRouter = require('./routes/api');
 
 // Para crear el servidor
@@ -14,12 +9,14 @@ const app= express();
 
 require('./databases/db');
 
+const PORT = process.env.PORT || 3000;
+
 //Para recibir peticiones
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:true}));
+app.use(cors());
+app.use(express.json());
 
 app.use('/',apiRouter);
 
-app.listen(3000, ()=>{
-    console.log('Servidor activo en el puerto 3000');
+app.listen(PORT, ()=>{
+    console.log(`Servidor activo en el puerto ${PORT}`);
 });

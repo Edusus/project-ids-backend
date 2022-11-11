@@ -3,8 +3,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const authconfig = require('../config/auth');
 const nodemailer = require('nodemailer');
-const mg = require('nodemailer-mailgun-transport');
-
 
 module.exports = {
     
@@ -51,7 +49,7 @@ module.exports = {
 
     //Register
     signUp(req, res) {
-
+        
         const role = "user";
         let password = bcrypt.hashSync(req.body.password, Number.parseInt(authconfig.rounds));
 
@@ -96,11 +94,11 @@ module.exports = {
              } else {
 
                 let transporter = nodemailer.createTransport({
-                  host: "smtp.ethereal.email",
-                  port: 587,
+                  host: process.env.HOST,
+                  port: process.env.PORTGMAIL,
                     auth: {
-                      user: 'tre.waelchi6@ethereal.email',
-                      pass: 'eCfmXYbMBYTjUVqgHq'
+                      user: process.env.USERHOST,
+                      pass: process.env.PASSWORD
                     }
                   });
 
@@ -111,11 +109,11 @@ module.exports = {
 
                 
  
-                  const linkVerification = `http://localhost:3000/new-password/${token}`
+                  const linkVerification = `${process.env.DOMAIN}/new-password/${token}`
                   let mensaje = 'Ingrese al link '+ linkVerification;
                   
                   let mailOptions = {
-                    from: "salcedoplan20@gmail.com",
+                    from: process.env.GMAIL,
                     to: user.email,
                     subject: 'Offside_recovery',
                     text: mensaje
@@ -131,11 +129,6 @@ module.exports = {
                       token: token })
                     }
                   });
-
-                res.json({
-                  user: user,
-                  token: token
-                })  
 
              }
 
