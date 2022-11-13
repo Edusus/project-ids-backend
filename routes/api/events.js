@@ -1,6 +1,6 @@
 const router= require('express').Router();
 
-const { Event }= require('../../dataBase/db');
+const { Event }= require('../../databases/db');
 
 //endpoint para listar eventos
 router.get('/', async (req,res)=>{

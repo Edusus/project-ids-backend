@@ -1,5 +1,5 @@
 const router = require('express').Router();
- 
+const { check } = require('express-validator');
 const { User }= require('../../databases/db');
 
 //endpoint para listar usuarios
