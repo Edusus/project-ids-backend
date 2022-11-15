@@ -11,8 +11,8 @@ router.get('/', async (req,res)=>{
         limit: +size,
         offset: (+page) * (+size)
     };
-    const users = await Chrome.findAll(options);
-    res.status(200).json({message: 'Lista de usuarios', users });
+    const stickers = await Chrome.findAll(options);
+    res.status(200).json({message: 'Lista de cromos', stickers});
 });
 
 //endpoint para recuperar el mayor id
