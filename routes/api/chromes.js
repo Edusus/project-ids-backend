@@ -15,14 +15,6 @@ router.get('/', async (req,res)=>{
     res.status(200).json({message: 'Lista de cromos', stickers});
 });
 
-//endpoint para recuperar el mayor id
-router.get('/maxid', async (req, res) => {
-  const maxid = await Chrome.max("id");
-  res.status(200).json({
-    message: 'El mayor id es ' + maxid, 
-    id: maxid
-  });
-});
 
 //endpoint para crear cromos
 router.post('/', async (req,res)=>{
