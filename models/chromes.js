@@ -4,7 +4,7 @@ module.exports=(sequelize,type)=>{
             type:type.INTEGER,
             primaryKey:true,
             autoIncrement:true,
-            allowNull:false
+            allowNull:true
         },
         playerName:{
             type:type.STRING,
