@@ -1,5 +1,5 @@
 module.exports=(sequelize,type)=>{
-    return sequelize.define('chrome',{
+    return sequelize.define('sticker',{
         id:{
             type:type.INTEGER,
             primaryKey:true,
@@ -23,7 +23,7 @@ module.exports=(sequelize,type)=>{
             allowNull:false
         },
         img:{
-            type:type.BLOB,
+            type:type.STRING,
             allowNull:false
         },
         height: {

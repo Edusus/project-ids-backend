@@ -1,8 +1,8 @@
 const Sequelize = require('sequelize');
 
-const UserModel =require('./../models/users');
-const ChromeModel = require('./../models/chromes');
-const EventModel =require('./../models/events');
+const UserModel = require('./../models/users');
+const StickerModel = require('../models/sticker');
+const EventModel = require('./../models/events');
 
 
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD,{
@@ -11,7 +11,7 @@ const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.
 });
 
 const User = UserModel(sequelize,Sequelize);
-const Chrome = ChromeModel(sequelize,Sequelize);
+const Sticker = StickerModel(sequelize,Sequelize);
 const Event = EventModel(sequelize,Sequelize);
 
 sequelize.sync({force:false})
@@ -20,5 +20,5 @@ sequelize.sync({force:false})
     })
 
 module.exports ={
-    User, Chrome, Event
+    User, Sticker, Event
 }
