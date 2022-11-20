@@ -50,6 +50,7 @@ module.exports = {
     signUp(req, res) {
         
         const role = "user";
+        console.log(req.body);
         let password = bcrypt.hashSync(req.body.password, Number.parseInt(authconfig.rounds));
 
          User.create({
