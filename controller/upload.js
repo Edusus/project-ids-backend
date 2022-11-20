@@ -16,7 +16,8 @@ const upload = multer({ storage: storage });
 
 exports.upload = upload.single('myFile')
 
-exports.uploadFile = async (req, res) => {
+//funcion de subir imagenes de los cromos
+exports.uploadFileSticker = async (req, res) => {
     const file = req.file.path;
     const {playerName, team, country, position, height, weight, appearanceRate } = req.body;
     const newSticker = await Chrome.create({
