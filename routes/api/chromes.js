@@ -2,7 +2,6 @@ const router = require('express').Router();
 
 const { Chrome }= require('../../databases/db');
 
-const controller = require('../../controller/upload');
 
 //endpoint para listar cromos
 router.get('/', async (req,res)=>{
@@ -17,8 +16,12 @@ router.get('/', async (req,res)=>{
     res.status(200).json({message: 'Lista de cromos', stickers});
 });
 
+
 //endpoint para crear cromos
-router.post('/', controller.upload, controller.uploadFileSticker);
+router.post('/', async (req,res)=>{
+    const chrome = await Chrome.create(req.body);
+    res.json(chrome);
+});
 
 //endpoint para editar cromos
 router.put('/:playerId', async (req,res)=>{

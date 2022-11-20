@@ -3,7 +3,8 @@ module.exports=(sequelize,type)=>{
         id:{
             type:type.INTEGER,
             primaryKey:true,
-            autoIncrement:true
+            autoIncrement:true,
+            allowNull:true
         },
         eventName: {
             type:type.STRING,

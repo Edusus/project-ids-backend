@@ -1,7 +1,8 @@
 const router = require('express').Router();
 const { check } = require('express-validator');
-const { User }= require('../../databases/db');
 const { validationResult } = require('express-validator');
+const { User }= require('../../databases/db');
+
 const bcrypt = require('bcrypt');
 
 //endpoint para listar usuarios
