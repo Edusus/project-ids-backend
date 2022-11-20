@@ -4,7 +4,7 @@ module.exports=(sequelize,type)=>{
             type:type.INTEGER,
             primaryKey:true,
             autoIncrement:true,
-            allowNull:false
+            allowNull:true
         },
         playerName:{
             type:type.STRING,
@@ -23,7 +23,7 @@ module.exports=(sequelize,type)=>{
             allowNull:false
         },
         img:{
-            type:type.BLOB,
+            type:type.STRING,
             allowNull:false
         },
         height: {
