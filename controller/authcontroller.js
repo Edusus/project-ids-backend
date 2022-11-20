@@ -5,7 +5,6 @@ const authconfig = require('../config/auth');
 const nodemailer = require('nodemailer');
 
 module.exports = {
-    
     //Login
     signIn(req, res) {
 

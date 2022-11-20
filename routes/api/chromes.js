@@ -18,7 +18,7 @@ router.get('/', async (req,res)=>{
 });
 
 //endpoint para crear cromos
-router.post('/', controller.upload, controller.uploadFile);
+router.post('/', controller.upload, controller.uploadFileSticker);
 
 //endpoint para editar cromos
 router.put('/:playerId', async (req,res)=>{
