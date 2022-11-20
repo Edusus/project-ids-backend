@@ -4,8 +4,15 @@ const { Event }= require('../../databases/db');
 
 //endpoint para listar eventos
 router.get('/', async (req,res)=>{
-    const events = await Event.findAll();
-    res.json(events);
+    //paginacion
+    const {page = 0, size = 10} = req.query;
+
+    let options = {
+        limit: +size,
+        offset: (+page) * (+size)
+    };
+    const events = await Event.findAll(options);
+    res.status(200).json(events);
 });
 
 //endpoint para crear eventos
