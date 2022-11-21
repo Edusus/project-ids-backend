@@ -2,6 +2,8 @@ const router = require('express').Router();
 
 const { Sticker }= require('../../databases/db');
 
+const controller = require('../../controller/upload');
+
 //endpoint para listar cromos
 router.get('/', async (req,res)=>{
     //paginacion
@@ -17,11 +19,7 @@ router.get('/', async (req,res)=>{
 
 
 //endpoint para crear cromos
-router.post('/', async (req,res)=>{
-    console.log(req.body);
-    const sticker = await Sticker.create(req.body);
-    res.json(sticker);
-});
+router.post('/', controller.upload, controller.uploadFileSticker);
 
 //endpoint para editar cromos
 router.put('/:playerId', async (req,res)=>{
