@@ -1,6 +1,8 @@
 const router = require('express').Router();
+const Sequelize = require('sequelize');
+const { Op } = Sequelize;
 
-const { Sticker }= require('../../databases/db');
+const { Sticker, random } = require('../../databases/db');
 
 //endpoint para listar cromos
 router.get('/', async (req,res)=>{
@@ -14,6 +16,33 @@ router.get('/', async (req,res)=>{
     const stickers = await Sticker.findAll(options);
     res.status(200).json({message: 'Lista de cromos', stickers});
 });
+
+//endpoint para obtener 5 cromos al azar
+router.get('/obtain', async (req, res) => {
+  const stickers = [];
+  let appearanceRate = 0;
+  let singleSticker;
+  do {
+    do {
+      appearanceRate = Math.random()*100;
+      singleSticker = await Sticker.findOne({
+        order: random,
+        where: {
+          appearanceRate: {
+            [Op.gte]: appearanceRate
+          }
+        }
+      });
+    } while (!(singleSticker))
+
+    stickers.push(singleSticker);
+
+  } while (stickers.length < 5)
+  res.status(200).json({
+    "success": true,
+    "stickers": stickers
+  })
+})
 
 
 //endpoint para crear cromos
