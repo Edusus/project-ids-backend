@@ -5,9 +5,14 @@ module.exports = (sequelize, type) => {
       primaryKey: true,
       autoIncrement: true
     },
-    teamName: {
+    name: {
       type: type.STRING,
       defaultValue: "Bulldog",
+      allowNull: false
+    },
+    badge: {
+      type: type.STRING,
+      defaultValue: "Offside",
       allowNull: false
     }
   });
