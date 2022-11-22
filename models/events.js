@@ -8,8 +8,7 @@ module.exports=(sequelize,type)=>{
         },
         eventName: {
             type:type.STRING,
-            allowNull:false,
-            unique: true
+            allowNull: false
         },
         status: {
             type:type.BOOLEAN,
