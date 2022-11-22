@@ -9,14 +9,12 @@ module.exports = {
     //Login
     signIn(req, res) {
 
-        let {email, password } = req.body;
+        let { email, password } = req.body;
 
         //Buscar usuario
 
         User.findOne({
-            where: {
-                email: email
-            }
+            where: { email }
         }).then(user => {
 
              if (!user){
@@ -48,32 +46,28 @@ module.exports = {
     },
 
     //Register
-    signUp(req, res) {
-        
-        const role = "user";
-        let password = bcrypt.hashSync(req.body.password, Number.parseInt(authconfig.rounds));
+    async signUp(req, res) {
+      const { name, email } = req.body;
 
-         User.create({
-            name: req.body.name,
-            role: role,
-            email: req.body.email,
-            password: password
-         }).then(user => {  
+      const userOfEmail = await User.findOne({ where: { email: req.body.email } });
+      if (userOfEmail)  {
+        res.status(409).json({message: "Ya existe un usuario con este correo"});
+      }
 
-            //Creacion de token
-            let token = jwt.sign({id: user}, authconfig.secret, {
-                expiresIn: authconfig.expire
-            });
+      const role = "user";
+      const password = bcrypt.hashSync(req.body.password, Number.parseInt(authconfig.rounds));
 
-            res.json({
-                user: user,
-                token: token
-            })
+      try {
+        const user = await User.create({ name, role, email, password });
+        //Creacion de token
+        const token = jwt.sign({id: user}, authconfig.secret, {
+            expiresIn: authconfig.expire
+        });
+        res.json({ user, token })
+      } catch (err) {
+        res.status(500).json(err);
+      }
 
-         }).catch(err => {
-             res.status(500).json(err);
-         });
-         
     },
     
     //Forgot password
