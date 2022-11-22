@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const teamsRouter = require('./api/teams.js');
-const apiEventsRouter = require('./api/events');sRouter = require('./api/events.js');
+const apiEventsRouter = require('./api/events');
 const router = Router();
 
 router.use('/teams', teamsRouter);

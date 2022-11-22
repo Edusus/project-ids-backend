@@ -8,7 +8,10 @@ module.exports = (sequelize, type) => {
     name: {
       type: type.STRING,
       defaultValue: "Bulldog",
-      allowNull: false
+      allowNull: false,
+      validate: {
+        notEmpty: true
+      }
     },
     badge: {
       type: type.STRING,
