@@ -1,37 +1,67 @@
 const multer = require('multer');
 
+const fs1 = require("fs-extra");
 const { Sticker }= require('../databases/db');
 const { ad } = require('../databases/db');
+let filtro = false;
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
-        cb(null, './uploads');
+        const ruta = './uploads'
+        fs1.mkdirsSync(ruta)
+        cb(null, ruta);
     },
     filename: function(req, file, cb) {
         cb(null, `${Date.now()}-${file.originalname}`);
         
-    }
+    }   
 });
 
-const upload = multer({ storage: storage });
+const uploadFilter = function (req, file, cb,) {
+
+     let typeArray = file.mimetype.split('/');
+     let fileType = typeArray[1];
+       if (fileType == 'jpg' || fileType == 'png' || fileType == 'jpeg') {
+          cb(null, true);
+        } else {
+             cb(null, false);
+              filtro = true;
+            }
+
+ };
+
+const upload = multer({ 
+    storage: storage,
+    fileFilter: uploadFilter
+ });
 
 exports.upload = upload.single('myFile')
 
 //funcion de subir imagenes de los cromos
 exports.uploadFileSticker = async (req, res) => {
-    const file = req.file.path;
-    const {playerName, team, country, position, height, weight, appearanceRate } = req.body;
-    const newSticker = await Sticker.create({
-        playerName,
-        team,
-        country,
-        position,
-        img: file,
-        height,
-        weight,
-        appearanceRate
+    try {
+        const file = req.file.path;
+        const {playerName, team, country, position, height, weight, appearanceRate } = req.body;
+        const newSticker = await Sticker.create({
+          playerName,
+          team,
+          country,
+          position,
+          img: file,
+          height,
+          weight,
+          appearanceRate
     });
     res.status(201).json(newSticker);
+    } catch (error) {
+         if (filtro == true) {
+            res.status(400).json({"success": false, "message": "El archivo no es una imagen"});
+         } else {
+            console.log(error);
+            res.status(400).send(error.message);
+         }
+    }
+    
 }
 
 exports.uploadFileAd = async (req, res) => {
@@ -46,7 +76,11 @@ exports.uploadFileAd = async (req, res) => {
         });
         res.status(201).json(newAd);
       } catch (error) {
-        console.error(error);
-        res.status(400).send(error.message);
+        if (filtro == true) {
+            res.status(400).json({"success": false, "message": "El archivo no es una imagen"});
+         } else {
+            console.log(error);
+            res.status(400).send(error.message);
+         }
       }
 }
