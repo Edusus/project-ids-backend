@@ -21,12 +21,12 @@ const uploadFilter = function (req, file, cb,) {
 
      let typeArray = file.mimetype.split('/');
      let fileType = typeArray[1];
-       if (fileType == 'jpg' || fileType == 'png' || fileType == 'jpeg') {
-          cb(null, true);
-        } else {
-             cb(null, false);
-              filtro = true;
-            }
+    if (fileType == 'jpg' || fileType == 'png' || fileType == 'jpeg') {
+        cb(null, true);
+    } else {
+            cb(null, false);
+            filtro = true;
+    }
 
  };
 
@@ -39,7 +39,15 @@ exports.upload = upload.single('myFile')
 
 //funcion de subir imagenes de los cromos
 exports.uploadFileSticker = async (req, res) => {
+    if (!req.file?.path) {
+        return res.status(400).json({
+            success: false,
+            message: "No se ha subido archivo",
+        })
+    }
+
     try {
+
         const file = req.file.path;
         const {playerName, team, country, position, height, weight, appearanceRate } = req.body;
         const newSticker = await Sticker.create({
@@ -47,7 +55,7 @@ exports.uploadFileSticker = async (req, res) => {
           team,
           country,
           position,
-          img: file,
+          img: `${process.env.DOMAIN}/${file}`,
           height,
           weight,
           appearanceRate
