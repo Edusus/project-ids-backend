@@ -8,7 +8,8 @@ module.exports=(sequelize,type)=>{
         },
         name: {
             type:type.STRING,
-            allowNull:false
+            allowNull:false,
+            unique: true
         },
         role: {
             type:type.STRING,
@@ -16,7 +17,8 @@ module.exports=(sequelize,type)=>{
         },
         email: {
             type:type.STRING,
-            allowNull:false
+            allowNull:false,
+            unique: true
         },
         password: {
             type:type.STRING,

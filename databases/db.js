@@ -17,8 +17,7 @@ const Sticker = StickerModel(sequelize,Sequelize);
 const Event = EventModel(sequelize,Sequelize);
 const ad = adsModel(sequelize,Sequelize);
 
-
-sequelize.sync({force:false})
+sequelize.sync({ force: false })
     .then(()=>{
         console.log('Syncronized tables');
     })

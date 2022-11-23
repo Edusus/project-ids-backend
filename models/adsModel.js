@@ -10,7 +10,12 @@ module.exports = (sequelize, type) => {
 		announcer: {
 			type: type.STRING,
       defaultValue: "John Doe",
-			allowNull: false
+			allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: "announcer must have a name"
+        }
+      }
 		},
 		adType: { 
 			type: type.ENUM,
@@ -37,7 +42,7 @@ module.exports = (sequelize, type) => {
 		},
 		img: { 
 			type: type.STRING,
-            defaultValue: process.env.OFFSIDEIMGURL,
+      defaultValue: process.env.OFFSIDEIMGURL,
 			allowNull: false
 		}
 	});

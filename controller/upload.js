@@ -1,4 +1,4 @@
-const multer = require('multer');
+const multer = require("multer");
 
 const fs1 = require("fs-extra");
 const { Sticker }= require('../databases/db');
@@ -35,7 +35,7 @@ const upload = multer({
     fileFilter: uploadFilter
  });
 
-exports.upload = upload.single('myFile')
+exports.upload = upload.single("myFile");
 
 //funcion de subir imagenes de los cromos
 exports.uploadFileSticker = async (req, res) => {
@@ -73,22 +73,18 @@ exports.uploadFileSticker = async (req, res) => {
 }
 
 exports.uploadFileAd = async (req, res) => {
-    try {
-        const file = req.file.path;
-        const {announcer, adType, redirecTo} = req.body;
-        const newAd = await ad.create({
-            announcer,
-            adType,
-            redirecTo,
-            img: file
-        });
-        res.status(201).json(newAd);
-      } catch (error) {
-        if (filtro == true) {
-            res.status(400).json({"success": false, "message": "El archivo no es una imagen"});
-         } else {
-            console.log(error);
-            res.status(400).send(error.message);
-         }
-      }
-}
+  try {
+    const file = req.file.path;
+    const { announcer, adType, redirecTo } = req.body;
+    const newAd = await ad.create({
+      announcer,
+      adType,
+      redirecTo,
+      img: file,
+    });
+    res.status(201).json(newAd);
+  } catch (error) {
+    console.error(error);
+    res.status(400).send(error.message);
+  }
+};

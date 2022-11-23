@@ -16,6 +16,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/',apiRouter);
+app.use('/uploads', express.static('./uploads'));
 
 app.listen(PORT, ()=>{
     console.log(`Servidor activo en el puerto ${PORT}`);
