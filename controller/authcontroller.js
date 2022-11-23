@@ -18,7 +18,7 @@ module.exports = {
         }).then(user => {
 
              if (!user){
-                res.status(404).json({message: "Usuario con este correo no encontrado"});
+                res.status(404).json({ success: false, message: "Usuario con este correo no encontrado" });
              } else {
 
                if (bcrypt.compareSync(password, user.password)) {
@@ -34,7 +34,7 @@ module.exports = {
 
                }else {
                    //Acceso no autorizado 
-                 res.status(401).json({message: "Contraseña incorrecta"});
+                 res.status(401).json({ success: false, message: "Contraseña incorrecta" });
                }
 
              }
