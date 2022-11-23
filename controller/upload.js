@@ -78,3 +78,22 @@ exports.uploadFileAd = async (req, res) => {
     res.status(400).send(error.message);
   }
 };
+
+exports.uploadUpdatedFileAd = async (req, res) => {
+  try {
+    const file = req.file.path;
+    const { announcer, adType, redirecTo } = req.body;
+    await ad.update({
+      announcer,
+      adType,
+      redirecTo,
+      img: file,
+    }, { 
+      where: { id: req.params.adId }
+    });
+    res.status(200).send("Modified ad " + req.params.adId);
+  } catch (error) {
+    console.error(error);
+    res.status(400).send(error.message);
+  }
+};

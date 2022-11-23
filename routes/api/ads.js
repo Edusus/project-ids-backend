@@ -54,18 +54,9 @@ router.get('/:adId', async (req, res) => {
   httpGetResponse(res, reqAd, 'Required ad');
 });
 
-router.post('/',controller.upload, controller.uploadFileAd);
+router.post('/', controller.upload, controller.uploadFileAd);
 
-router.put('/:adId', async (req, res) => {
-  if (await findAdById(req.params.adId)) {
-    await ad.update(req.body, { fields: allowedFields,
-      where: { id: req.params.adId }
-    });
-    res.status(200).send('Modified ad ' + req.params.adId);
-  } else {
-    res.status(404).send('Ad not found');
-  }
-});
+router.put('/:adId', controller.upload, controller.uploadUpdatedFileAd);
 
 router.delete('/:adId', async (req, res) => {
   if (await findAdById(req.params.adId)) {
