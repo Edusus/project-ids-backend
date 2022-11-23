@@ -1,18 +1,39 @@
 const multer = require("multer");
 
-const { Sticker } = require("../databases/db");
-const { ad } = require("../databases/db");
+const fs1 = require("fs-extra");
+const { Sticker }= require('../databases/db');
+const { ad } = require('../databases/db');
+let filtro = false;
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./uploads");
-  },
-  filename: function (req, file, cb) {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
+    destination: function(req, file, cb) {
+        const ruta = './uploads'
+        fs1.mkdirsSync(ruta)
+        cb(null, ruta);
+    },
+    filename: function(req, file, cb) {
+        cb(null, `${Date.now()}-${file.originalname}`);
+        
+    }   
 });
 
-const upload = multer({ storage: storage });
+const uploadFilter = function (req, file, cb,) {
+
+     let typeArray = file.mimetype.split('/');
+     let fileType = typeArray[1];
+       if (fileType == 'jpg' || fileType == 'png' || fileType == 'jpeg') {
+          cb(null, true);
+        } else {
+             cb(null, false);
+              filtro = true;
+            }
+
+ };
+
+const upload = multer({ 
+    storage: storage,
+    fileFilter: uploadFilter
+ });
 
 exports.upload = upload.single("myFile");
 
