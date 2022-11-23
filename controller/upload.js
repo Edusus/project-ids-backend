@@ -21,12 +21,12 @@ const uploadFilter = function (req, file, cb,) {
 
      let typeArray = file.mimetype.split('/');
      let fileType = typeArray[1];
-       if (fileType == 'jpg' || fileType == 'png' || fileType == 'jpeg') {
-          cb(null, true);
-        } else {
-             cb(null, false);
-              filtro = true;
-            }
+    if (fileType == 'jpg' || fileType == 'png' || fileType == 'jpeg') {
+        cb(null, true);
+    } else {
+            cb(null, false);
+            filtro = true;
+    }
 
  };
 
@@ -39,28 +39,38 @@ exports.upload = upload.single("myFile");
 
 //funcion de subir imagenes de los cromos
 exports.uploadFileSticker = async (req, res) => {
-  const file = req.file.path;
-  const {
-    playerName,
-    team,
-    country,
-    position,
-    height,
-    weight,
-    appearanceRate,
-  } = req.body;
-  const newSticker = await Sticker.create({
-    playerName,
-    team,
-    country,
-    position,
-    img: file,
-    height,
-    weight,
-    appearanceRate,
-  });
-  res.status(201).json(newSticker);
-};
+    if (!req.file?.path) {
+        return res.status(400).json({
+            success: false,
+            message: "No se ha subido archivo",
+        })
+    }
+
+    try {
+
+        const file = req.file.path;
+        const {playerName, team, country, position, height, weight, appearanceRate } = req.body;
+        const newSticker = await Sticker.create({
+          playerName,
+          team,
+          country,
+          position,
+          img: `${process.env.DOMAIN}/${file}`,
+          height,
+          weight,
+          appearanceRate
+    });
+    res.status(201).json(newSticker);
+    } catch (error) {
+         if (filtro == true) {
+            res.status(400).json({"success": false, "message": "El archivo no es una imagen"});
+         } else {
+            console.log(error);
+            res.status(400).send(error.message);
+         }
+    }
+    
+}
 
 exports.uploadFileAd = async (req, res) => {
   try {

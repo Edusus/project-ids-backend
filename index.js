@@ -21,3 +21,4 @@ app.use('/uploads', express.static('./uploads'));
 app.listen(PORT, ()=>{
     console.log(`Servidor activo en el puerto ${PORT}`);
 });
+app.use('/uploads', express.static('./uploads'));
