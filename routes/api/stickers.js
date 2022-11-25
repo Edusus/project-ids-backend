@@ -19,30 +19,35 @@ router.get('/', async (req,res)=>{
 
 //endpoint para obtener 5 cromos al azar
 router.get('/obtain', async (req, res) => {
-  const stickers = [];
-  let appearanceRate = 0;
-  let singleSticker;
-  do {
+  if (await Sticker.findOne()) {
+    const stickers = [];
+    let appearanceRate = 0;
+    let singleSticker;
     do {
-      appearanceRate = Math.random()*100;
-      singleSticker = await Sticker.findOne({
-        order: random,
-        where: {
-          appearanceRate: {
-            [Op.gte]: appearanceRate
+      do {
+        appearanceRate = Math.random()*100;
+        singleSticker = await Sticker.findOne({
+          order: random,
+          where: {
+            appearanceRate: {
+              [Op.gte]: appearanceRate
+            }
           }
-        }
-      });
-    } while (!(singleSticker))
+        });
+      } while (!singleSticker)
 
-    stickers.push(singleSticker);
+      stickers.push(singleSticker);
 
-  } while (stickers.length < 5)
-  res.status(200).json({
-    "success": true,
-    "stickers": stickers
-  })
-})
+    } while (stickers.length < 5)
+    res.status(200).json({
+      "success": true,
+      "stickers": stickers
+    });
+  } else {
+    console.error('NO STICKERS IN DB AAAAAAAAAAAAAAAAAAAAAH');
+    res.status(500).send('Servicio en mantenimiento...');
+  }
+});
 
 
 //endpoint para crear cromos
