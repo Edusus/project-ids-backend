@@ -4,7 +4,6 @@ const UserModel = require('./../models/users');
 const StickerModel = require('../models/sticker');
 const EventModel = require('./../models/events');
 
-
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD,{
     host: process.env.DBHOST,
     dialect:'mysql'
@@ -19,6 +18,8 @@ sequelize.sync({force:false})
         console.log('Syncronized tables');
     })
 
+const random = sequelize.random();
+
 module.exports ={
-    User, Sticker, Event
+    User, Sticker, Event, random
 }
