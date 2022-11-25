@@ -20,8 +20,11 @@ const ad = adsModel(sequelize,Sequelize);
 sequelize.sync({ force: false })
     .then(()=>{
         console.log('Syncronized tables');
-    })
+    });
+
+const random = sequelize.random();
+const { Op } = Sequelize;
 
 module.exports ={
-    User, Sticker, Event, ad
+    User, Sticker, Event, ad, random, Op
 }
