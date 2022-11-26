@@ -69,8 +69,30 @@ exports.uploadFileSticker = async (req, res) => {
             res.status(400).send(error.message);
          }
     }
-    
 }
+
+exports.uploadUpdatedFileSticker = async (req, res) => {
+  try {
+    const file = req.file.path;
+    const {playerName, team, country, position, height, weight, appearanceRate } = req.body;
+    await Sticker.update({
+      playerName,
+          team,
+          country,
+          position,
+          img: `${process.env.DOMAIN}/${file}`,
+          height,
+          weight,
+          appearanceRate
+    }, { 
+      where: { id: req.params.playerId }
+    });
+    res.status(200).send("Modified ad " + req.params.playerId);
+  } catch (error) {
+    console.error(error);
+    res.status(400).send(error.message);
+  }
+};
 
 exports.uploadFileAd = async (req, res) => {
   try {

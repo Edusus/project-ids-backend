@@ -53,12 +53,7 @@ router.get('/obtain', async (req, res) => {
 router.post('/', controller.upload, controller.uploadFileSticker);
 
 //endpoint para editar cromos
-router.put('/:playerId', async (req,res)=>{
-    await Sticker.update(req.body,{
-        where:{ id: req.params.playerId }
-    });
-    res.json({ success:'Se ha modificado'});
-});
+router.put('/:playerId', controller.upload, controller.uploadUpdatedFileSticker);
 
 //endpoint para borrar cromos
 router.delete('/:playerId', async (req,res)=>{
