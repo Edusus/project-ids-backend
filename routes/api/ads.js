@@ -1,7 +1,8 @@
 const router = require('express').Router();
 const { Op } = require('sequelize');
 const { ad } = require('../../databases/db');
-const controller = require('../../controller/upload');
+const controllerFile = require('../../controller/upload');
+const controllerAd = require('../../controller/uploadAd')
 
 const allowedFields = ['announcer', 'adType', 'redirecTo', 'img'];
 
@@ -54,9 +55,9 @@ router.get('/:adId', async (req, res) => {
   httpGetResponse(res, reqAd, 'Required ad');
 });
 
-router.post('/', controller.upload, controller.uploadFileAd);
+router.post('/', controllerFile.upload, controllerAd.uploadFileAd);
 
-router.put('/:adId', controller.upload, controller.uploadUpdatedFileAd);
+router.put('/:adId', controllerFile.upload, controllerAd.uploadUpdatedFileAd);
 
 router.delete('/:adId', async (req, res) => {
   if (await findAdById(req.params.adId)) {

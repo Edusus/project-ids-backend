@@ -11,7 +11,7 @@ router.get('/', async (req,res)=>{
         limit: +size,
         offset: (+page) * (+size)
     };
-    const events = await Event.findAll(options);
+    const events = await Event.findAndCountAll(options);
     res.status(200).json(events);
 });
 

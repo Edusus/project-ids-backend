@@ -2,7 +2,8 @@ const router = require('express').Router();
 
 const { Sticker, random, Op } = require('../../databases/db');
 
-const controller = require('../../controller/upload');
+const controllerFile = require('../../controller/upload');
+const controllerSticker = require('../../controller/uploadStickers')
 
 //endpoint para listar cromos
 router.get('/', async (req,res)=>{
@@ -13,7 +14,7 @@ router.get('/', async (req,res)=>{
         limit: +size,
         offset: (+page) * (+size)
     };
-    const stickers = await Sticker.findAll(options);
+    const stickers = await Sticker.findAndCountAll(options);
     res.status(200).json({message: 'Lista de cromos', stickers});
 });
 
@@ -50,10 +51,10 @@ router.get('/obtain', async (req, res) => {
 });
 
 //endpoint para crear cromos
-router.post('/', controller.upload, controller.uploadFileSticker);
+router.post('/', controllerFile.upload, controllerSticker.uploadFileSticker);
 
 //endpoint para editar cromos
-router.put('/:playerId', controller.upload, controller.uploadUpdatedFileSticker);
+router.put('/:playerId', controllerFile.upload, controllerSticker.uploadUpdatedFileSticker);
 
 //endpoint para borrar cromos
 router.delete('/:playerId', async (req,res)=>{
