@@ -7,7 +7,6 @@ module.exports = (sequelize, type) => {
     },
     name: {
       type: type.STRING,
-      defaultValue: "Bulldog",
       allowNull: false,
       validate: {
         notEmpty: true
@@ -15,7 +14,7 @@ module.exports = (sequelize, type) => {
     },
     badge: {
       type: type.STRING,
-      defaultValue: "Offside",
+      defaultValue: `${process.env.OFFSITEURL}\\uploads\\offside.png`,
       allowNull: false
     }
   });

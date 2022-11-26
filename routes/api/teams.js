@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const { finder, poster, updater, deleter } = require('../../controllers/teamsControllers');
+const imgController = require('../../controllers/imgControllers');
 
 const teamsRouter = Router();
 
@@ -42,7 +43,7 @@ teamsRouter.get('/:teamId', finder.findById);
  * idEvents value must be an already existing event id
  */
 
-teamsRouter.post('/', poster.post);
+teamsRouter.post('/', imgController.uploadImg, poster.post);
 
 
 
@@ -52,7 +53,7 @@ teamsRouter.post('/', poster.post);
  * idEvents value must be an already existing event id
  */
 
-teamsRouter.put('/:teamId', updater.update);
+teamsRouter.put('/:teamId', imgController.uploadImg, updater.update);
 
 
 

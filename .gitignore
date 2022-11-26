@@ -1,3 +1,5 @@
-project-ids-backend
 node_modules
 .env
+uploads/**
+!.gitkeep
+!offside.png
