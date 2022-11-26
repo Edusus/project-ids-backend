@@ -6,7 +6,7 @@ exports.uploadFileSticker = async (req, res) => {
     if (!req.file?.path) {
         return res.status(400).json({
             success: false,
-            message: "No se ha subido archivo",
+            message: "No se ha subido archivo o no cumple el filtro",
         })
     }
 

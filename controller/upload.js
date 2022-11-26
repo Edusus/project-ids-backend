@@ -23,7 +23,7 @@ const uploadFilter = function (req, file, cb,) {
         cb(null, true);
     } else {
             cb(null, false);
-            filtro = true;
+            console.log("archivo no cumple el filtro");
     }
 
  };

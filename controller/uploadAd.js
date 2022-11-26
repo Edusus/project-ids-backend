@@ -1,6 +1,13 @@
 const { ad } = require('../databases/db');
 
 exports.uploadFileAd = async (req, res) => {
+ 
+  if (!req.file?.path) {
+    return res.status(400).json({
+        success: false,
+        message: "No se ha subido archivo o no cumple el filtro",
+    })
+   }
     try {
       const file = req.file.path;
       const { announcer, adType, redirecTo } = req.body;
