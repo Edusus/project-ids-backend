@@ -11,7 +11,7 @@ const destroy = async (req, res) => {
   const teamId = req.params.teamId;
   const Team = await team.findByPk(teamId);
   if (Team) {
-    const { badge: fileurl } = await team.findByPk(teamId);
+    const { badge: fileurl } = Team;
     const filepath = fileurl.split('/uploads')[1];
     await team.destroy({
       where: { id: teamId }
