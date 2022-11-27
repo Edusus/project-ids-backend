@@ -68,6 +68,25 @@ router.get('/watch', async (req, res) => {
   }
 });
 
+router.put('/watch-detailed/:adId', async (req, res) => {
+  //return res.status(500).json({ success: false, message: "Error random del servidor :3" });
+  if (await findAdById(req.params.adId)) {
+     const reqAd = await findAdById(req.params.adId);
+     const cont = 1;
+     let valorActual = reqAd.dataValues.clickedQuantities;
+     let valorNuevo = valorActual + cont;
+     reqAd.update({ clickedQuantities: valorNuevo });
+     let URL = reqAd.dataValues.redirecTo;
+     return res.redirect(303, URL);
+  } else {
+    console.error('NO ADS IN DB ');
+    return res.status(500).json({
+      success: false,
+      message: "No hay anuncios que mostrar :)"
+    });
+  }
+});
+
 router.get('/:adId', async (req, res) => {
   const reqAd = await findAdById(req.params.adId);
   httpGetResponse(res, reqAd, 'Required ad');
