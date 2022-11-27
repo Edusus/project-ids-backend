@@ -2,11 +2,12 @@ const router = require('express').Router();
 
 const controllerFile = require('../../controller/upload');
 
+/*
 const games = [
     {
         id: 1,
-        teamOneId: 5, // Arg
-        teamTwoId: 15, // Vnlz
+        teamOneId: 10, // Arg
+        teamTwoId: 12, // Vnlz
         matchedAt: "2022-11-27T03:30:40.000Z",
         updatedAt: "2022-11-27T03:30:40.000Z",
         createdAt: "2022-11-27T03:30:40.000Z"
@@ -59,6 +60,7 @@ const playersGames = [
         points: -50
     },
 ];
+*/
 
 const gamesFormmated = [
     {
@@ -149,7 +151,7 @@ router.post('/', controllerFile.uploadExcel, async (req, res) => {
     }
 });
 
-router.put('/', controllerFile.uploadExcel, async (req, res) => {
+router.put('/:gameId', controllerFile.uploadExcel, async (req, res) => {
     if (!req.body.matchedAt) {
         return res.status(400).json({
             "success": false,
