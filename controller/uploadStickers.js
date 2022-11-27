@@ -13,7 +13,7 @@ exports.uploadFileSticker = async (req, res) => {
     try {
 
         const file = req.file.path;
-        const {playerName, team, country, position, height, weight, appearanceRate } = req.body;
+        const {playerName, team, country, position, height, weight, appearanceRate, teamId } = req.body;
         const newSticker = await Sticker.create({
           playerName,
           team,
@@ -22,7 +22,8 @@ exports.uploadFileSticker = async (req, res) => {
           img: `${process.env.DOMAIN}/${file}`,
           height,
           weight,
-          appearanceRate
+          appearanceRate,
+          teamId
     });
     res.status(201).json(newSticker);
     } catch (error) {

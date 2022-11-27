@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const { Sticker, random, Op } = require('../../databases/db');
+const { Sticker, random, Op, team } = require('../../databases/db');
 
 const controllerFile = require('../../controller/upload');
 const controllerSticker = require('../../controller/uploadStickers')
@@ -14,7 +14,13 @@ router.get('/', async (req,res)=>{
         limit: +size,
         offset: (+page) * (+size)
     };
-    const stickers = await Sticker.findAndCountAll(options);
+    const stickers = await Sticker.findAndCountAll({
+      options, 
+      include: {
+        model: team,
+        as: 'team',
+        attributes: ['name', 'badge']
+    }});
     res.status(200).json({message: 'Lista de cromos', stickers});
 });
 
@@ -29,6 +35,10 @@ router.get('/obtain', async (req, res) => {
         appearanceRate = Math.random()*100;
         singleSticker = await Sticker.findOne({
           order: random,
+          include : {
+            model: team,
+            as: 'team'
+          },
           where: {
             appearanceRate: {
               [Op.gte]: appearanceRate
