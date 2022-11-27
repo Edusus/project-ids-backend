@@ -28,9 +28,17 @@ const uploadFilter = function (req, file, cb,) {
 
  };
 
-const upload = multer({ 
+const uploadExcelFilter = function (req, file, cb,) {
+    cb(null, true);
+};
+
+
+exports.upload = multer({ 
     storage: storage,
     fileFilter: uploadFilter
- });
+ }).single("myFile");
 
-exports.upload = upload.single("myFile");
+exports.uploadExcel = multer({ 
+    storage: storage, //TODO: Crear store especificamente para el excel
+    fileFilter: uploadExcelFilter
+ }).single("myFile");
