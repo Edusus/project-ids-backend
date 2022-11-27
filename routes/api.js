@@ -14,3 +14,5 @@ router.use('/auth',apiAuthRouter);
 router.use('/events',apiEventsRouter);
 router.use('/ads', adsRouter);
 router.use('/test-endpoints', testEndpoints);
+
+module.exports = router;
