@@ -51,18 +51,16 @@ router.get('/search', async (req, res) => {
 });
 
 router.get('/watch', async (req, res) => {
+  //return res.status(500).json({ success: false, message: "Error random del servidor :3" });
   if (await ad.findOne()) {
-    let singleAds;
-    singleAds = await ad.findOne({
-      order: random
-      });
-    res.status(200).json({
-      "success": true,
-      "ads": singleAds
-    });
+    const singleAd = await ad.findOne({ order: random });
+    return res.status(200).json({ success: true, ad: singleAd });
   } else {
     console.error('NO ADS IN DB ');
-    res.status(500).send('Servicio en mantenimiento...');
+    return res.status(500).json({
+      success: false,
+      message: "No hay anuncios que mostrar :)"
+    });
   }
 });
 
