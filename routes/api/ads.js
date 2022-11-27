@@ -68,7 +68,7 @@ router.get('/watch', async (req, res) => {
   }
 });
 
-router.put('/watch-detailed/:adId', async (req, res) => {
+router.get('/watch-detailed/:adId', async (req, res) => {
   //return res.status(500).json({ success: false, message: "Error random del servidor :3" });
   if (await findAdById(req.params.adId)) {
      const reqAd = await findAdById(req.params.adId);
