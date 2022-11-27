@@ -25,7 +25,11 @@ team.belongsTo(Event, {
     name: "idEvents"
   }
 });
-Event.hasMany(team);
+Event.hasMany(team, {
+  foreignKey: {
+    name: "idEvents"
+  }
+});
 
 team.hasOne(game, {
   as: 'teamOne'
@@ -33,9 +37,14 @@ team.hasOne(game, {
 team.hasOne(game, {
   as: 'teamTwo'
 })
-game.belongsTo(team);
+game.belongsTo(team, {
+  as: 'teamOne'
+});
+game.belongsTo(team, {
+  as: 'teamTwo'
+})
 
-sequelize.sync({ force: false })
+sequelize.sync({ force: true })
     .then(()=>{
         console.log('Syncronized tables');
     });
