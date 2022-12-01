@@ -44,7 +44,23 @@ game.belongsTo(team, {
   as: 'teamTwo'
 })
 
-sequelize.sync({ force: true })
+team.hasMany(Sticker, { 
+  as: "team", 
+  foreignKey: {
+      name: "teamId",
+      allowNull: false
+   } 
+});
+
+Sticker.belongsTo(team, {
+   as: "team", 
+   foreignKey: {
+     name: "teamId",
+     allowNull: false
+   } 
+});
+
+sequelize.sync({ force: false })
     .then(()=>{
         console.log('Syncronized tables');
     });
