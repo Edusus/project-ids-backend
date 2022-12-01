@@ -1,12 +1,12 @@
 const router = require('express').Router();
 
-const { Sticker, random, Op } = require('../../databases/db');
+const { Sticker, random, Op, team } = require('../../databases/db');
 
 const controllerFile = require('../../controller/upload');
 const controllerSticker = require('../../controller/uploadStickers')
 
 //endpoint para listar cromos
-router.get('/', async (req,res)=>{
+router.get('/', async (req,res)=>{  
     //paginacion
     const {page = 0, size = 10} = req.query;
 
@@ -14,7 +14,15 @@ router.get('/', async (req,res)=>{
         limit: +size,
         offset: (+page) * (+size)
     };
-    const stickers = await Sticker.findAndCountAll(options);
+    const stickers = await Sticker.findAndCountAll({
+      options,
+      attributes: ['id','playerName', 'country', 'position', 'img', 'height', 'weight', 'appearanceRate', 'createdAt', 'updatedAt'],
+      include: {
+        model: team,
+        as: 'team',
+        attributes: ['id','name', 'badge']
+      }
+    });
     res.status(200).json({message: 'Lista de cromos', stickers});
 });
 
@@ -29,6 +37,12 @@ router.get('/obtain', async (req, res) => {
         appearanceRate = Math.random()*100;
         singleSticker = await Sticker.findOne({
           order: random,
+          attributes: ['id','playerName', 'country', 'position', 'img', 'height', 'weight', 'appearanceRate', 'createdAt', 'updatedAt'],
+          include : {
+            model: team,
+            as: 'team',
+            attributes: ['name', 'badge']
+          },
           where: {
             appearanceRate: {
               [Op.gte]: appearanceRate
