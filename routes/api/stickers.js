@@ -19,8 +19,7 @@ router.get('/', async (req,res)=>{
       attributes: ['id','playerName', 'country', 'position', 'img', 'height', 'weight', 'appearanceRate', 'createdAt', 'updatedAt'],
       include: {
         model: team,
-        as: 'team',
-        attributes: ['id','name', 'badge']
+        attributes: ['id', 'name', 'badge']
       }
     });
     res.status(200).json({message: 'Lista de cromos', stickers});
