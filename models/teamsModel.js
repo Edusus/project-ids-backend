@@ -14,7 +14,7 @@ module.exports = (sequelize, type) => {
     },
     badge: {
       type: type.STRING,
-      defaultValue: `${process.env.OFFSITEURL}\\uploads\\offside.png`,
+      defaultValue: `${process.env.OFFSITEURL}/uploads/offside.png`,
       allowNull: false
     }
   });

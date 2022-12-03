@@ -1,13 +1,12 @@
 const { Router, static } = require('express');
 const teamsRouter = require('./api/teams.js');
 const apiEventsRouter = require('./api/events');
-const path = require('path');
+const { uploads_dir } = require('../controllers/filesControllers');
 
 const router = Router();
-const current_dir = path.dirname(__filename);
 
 router.use('/teams', teamsRouter);
 router.use('/events', apiEventsRouter);
-router.use('/uploads', static(path.join(current_dir, '..', 'uploads')));
+router.use('/uploads', static(uploads_dir));
 
 module.exports = router;

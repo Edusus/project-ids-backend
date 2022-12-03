@@ -1,5 +1,11 @@
 node_modules
 .env
 uploads/**
+!uploads/img
+!uploads/csv
 !.gitkeep
 !offside.png
+uploads/img/**
+!.gitkeep
+uploads/csv/**
+!.gitkeep

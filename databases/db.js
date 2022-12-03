@@ -7,8 +7,8 @@ const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.
 	dialect: 'mysql'
 });
 
-const team = teamsModel(sequelize, DataTypes);
 const Event = EventModel(sequelize, DataTypes);
+const team = teamsModel(sequelize, DataTypes);
 
 /* Creating a foreign key relationship between the two tables. */
 team.belongsTo(Event, {
@@ -17,8 +17,14 @@ team.belongsTo(Event, {
     allowNull: false
   }
 });
+Event.hasMany(team, {
+  foreignKey: {
+    name: "idEvents",
+    allowNull: false
+  }
+});
 
-sequelize.sync()
+sequelize.sync({ force: false })
 	.then(() => {
 		console.log('Syncronized tables');
 	})
@@ -27,5 +33,5 @@ sequelize.sync()
   });
 
 module.exports = {
-	team, Event
+	Event, team
 };
