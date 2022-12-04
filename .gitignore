@@ -1,7 +1,4 @@
 node_modules
-<<<<<<< HEAD
-.env
-=======
 .env
 uploads/**
 !uploads/img
@@ -12,4 +9,3 @@ uploads/img/**
 !.gitkeep
 uploads/csv/**
 !.gitkeep
->>>>>>> teams
