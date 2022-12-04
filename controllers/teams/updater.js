@@ -23,9 +23,9 @@ const update = async (req, res) => {
     const { name, idEvents: eventsid } = req.body;
     let filepath;
     if (process.env.USINGIMGHOST == 'true') {
-      filepath = `${process.env.IMGURL}${img_relative_dir}/${req.file.filename.replaceAll(' ', '-')}`;
+      filepath = `${process.env.IMGURL}${img_relative_dir}/${req.file.filename}`;
     } else {
-      filepath = `${process.env.OFFSIDEURL}${img_relative_dir}/${req.file.filename.replaceAll(' ', '-')}`;
+      filepath = `${process.env.OFFSIDEURL}${img_relative_dir}/${req.file.filename}`;
     }
     let idEvents = 0;
     if (typeof eventsid == 'object') {
