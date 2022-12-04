@@ -6,6 +6,7 @@ const EventModel = require('./../models/events');
 const adsModel = require('../models/adsModel');
 const gamesModel = require('../models/games');
 const teamsModel = require('../models/teamsModel');
+const inventoryModel = require('../models/inventory');
 
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD,{
     host: process.env.DBHOST,
@@ -18,6 +19,7 @@ const Event = EventModel(sequelize,Sequelize);
 const ad = adsModel(sequelize,Sequelize);
 const game = gamesModel(sequelize, Sequelize);
 const team = teamsModel(sequelize, Sequelize);
+const inventory = inventoryModel(sequelize, Sequelize);
 
 /* Defining associations */
 team.belongsTo(Event, {
@@ -59,6 +61,18 @@ Sticker.belongsTo(team,{
   }
 });
 
+//Relaciones entre usuarios, sticker para formar un inventario
+User.belongsToMany(Sticker, { 
+  through: inventory,
+});
+Sticker.belongsToMany(User, { 
+  through: inventory
+});
+User.hasMany(inventory);
+inventory.belongsTo(User);
+Sticker.hasMany(inventory);
+inventory.belongsTo(Sticker);
+
 sequelize.sync({ force: false })
     .then(()=>{
         console.log('Syncronized tables');
@@ -68,5 +82,5 @@ const random = sequelize.random();
 const { Op } = Sequelize;
 
 module.exports ={
-    User, Sticker, Event, ad, game, team, random, Op
+    User, Sticker, Event, ad, game, team, random, Op, inventory
 }

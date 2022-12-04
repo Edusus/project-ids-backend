@@ -8,6 +8,7 @@ const gamesEndpoints = require('./api/games');
 const apiEventsRouter = require('./api/events');
 const adsRouter = require('./api/ads');
 const teamsRouter = require('./api/teams.js');
+const inventoryRouter = require('./api/inventory')
 
 const auth = require('../middlewares/auth');
 const current_dir = path.dirname(__filename);
@@ -22,6 +23,7 @@ router.use('/test-endpoints', testEndpoints);
 router.use('/games', gamesEndpoints);
 router.use('/teams', teamsRouter);
 router.use('/uploads', static(path.join(current_dir, '..', 'uploads')));
+router.use('/inventory', inventoryRouter);
 
 module.exports = router;
 
