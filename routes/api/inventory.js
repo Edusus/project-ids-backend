@@ -1,6 +1,6 @@
 const router= require('express').Router();
 
-const { inventory, Sticker, team, Op }= require('../../databases/db');
+const { inventory, Sticker, team, Op, Event}= require('../../databases/db');
 
 router.get('/public-events/:eventId', async (req,res)=>{
     try { 
@@ -131,8 +131,43 @@ router.post('/public-events/:eventId/claim-sticker', async (req,res) => {
         console.log(err);
         res.status(400).send(err);
     }
-
-
 });
+
+router.get('/public-events/:eventId/album', async (req,res) => {
+  try {
+    const eventId = req.params.eventId;
+    const event = await Event.findOne({
+        where: {
+            id: eventId
+        }
+    });
+     if (!event) {
+        res.status(404).json({success: false, message: 'Evento no encontrado'});
+     } else {
+        const {count: count2} = await Sticker.findAndCountAll();
+        const {count} = await inventory.findAndCountAll({
+            where: {
+                [Op.and]: [{eventId: eventId},{isInAlbum: true}]
+            }
+        });        
+       const progress = (count/count2)*100;
+        
+        res.status(200).json({
+            success: true,
+            event: {
+                name: event.dataValues.eventName
+            },
+            totalStickers: count2,
+            claimedStickers: count,
+            actualProgressPercertage : progress 
+        });
+     }
+
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error);
+  }
+});
+
 
 module.exports = router;
