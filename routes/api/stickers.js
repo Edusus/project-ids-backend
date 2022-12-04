@@ -30,6 +30,7 @@ router.get('/',auth, async (req,res)=>{
 router.get('/obtain/:eventId',auth, async (req, res) => {
   if (await Sticker.findOne()) {
     const stickers = [];
+    const idUser = req.user.id.id;
     let appearanceRate = 0;
     let singleSticker;
     do {
@@ -50,29 +51,26 @@ router.get('/obtain/:eventId',auth, async (req, res) => {
         });
       } while (!singleSticker)
       
-     let idSticker = singleSticker.dataValues.id
-     const idUser = req.user.id.id;
-
-      inventory.findOne({
+      await inventory.findOne({
         where: {
-          [Op.and]: [{stickerId: idSticker},{eventId : req.params.eventId}]
+          [Op.and]: [{stickerId: singleSticker.dataValues.id},{eventId : req.params.eventId}]
         }
-     }).then(inventorys => {
+     }).then( async inventorys => {
          if(!inventorys) {
-                inventory.create({
+                await inventory.create({
                 isInAlbum: false,
                 Quantity: 1,
                 userId: idUser,
-                stickerId: idSticker,
+                stickerId: singleSticker.dataValues.id,
                 eventId: req.params.eventId
                });
          } else {
             const quant = inventorys.dataValues.Quantity;
-              inventory.update({
+              await inventory.update({
               Quantity : quant+1,
              },{
               where:{
-                [Op.and]: [{stickerId: idSticker},{userId : idUser},{eventId: req.params.eventId}]
+                [Op.and]: [{stickerId: singleSticker.dataValues.id},{userId : idUser},{eventId: req.params.eventId}]
                }
             })
           }
