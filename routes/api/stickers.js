@@ -1,12 +1,13 @@
 const router = require('express').Router();
 
-const { Sticker, random, Op, team } = require('../../databases/db');
+const { Sticker, random, Op, team, inventory } = require('../../databases/db');
 
 const controllerFile = require('../../controller/upload');
 const controllerSticker = require('../../controller/uploadStickers')
+const auth = require('../../middlewares/auth');
 
 //endpoint para listar cromos
-router.get('/', async (req,res)=>{  
+router.get('/',auth, async (req,res)=>{  
     //paginacion
     const {page = 0, size = 10} = req.query;
 
@@ -26,7 +27,7 @@ router.get('/', async (req,res)=>{
 });
 
 //endpoint para obtener 5 cromos al azar
-router.get('/obtain', async (req, res) => {
+router.get('/obtain',auth, async (req, res) => {
   if (await Sticker.findOne()) {
     const stickers = [];
     let appearanceRate = 0;
@@ -39,7 +40,6 @@ router.get('/obtain', async (req, res) => {
           attributes: ['id','playerName', 'country', 'position', 'img', 'height', 'weight', 'appearanceRate', 'createdAt', 'updatedAt'],
           include : {
             model: team,
-            as: 'team',
             attributes: ['name', 'badge']
           },
           where: {
@@ -50,15 +50,43 @@ router.get('/obtain', async (req, res) => {
         });
       } while (!singleSticker)
 
+     let idSticker = singleSticker.dataValues.id
+      inventory.findOne({
+        where: {
+            stickerId: idSticker
+        }
+     }).then(async inventorys => {
+      console.log(inventorys)
+      const idUser = req.user.id.id;
+         if(inventorys == null) {
+              await inventory.create({
+                isInAlbum: false,
+                Quantity: 1,
+                userId: idUser,
+                stickerId: idSticker
+               });
+         };
+          if (inventorys) {
+            const quant = inventorys.dataValues.Quantity
+             await inventory.update({
+              Quantity : quant+1,
+             },{
+              where:{
+                [Op.and]: [{stickerId: idSticker},{userId : idUser}]
+               }
+            })
+          }
+    });
+      
       stickers.push(singleSticker);
 
     } while (stickers.length < 5)
     res.status(200).json({
-      "success": true,
-      "stickers": stickers
-    });
+      success: true,
+      stickers : stickers
+    }) 
   } else {
-    console.error('NO STICKERS IN DB AAAAAAAAAAAAAAAAAAAAAH');
+    console.error('NO STICKERS IN DB');
     res.status(500).send('Servicio en mantenimiento...');
   }
 });
