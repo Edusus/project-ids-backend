@@ -1,2 +1,15 @@
 node_modules
+<<<<<<< HEAD
 .env
+=======
+.env
+uploads/**
+!uploads/img
+!uploads/csv
+!.gitkeep
+!offside.png
+uploads/img/**
+!.gitkeep
+uploads/csv/**
+!.gitkeep
+>>>>>>> teams
