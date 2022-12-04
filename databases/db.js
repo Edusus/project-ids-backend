@@ -61,6 +61,7 @@ Sticker.belongsTo(team,{
   }
 });
 
+
 //Relaciones entre usuarios, sticker para formar un inventario
 User.belongsToMany(Sticker, { 
   through: inventory,
@@ -72,6 +73,8 @@ User.hasMany(inventory);
 inventory.belongsTo(User);
 Sticker.hasMany(inventory);
 inventory.belongsTo(Sticker);
+Event.hasOne(inventory);
+inventory.belongsTo(Event);
 
 sequelize.sync({ force: false })
     .then(()=>{

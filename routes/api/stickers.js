@@ -27,7 +27,7 @@ router.get('/',auth, async (req,res)=>{
 });
 
 //endpoint para obtener 5 cromos al azar
-router.get('/obtain',auth, async (req, res) => {
+router.get('/obtain/:eventId',auth, async (req, res) => {
   if (await Sticker.findOne()) {
     const stickers = [];
     let appearanceRate = 0;
@@ -51,27 +51,28 @@ router.get('/obtain',auth, async (req, res) => {
       } while (!singleSticker)
       
      let idSticker = singleSticker.dataValues.id
+     const idUser = req.user.id.id;
 
       inventory.findOne({
         where: {
-            stickerId: idSticker
+          [Op.and]: [{stickerId: idSticker},{eventId : req.params.eventId}]
         }
      }).then(inventorys => {
-      const idUser = req.user.id.id;
          if(!inventorys) {
                 inventory.create({
                 isInAlbum: false,
                 Quantity: 1,
                 userId: idUser,
-                stickerId: idSticker
+                stickerId: idSticker,
+                eventId: req.params.eventId
                });
          } else {
-            const quant = inventorys.dataValues.Quantity
+            const quant = inventorys.dataValues.Quantity;
               inventory.update({
               Quantity : quant+1,
              },{
               where:{
-                [Op.and]: [{stickerId: idSticker},{userId : idUser}]
+                [Op.and]: [{stickerId: idSticker},{userId : idUser},{eventId: req.params.eventId}]
                }
             })
           }

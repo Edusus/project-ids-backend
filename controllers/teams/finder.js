@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { team, Sticker } = require('../../databases/db');
+const { team, Sticker, Event } = require('../../databases/db');
 
 /**
  * If the resource is found, send a 200 status code with the resource in the response body. If the
@@ -70,7 +70,14 @@ const findById = async (req, res) => {
  */
 const findAll = async (req, res) => {
   const teams = await team.findAll({
-    include: Sticker
+    include: [
+      {
+         model: Sticker
+      },
+      {
+         model: Event
+      }
+  ]
   });
   httpGetResponse(res, teams, "teams");
 }
