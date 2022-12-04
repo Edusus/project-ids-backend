@@ -93,4 +93,46 @@ router.get('/public-events/:eventId', async (req,res)=>{
     }
 });
 
+router.post('/public-events/:eventId/claim-sticker', async (req,res) => {
+    try {
+     const {stickerId} = req.body;
+     const eventId = req.params.eventId;
+     const inventorys = await inventory.findOne({
+        where: {
+            [Op.and]: [{stickerId: stickerId},{eventId: eventId}]
+        }
+      });
+        if (!inventorys) {
+            res.status(404).json({success: false, message: 'No posees este sticker en el inventario'});
+        } else {
+            const contAct = inventorys.dataValues.Quantity
+            const notSticker = inventorys.dataValues.isInAlbum
+            if (contAct > 0 && notSticker == false) {
+                const cont = contAct - 1;
+                await inventory.update({
+                    isInAlbum : true,
+                    Quantity: cont
+                }, {
+                    where: {
+                        [Op.and]: [{stickerId: stickerId},{eventId: eventId}]
+                    }
+                });
+                res.status(200).json({success: true, message: 'Sticker pegado con exito'});
+            } else {
+                 if (notSticker == true) {
+                    res.status(409).json({success: false, message: 'Ya tienes ese sticker pegado en el inventario'});
+                 } else {
+                   res.status(404).json({success: false, message: 'No posees ese sticker en el inventario'});
+                 }
+              }  
+            }
+
+    } catch (err) {
+        console.log(err);
+        res.status(400).send(err);
+    }
+
+
+});
+
 module.exports = router;
