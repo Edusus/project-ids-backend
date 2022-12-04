@@ -169,5 +169,55 @@ router.get('/public-events/:eventId/album', async (req,res) => {
   }
 });
 
+router.get('/public-events/:eventId/album/:teamId', async (req,res) => {
+    try {
+        const {eventId, teamId} = req.params;
+        const event = await Event.findOne({
+            where: {
+                id: eventId
+            }
+        });
+        if (!event) {
+            res.status(404).json({success: false, message: 'Evento no encontrado'});
+        } else {
+            const teams = await team.findOne({
+                where: {
+                    [Op.and]: [{idEvents: eventId},{id: teamId}]
+                }
+            });
+            if (!teams) {
+                res.status(404).json({success: false, message: 'Equipo no encontrado'});
+            } else {
+                const player = await Sticker.findAll({
+                    attributes: ['id'],
+                    where: {
+                       teamId: teams.dataValues.id
+                    }
+                });
+                const inventorys = await inventory.findAll({
+                    where: {
+                        [Op.and]: [{eventId: eventId},{stickerId : player},{isInAlbum: true}]
+                    }
+                });
+               res.status(200).json({
+                    success: true,
+                    album: {
+                        currentTeam: {
+                            id: teams.dataValues.id,
+                            name: teams.dataValues.name
+                        }             
+                    },
+                    stickers: inventorys
+               })
+            }
+
+        }
+        
+    } catch (error) {
+        console.log(error);
+        res.status(400).send(error);
+    }
+
+});
 
 module.exports = router;
