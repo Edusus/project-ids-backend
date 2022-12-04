@@ -49,26 +49,25 @@ router.get('/obtain',auth, async (req, res) => {
           }
         });
       } while (!singleSticker)
-
+      
      let idSticker = singleSticker.dataValues.id
+
       inventory.findOne({
         where: {
             stickerId: idSticker
         }
-     }).then(async inventorys => {
-      console.log(inventorys)
+     }).then(inventorys => {
       const idUser = req.user.id.id;
-         if(inventorys == null) {
-              await inventory.create({
+         if(!inventorys) {
+                inventory.create({
                 isInAlbum: false,
                 Quantity: 1,
                 userId: idUser,
                 stickerId: idSticker
                });
-         };
-          if (inventorys) {
+         } else {
             const quant = inventorys.dataValues.Quantity
-             await inventory.update({
+              inventory.update({
               Quantity : quant+1,
              },{
               where:{
