@@ -207,7 +207,7 @@ router.get('/public-events/:eventId/album/:teamId', async (req,res) => {
                             name: teams.dataValues.name
                         }             
                     },
-                    stickers: inventorys
+                    item: inventorys
                })
             }
 
