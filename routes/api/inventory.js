@@ -188,15 +188,15 @@ router.get('/public-events/:eventId/album/:teamId', async (req,res) => {
             if (!teams) {
                 res.status(404).json({success: false, message: 'Equipo no encontrado'});
             } else {
-                const player = await Sticker.findAll({
-                    attributes: ['id'],
-                    where: {
-                       teamId: teams.dataValues.id
-                    }
-                });
                 const inventorys = await inventory.findAll({
+                    include : {
+                        model: Sticker,
+                        where : {
+                            teamId: teamId
+                        }
+                    },
                     where: {
-                        [Op.and]: [{eventId: eventId},{stickerId : player},{isInAlbum: true}]
+                        [Op.and]: [{eventId: eventId},{isInAlbum: true}]
                     }
                 });
                res.status(200).json({
