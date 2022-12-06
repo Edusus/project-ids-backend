@@ -235,6 +235,8 @@ router.post('/public-events/:eventId/claim-sticker', async (req, res) => {
                     stickerId: stickerId
                 }, {
                     eventId: eventId
+                },{
+                    userId: req.user.id.id
                 }]
             }
         });
@@ -257,6 +259,8 @@ router.post('/public-events/:eventId/claim-sticker', async (req, res) => {
                             stickerId: stickerId
                         }, {
                             eventId: eventId
+                        },{
+                            userId: req.user.id.id
                         }]
                     }
                 });
@@ -310,6 +314,8 @@ router.get('/public-events/:eventId/album', async (req, res) => {
                         eventId: eventId
                     }, {
                         isInAlbum: true
+                    }, {
+                        userId: req.user.id.id
                     }]
                 }
             });
@@ -376,6 +382,8 @@ router.get('/public-events/:eventId/album/:teamId', async (req, res) => {
                             eventId: eventId
                         }, {
                             isInAlbum: true
+                        },{
+                            userId: req.user.id.id
                         }]
                     }
                 });
