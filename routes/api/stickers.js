@@ -4,10 +4,10 @@ const { Sticker, random, Op, team, inventory } = require('../../databases/db');
 
 const controllerFile = require('../../controller/upload');
 const controllerSticker = require('../../controller/uploadStickers')
-const auth = require('../../middlewares/auth');
+const { verifyToken, isAdmin } = require('../../middlewares/auth');
 
 //endpoint para listar cromos
-router.get('/',auth, async (req,res)=>{  
+router.get('/',isAdmin, async (req,res)=>{  
     //paginacion
     const {page = 0, size = 10} = req.query;
 
@@ -27,7 +27,7 @@ router.get('/',auth, async (req,res)=>{
 });
 
 //endpoint para obtener 5 cromos al azar
-router.get('/obtain/:eventId',auth, async (req, res) => {
+router.get('/obtain/:eventId', async (req, res) => {
   if (await Sticker.findOne()) {
     const stickers = [];
     const idUser = req.user.id.id;
@@ -53,7 +53,7 @@ router.get('/obtain/:eventId',auth, async (req, res) => {
       
       await inventory.findOne({
         where: {
-          [Op.and]: [{stickerId: singleSticker.dataValues.id},{eventId : req.params.eventId}]
+          [Op.and]: [{stickerId: singleSticker.dataValues.id},{eventId : req.params.eventId},{userId: idUser}]
         }
      }).then( async inventorys => {
          if(!inventorys) {
@@ -90,13 +90,13 @@ router.get('/obtain/:eventId',auth, async (req, res) => {
 });
 
 //endpoint para crear cromos
-router.post('/', controllerFile.upload, controllerSticker.uploadFileSticker);
+router.post('/',isAdmin, controllerFile.upload, controllerSticker.uploadFileSticker);
 
 //endpoint para editar cromos
-router.put('/:playerId', controllerFile.upload, controllerSticker.uploadUpdatedFileSticker);
+router.put('/:playerId',isAdmin, controllerFile.upload, controllerSticker.uploadUpdatedFileSticker);
 
 //endpoint para borrar cromos
-router.delete('/:playerId', async (req,res)=>{
+router.delete('/:playerId',isAdmin, async (req,res)=>{
     await Sticker.destroy({
         where:{ id: req.params.playerId }
     });

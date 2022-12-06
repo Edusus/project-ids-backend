@@ -14,8 +14,8 @@ const auth = require('../middlewares/auth');
 const current_dir = path.dirname(__filename);
 const router = Router();
 
-router.use('/users', auth, apiUsersRouter);
-router.use('/stickers',apiStickerRouter);
+router.use('/users', auth.verifyToken, auth.isAdmin, apiUsersRouter);
+router.use('/stickers',auth.verifyToken, apiStickerRouter);
 router.use('/auth',apiAuthRouter);
 router.use('/events',apiEventsRouter);
 router.use('/ads', adsRouter);
@@ -23,7 +23,7 @@ router.use('/test-endpoints', testEndpoints);
 router.use('/games', gamesEndpoints);
 router.use('/teams', teamsRouter);
 router.use('/uploads', static(path.join(current_dir, '..', 'uploads')));
-router.use('/inventory',auth, inventoryRouter);
+router.use('/inventory',auth.verifyToken, inventoryRouter);
 
 module.exports = router;
 
