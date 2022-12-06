@@ -23,7 +23,7 @@ router.use('/test-endpoints', testEndpoints);
 router.use('/games', gamesEndpoints);
 router.use('/teams', teamsRouter);
 router.use('/uploads', static(path.join(current_dir, '..', 'uploads')));
-router.use('/inventory', inventoryRouter);
+router.use('/inventory',auth, inventoryRouter);
 
 module.exports = router;
 
