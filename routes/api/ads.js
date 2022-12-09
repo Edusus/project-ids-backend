@@ -77,7 +77,7 @@ router.get('/watch-detailed/:adId', async (req, res) => {
      let valorNuevo = valorActual + cont;
      reqAd.update({ clickedQuantities: valorNuevo });
      let URL = reqAd.dataValues.redirecTo;
-     return res.redirect(303, URL);
+     return res.redirect(302, URL);
   } else {
     console.error('NO ADS IN DB ');
     return res.status(500).json({
