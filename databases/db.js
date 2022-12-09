@@ -4,7 +4,6 @@ const UserModel = require('./../models/users');
 const StickerModel = require('../models/sticker');
 const EventModel = require('./../models/events');
 const adsModel = require('../models/adsModel');
-const { truncate } = require('mz/fs');
 
 
 
