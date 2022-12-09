@@ -20,7 +20,7 @@ const ad = adsModel(sequelize,Sequelize);
 const game = gamesModel(sequelize, Sequelize);
 const team = teamsModel(sequelize, Sequelize);
 const inventory = inventoryModel(sequelize, Sequelize);
-
+const Deposit = 
 /* Defining associations */
 team.belongsTo(Event, {
   foreignKey: {
