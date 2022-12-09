@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const authcontroller = require('../../controller/authcontroller');
+const authcontroller = require('../../controllers/auth/authcontroller');
 const authConfig = require('../../config/auth');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
