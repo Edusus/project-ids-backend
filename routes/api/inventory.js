@@ -54,6 +54,9 @@ router.get('/public-events/:eventId', async (req, res) => {
                                 offset: pageAsNumber * sizeAsNumber,
                                 include: {
                                     model: Sticker,
+                                    include: {
+                                        model: team
+                                    }
                                 },
                                 where: {
                                     [Op.and]: [{
@@ -87,12 +90,16 @@ router.get('/public-events/:eventId', async (req, res) => {
                                 const {
                                     rows
                                 } = await inventory.findAndCountAll(options);
+                                const cantPages = Math.round(count/sizeAsNumber);
                                 res.status(200).json({
                                     success: true,
-                                    totalStickers: count,
-                                    pageNumber: pageAsNumber,
-                                    pageSize: sizeAsNumber,
-                                    stickers: rows
+                                    paginate: {
+                                        total: count,
+                                        page: pageAsNumber,
+                                        pages: cantPages,
+                                        perPage: sizeAsNumber
+                                    },
+                                    items: rows
                                 });
                             }
                         } else {
@@ -109,6 +116,9 @@ router.get('/public-events/:eventId', async (req, res) => {
                                 model: Sticker,
                                 where: {
                                     teamId: teams.dataValues.id
+                                },
+                                include: {
+                                    model: team
                                 }
                             },
                             where: {
@@ -142,12 +152,16 @@ router.get('/public-events/:eventId', async (req, res) => {
                             const {
                                 rows
                             } = await inventory.findAndCountAll(options);
+                            const cantPages = Math.round(count/sizeAsNumber);
                             res.status(200).json({
                                 success: true,
-                                totalStickers: count,
-                                pageNumber: pageAsNumber,
-                                pageSize: sizeAsNumber,
-                                stickers: rows
+                                paginate: {
+                                    total: count,
+                                    page: pageAsNumber,
+                                    pages: cantPages,
+                                    perPage: sizeAsNumber
+                                },
+                                items: rows
                             });
                         }
                     }
@@ -170,6 +184,9 @@ router.get('/public-events/:eventId', async (req, res) => {
                                 offset: pageAsNumber * sizeAsNumber,
                                 include: {
                                     model: Sticker,
+                                    include: {
+                                        model: team
+                                    }
                                 },
                                      where: {
                                        [Op.and]: [{userId: req.user.id.id},{stickerId: player.dataValues.id}, {eventId: eventId}]
@@ -177,12 +194,16 @@ router.get('/public-events/:eventId', async (req, res) => {
                                  }
                             const {count} = await inventory.findAndCountAll();
                             const {rows} = await inventory.findAndCountAll(options);
+                            const cantPages = Math.round(count/sizeAsNumber);
                             res.status(200).json({
                                 success: true,
-                                totalStickers: count,
-                                pageNumber: pageAsNumber,
-                                pageSize: sizeAsNumber,
-                                stickers: rows
+                                paginate: {
+                                    total: count,
+                                    page: pageAsNumber,
+                                    pages: cantPages,
+                                    perPage: sizeAsNumber
+                                },
+                                items: rows
                             });
                         }
                 } else {
@@ -191,6 +212,9 @@ router.get('/public-events/:eventId', async (req, res) => {
                         offset: pageAsNumber * sizeAsNumber,
                         include: {
                             model: Sticker,
+                            include: {
+                                model: team
+                            }
                         },
                         where: {
                             [Op.and]: [{
@@ -206,12 +230,16 @@ router.get('/public-events/:eventId', async (req, res) => {
                     const {
                         rows
                     } = await inventory.findAndCountAll(options);
+                    const cantPages = Math.round(count/sizeAsNumber);
                     res.status(200).json({
                         success: true,
-                        totalStickers: count,
-                        pageNumber: pageAsNumber,
-                        pageSize: sizeAsNumber,
-                        stickers: rows
+                        paginate: {
+                            total: count,
+                            page: pageAsNumber,
+                            pages: cantPages,
+                            perPage: sizeAsNumber
+                        },
+                        items: rows
                     });
                 }
             }
