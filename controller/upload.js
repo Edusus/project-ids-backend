@@ -1,6 +1,7 @@
 const multer = require("multer");
 
 const fs1 = require("fs-extra");
+const e = require("express");
 let filtro = false;
 
 const storage = multer.diskStorage({
@@ -28,17 +29,7 @@ const uploadFilter = function (req, file, cb,) {
 
  };
 
-const uploadExcelFilter = function (req, file, cb,) {
-    cb(null, true);
-};
-
-
 exports.upload = multer({ 
     storage: storage,
     fileFilter: uploadFilter
- }).single("myFile");
-
-exports.uploadExcel = multer({ 
-    storage: storage, //TODO: Crear store especificamente para el excel
-    fileFilter: uploadExcelFilter
- }).single("myFile");
+ }).single("myFile")

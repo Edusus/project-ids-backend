@@ -1,5 +1,5 @@
 const { team } = require('../../databases/db');
-const imgController = require('../imgControllers'); 
+const { imgController, fileController } = require('../filesControllers'); 
 
 const allowedFields = ['name', 'badge', 'idEvents'];
 
@@ -12,11 +12,12 @@ const allowedFields = ['name', 'badge', 'idEvents'];
 const post = async (req, res) => {
   try {
     const { name, idEvents: eventsid } = req.body;
+    const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/') + '/';
     let filepath;
     if (process.env.USINGIMGHOST == 'true') {
-      filepath = `${process.env.IMGURL}/uploads/${req.file.filename}`;
+      filepath = `${process.env.IMGURL}${img_relative_dir}${req.file.filename}`;
     } else {
-      filepath = `${process.env.OFFSIDEURL}/uploads/${req.file.filename}`;
+      filepath = `${process.env.OFFSIDEURL}${img_relative_dir}${req.file.filename}`;
     }
     let idEvents = 0;
     if (typeof eventsid == 'object') {
@@ -33,7 +34,7 @@ const post = async (req, res) => {
   } catch (error) {
     console.error(error);
     if (typeof req.file !== 'undefined') {
-      imgController.deleteImg(req.file.path, req.file.filename);
+      fileController.deleteFile(req.file.path, req.file.filename);
       res.status(400).send(error.message);
     } else {
       res.status(400).send('Error: img not sent');

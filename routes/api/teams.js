@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { finder, poster, updater, deleter } = require('../../controllers/teamsControllers');
-const imgController = require('../../controllers/imgControllers');
+const { imgController } = require('../../controllers/filesControllers');
 
 const teamsRouter = Router();
 

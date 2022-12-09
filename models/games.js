@@ -19,5 +19,13 @@ module.exports = (sequelize, type) => {
         }
       }
     }
+  }, { 
+    sequelize,
+    validate: {
+      bothTeamsNotEqual() {
+        if (this.teamOneId == this.teamTwoId)
+          throw new Error('Error: a team cannot match itself');
+      }
+    }
   })
 }
