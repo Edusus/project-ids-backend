@@ -50,10 +50,6 @@ router.get('/obtain', async (req, res) => {
     res.status(500).send('Servicio en mantenimiento...');
   }
 });
-<<<<<<< HEAD
-
-=======
->>>>>>> uploads
 
 //endpoint para crear cromos
 router.post('/', controllerFile.upload, controllerSticker.uploadFileSticker);
