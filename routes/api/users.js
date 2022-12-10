@@ -8,24 +8,12 @@ const bcrypt = require('bcrypt');
 router.get('/', async (req,res)=>{
     //paginacion
     const {page = 0, size = 10} = req.query;
-    
     let options = {
         limit: +size,
         offset: (+page) * (+size)
     };
-    const {count,rows} = await User.findAndCountAll(options);
-
-    res.status(200).json({
-        success: true,
-        paginate:{
-            total:count,
-            page:page,
-            pages: Math.trunc(count/size),
-            perPage:size
-        },
-        message: 'Lista de usuarios',
-        users: rows
-    });
+    const users = await User.findAndCountAll(options);
+    res.status(200).json({message: 'Lista de usuarios', users });
 });
 
 //endpoint para crear usuarios
