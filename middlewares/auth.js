@@ -29,7 +29,7 @@ exports.verifyToken = (req, res, next) => {
 };
 
 exports.isAdmin = (req, res, next) => {
-    if ((req.user.id.role !== "ADMIN") || (req.user.id.role !== "admin")) {
+    if ((req.user.id.role !== "ADMIN") && (req.user.id.role !== "admin")) {
         return res.status(401).json({ error: "Acceso no autorizado usted no es admin" });
     };
     next();
