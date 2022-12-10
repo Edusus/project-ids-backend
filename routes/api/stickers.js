@@ -3,6 +3,8 @@ const Sequelize = require('sequelize');
 const { Op } = Sequelize;
 
 const { Sticker, random } = require('../../databases/db');
+const controllerFile = require('../../controllers/img/upload');
+const controllerSticker = require('../../controllers/stickers/uploadStickers');
 
 //endpoint para listar cromos
 router.get('/', async (req,res)=>{
@@ -13,7 +15,7 @@ router.get('/', async (req,res)=>{
         limit: +size,
         offset: (+page) * (+size)
     };
-    const stickers = await Sticker.findAll(options);
+    const stickers = await Sticker.findAndCountAll(options);
     res.status(200).json({message: 'Lista de cromos', stickers});
 });
 
@@ -48,22 +50,16 @@ router.get('/obtain', async (req, res) => {
     res.status(500).send('Servicio en mantenimiento...');
   }
 });
+<<<<<<< HEAD
 
+=======
+>>>>>>> uploads
 
 //endpoint para crear cromos
-router.post('/', async (req,res)=>{
-    console.log(req.body);
-    const sticker = await Sticker.create(req.body);
-    res.json(sticker);
-});
+router.post('/', controllerFile.upload, controllerSticker.uploadFileSticker);
 
 //endpoint para editar cromos
-router.put('/:playerId', async (req,res)=>{
-    await Sticker.update(req.body,{
-        where:{ id: req.params.playerId }
-    });
-    res.json({ success:'Se ha modificado'});
-});
+router.put('/:playerId', controllerFile.upload, controllerSticker.uploadUpdatedFileSticker);
 
 //endpoint para borrar cromos
 router.delete('/:playerId', async (req,res)=>{

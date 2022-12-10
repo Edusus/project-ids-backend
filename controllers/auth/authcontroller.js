@@ -1,7 +1,7 @@
-const { User } = require('../databases/db');
+const { User } = require('../../databases/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const authconfig = require('../config/auth');
+const authconfig = require('../../config/auth');
 const nodemailer = require('nodemailer');
 
 module.exports = {
