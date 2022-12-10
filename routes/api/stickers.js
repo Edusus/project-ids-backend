@@ -60,6 +60,7 @@ router.get('/obtain/:eventId', async (req, res) => {
                 await inventory.create({
                 isInAlbum: false,
                 userId: idUser,
+                Quantity: 1,
                 stickerId: singleSticker.dataValues.id,
                 eventId: req.params.eventId
                });
