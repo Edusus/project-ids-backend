@@ -7,6 +7,7 @@ const adsModel = require('../models/adsModel');
 const gamesModel = require('../models/games');
 const teamsModel = require('../models/teamsModel');
 const inventoryModel = require('../models/inventory');
+const DepositModel = require('../models/deposit');
 
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD,{
     host: process.env.DBHOST,
@@ -20,6 +21,7 @@ const ad = adsModel(sequelize,Sequelize);
 const game = gamesModel(sequelize, Sequelize);
 const team = teamsModel(sequelize, Sequelize);
 const inventory = inventoryModel(sequelize, Sequelize);
+const Deposit = DepositModel(sequelize, Sequelize);
 
 /* Defining associations */
 team.belongsTo(Event, {
@@ -76,6 +78,29 @@ inventory.belongsTo(Sticker);
 Event.hasOne(inventory);
 inventory.belongsTo(Event);
 
+//Relaciones entre usuarios y stickers para el almacen
+User.belongsToMany(Sticker, { 
+  through: Deposit,
+});
+Sticker.belongsToMany(User, { 
+  through: Deposit
+});
+User.hasMany(Deposit);
+Deposit.belongsTo(User);
+Sticker.hasMany(Deposit);
+Deposit.belongsTo(Sticker);
+Event.hasOne(Deposit);
+Deposit.belongsTo(Event);
+
+sequelize.authenticate()
+    .then(()=>{
+        console.log('Connection has been established successfully.');
+    }
+    )
+    .catch(err=>{
+        console.error('Unable to connect to the database:', err);
+    }
+    );
 sequelize.sync({ force: false })
     .then(()=>{
         console.log('Syncronized tables');
@@ -85,5 +110,5 @@ const random = sequelize.random();
 const { Op } = Sequelize;
 
 module.exports ={
-    User, Sticker, Event, ad, game, team, random, Op, inventory
+    User, Sticker, Event, ad, game, team, random, Op, inventory, Deposit
 }

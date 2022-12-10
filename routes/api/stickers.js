@@ -1,10 +1,10 @@
 const router = require('express').Router();
 
-const { Sticker, random, Op, team, inventory } = require('../../databases/db');
+const { Sticker, random, Op, team, inventory, Deposit } = require('../../databases/db');
 
 const controllerFile = require('../../controller/upload');
 const controllerSticker = require('../../controller/uploadStickers')
-const { verifyToken, isAdmin } = require('../../middlewares/auth');
+const {isAdmin } = require('../../middlewares/auth');
 
 //endpoint para listar cromos
 router.get('/',isAdmin, async (req,res)=>{  
@@ -59,7 +59,6 @@ router.get('/obtain/:eventId', async (req, res) => {
          if(!inventorys) {
                 await inventory.create({
                 isInAlbum: false,
-                Quantity: 1,
                 userId: idUser,
                 stickerId: singleSticker.dataValues.id,
                 eventId: req.params.eventId
@@ -75,7 +74,22 @@ router.get('/obtain/:eventId', async (req, res) => {
             })
           }
     });
-      
+
+     await Deposit.findOne({
+       where: {
+          [Op.and]: [{stickerId: singleSticker.dataValues.id},{eventId : req.params.eventId},{userId: idUser}]
+       }
+     }).then(async deposit => {
+        if (!deposit) {
+          await Deposit.create({
+              isInSquad: false,
+              userId: idUser,
+              stickerId: singleSticker.dataValues.id,
+              eventId: req.params.eventId
+          });
+        }
+  });  
+
       stickers.push(singleSticker);
 
     } while (stickers.length < 5)
