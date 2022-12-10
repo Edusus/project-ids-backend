@@ -2,7 +2,7 @@ const { Router, static } = require('express');
 const path = require('path');
 const apiUsersRouter = require('./api/users');
 const apiAuthRouter = require('./api/auth');
-const apiStickerRouter = require('./api/stickers');
+const apiItemRouter = require('./api/items');
 const testEndpoints = require('./api/test-endpoints');
 const gamesEndpoints = require('./api/games');
 const apiEventsRouter = require('./api/events');
@@ -14,8 +14,8 @@ const auth = require('../middlewares/auth');
 const current_dir = path.dirname(__filename);
 const router = Router();
 
-router.use('/users', auth.verifyToken, auth.isAdmin, apiUsersRouter);
-router.use('/stickers',auth.verifyToken, apiStickerRouter);
+router.use('/users',auth.verifyToken, auth.isAdmin, apiUsersRouter);// 
+router.use('/items',auth.verifyToken, apiItemRouter);//
 router.use('/auth',apiAuthRouter);
 router.use('/events',apiEventsRouter);
 router.use('/ads', adsRouter);

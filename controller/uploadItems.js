@@ -1,8 +1,8 @@
 
-const { Sticker }= require('../databases/db');
+const { Item }= require('../databases/db');
 
 //funcion de subir imagenes de los cromos
-exports.uploadFileSticker = async (req, res) => {
+exports.uploadFileItem = async (req, res) => {
     if (!req.file?.path) {
         return res.status(400).json({
             success: false,
@@ -14,7 +14,7 @@ exports.uploadFileSticker = async (req, res) => {
 
         const file = req.file.path;
         const {playerName, team, country, position, height, weight, appearanceRate, teamId } = req.body;
-        const newSticker = await Sticker.create({
+        const newItem = await Item.create({
           playerName,
           team,
           country,
@@ -25,18 +25,18 @@ exports.uploadFileSticker = async (req, res) => {
           appearanceRate,
           teamId
     });
-    res.status(201).json(newSticker);
+    res.status(201).json(newItem);
     } catch (error) {
             console.log(error);
             res.status(400).send(error.message);
         }
 };
 
-exports.uploadUpdatedFileSticker = async (req, res) => {
+exports.uploadUpdatedFileItem = async (req, res) => {
     try {
       const file = req.file.path;
       const {playerName, team, country, position, height, weight, appearanceRate } = req.body;
-      await Sticker.update({
+      await Item.update({
         playerName,
             team,
             country,
@@ -48,7 +48,7 @@ exports.uploadUpdatedFileSticker = async (req, res) => {
       }, { 
         where: { id: req.params.playerId }
       });
-      res.status(200).send("Modified Sticker " + req.params.playerId);
+      res.status(200).send("Modified Item " + req.params.playerId);
     } catch (error) {
       console.error(error);
       res.status(400).send(error.message);

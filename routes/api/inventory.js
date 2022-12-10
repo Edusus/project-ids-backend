@@ -2,7 +2,7 @@ const router = require('express').Router();
 
 const {
     inventory,
-    Sticker,
+    Item,
     team,
     Op,
     Event
@@ -39,7 +39,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                     });
                 } else {
                     if ((playerName != '.*') && (teams)) {
-                        const player = await Sticker.findOne({
+                        const player = await Item.findOne({
                             where: {
                                 [Op.and]: [{
                                     teamId: teams.dataValues.id
@@ -53,14 +53,14 @@ router.get('/public-events/:eventId', async (req, res) => {
                                 limit: sizeAsNumber,
                                 offset: pageAsNumber * sizeAsNumber,
                                 include: {
-                                    model: Sticker,
+                                    model: Item,
                                     include: {
                                         model: team
                                     }
                                 },
                                 where: {
                                     [Op.and]: [{
-                                        stickerId: player.dataValues.id
+                                        itemId: player.dataValues.id
                                     }, {
                                         eventId: eventId
                                     }, {
@@ -72,7 +72,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                             let obtein = await inventory.findOne({
                                 where: {
                                     [Op.and]: [{
-                                        stickerId: player.dataValues.id
+                                        itemId: player.dataValues.id
                                     }, {
                                         userId: req.user.id.id
                                     }]
@@ -113,7 +113,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                             limit: sizeAsNumber,
                             offset: pageAsNumber * sizeAsNumber,
                             include: {
-                                model: Sticker,
+                                model: Item,
                                 where: {
                                     teamId: teams.dataValues.id
                                 },
@@ -131,7 +131,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                         };
                         let obtein = await inventory.findOne({
                             include: {
-                                model: Sticker,
+                                model: Item,
                                 where: {
                                     teamId: teams.dataValues.id
                                 }
@@ -143,7 +143,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                         if (!obtein) {
                             res.status(404).json({
                                 success: false,
-                                message: 'No posees stickers de este equipo'
+                                message: 'No posees items de este equipo'
                             });
                         } else {
                             const {
@@ -168,7 +168,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                 }
             } else {
                 if (playerName != '.*') {
-                    const player = await Sticker.findOne({
+                    const player = await Item.findOne({
                         where: {
                             playerName: playerName
                         }
@@ -183,13 +183,13 @@ router.get('/public-events/:eventId', async (req, res) => {
                                 limit: sizeAsNumber,
                                 offset: pageAsNumber * sizeAsNumber,
                                 include: {
-                                    model: Sticker,
+                                    model: Item,
                                     include: {
                                         model: team
                                     }
                                 },
                                      where: {
-                                       [Op.and]: [{userId: req.user.id.id},{stickerId: player.dataValues.id}, {eventId: eventId}]
+                                       [Op.and]: [{userId: req.user.id.id},{itemId: player.dataValues.id}, {eventId: eventId}]
                                      }
                                  }
                             const {count} = await inventory.findAndCountAll();
@@ -211,7 +211,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                         limit: sizeAsNumber,
                         offset: pageAsNumber * sizeAsNumber,
                         include: {
-                            model: Sticker,
+                            model: Item,
                             include: {
                                 model: team
                             }
@@ -254,13 +254,13 @@ router.get('/public-events/:eventId', async (req, res) => {
 router.post('/public-events/:eventId/claim-sticker', async (req, res) => {
     try {
         const {
-            stickerId
+            itemId
         } = req.body;
         const eventId = req.params.eventId;
         const inventorys = await inventory.findOne({
             where: {
                 [Op.and]: [{
-                    stickerId: stickerId
+                    itemId: itemId
                 }, {
                     eventId: eventId
                 },{
@@ -275,8 +275,8 @@ router.post('/public-events/:eventId/claim-sticker', async (req, res) => {
             });
         } else {
             const contAct = inventorys.dataValues.Quantity
-            const notSticker = inventorys.dataValues.isInAlbum
-            if (contAct > 0 && notSticker == false) {
+            const notItem = inventorys.dataValues.isInAlbum
+            if (contAct > 0 && notItem == false) {
                 const cont = contAct - 1;
                 await inventory.update({
                     isInAlbum: true,
@@ -284,7 +284,7 @@ router.post('/public-events/:eventId/claim-sticker', async (req, res) => {
                 }, {
                     where: {
                         [Op.and]: [{
-                            stickerId: stickerId
+                            itemId: itemId
                         }, {
                             eventId: eventId
                         },{
@@ -294,18 +294,18 @@ router.post('/public-events/:eventId/claim-sticker', async (req, res) => {
                 });
                 res.status(200).json({
                     success: true,
-                    message: 'Sticker pegado con exito'
+                    message: 'Item pegado con exito'
                 });
             } else {
-                if (notSticker == true) {
+                if (notItem == true) {
                     res.status(409).json({
                         success: false,
-                        message: 'Ya tienes ese sticker pegado en el inventario'
+                        message: 'Ya tienes ese item pegado en el inventario'
                     });
                 } else {
                     res.status(404).json({
                         success: false,
-                        message: 'No posees ese sticker en el inventario'
+                        message: 'No posees ese item en el inventario'
                     });
                 }
             }
@@ -333,7 +333,7 @@ router.get('/public-events/:eventId/album', async (req, res) => {
         } else {
             const {
                 count: count2
-            } = await Sticker.findAndCountAll();
+            } = await Item.findAndCountAll();
             const {
                 count
             } = await inventory.findAndCountAll({
@@ -354,8 +354,8 @@ router.get('/public-events/:eventId/album', async (req, res) => {
                 event: {
                     name: event.dataValues.eventName
                 },
-                totalStickers: count2,
-                claimedStickers: count,
+                totalItems: count2,
+                claimedItems: count,
                 actualProgressPercertage: progress
             });
         }
@@ -400,7 +400,7 @@ router.get('/public-events/:eventId/album/:teamId', async (req, res) => {
             } else {
                 const inventorys = await inventory.findAll({
                     include: {
-                        model: Sticker,
+                        model: Item,
                         where: {
                             teamId: teamId
                         }

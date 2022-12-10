@@ -1,5 +1,5 @@
 module.exports=(sequelize,type)=>{
-    return sequelize.define('sticker',{
+    return sequelize.define('item',{
         id:{
             type:type.INTEGER,
             primaryKey:true,
