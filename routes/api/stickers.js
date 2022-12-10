@@ -1,8 +1,5 @@
 const router = require('express').Router();
-const Sequelize = require('sequelize');
-const { Op } = Sequelize;
-
-const { Sticker, random } = require('../../databases/db');
+const { Sticker, random, Op } = require('../../databases/db');
 const controllerFile = require('../../controllers/img/upload');
 const controllerSticker = require('../../controllers/stickers/uploadStickers');
 
