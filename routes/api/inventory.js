@@ -356,7 +356,7 @@ router.get('/public-events/:eventId/album', async (req, res) => {
                 },
                 totalStickers: count2,
                 claimedStickers: count,
-                actualProgressPercertage: progress
+                actualProgressPercentage: progress
             });
         }
 
