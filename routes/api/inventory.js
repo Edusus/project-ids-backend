@@ -384,6 +384,18 @@ router.get('/public-events/:eventId/album/:teamId', async (req, res) => {
             });
         } else {
             const teams = await team.findOne({
+                include: {
+                    model: Sticker,
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt', 'appearanceRate']
+                    },
+                    include: {
+                        model: team,
+                        attributes: {
+                            exclude: ['createdAt', 'updatedAt', 'name', 'id','idEvents']
+                        }
+                    }
+                },
                 where: {
                     [Op.and]: [{
                         idEvents: eventId
@@ -398,32 +410,32 @@ router.get('/public-events/:eventId/album/:teamId', async (req, res) => {
                     message: 'Equipo no encontrado'
                 });
             } else {
-                const inventorys = await inventory.findAll({
-                    attributes: {
-                        exclude: ['createdAt', 'updatedAt', 'Quantity', 'userId', 'stickerId']
-                      },
-                    include: {
-                        model: Sticker,
-                        attributes: {
-                            exclude: ['createdAt', 'updatedAt', 'appearanceRate']
-                        },
-                        where: {
-                            teamId: teamId
-                        },
-                        include: {
-                            model: team,
-                            attributes: {
-                                exclude: ['createdAt', 'updatedAt']
+                 const stickers = teams.dataValues.stickers
+                 const stickersAlbum = stickers.map(async function(element) {
+                     const inventorys = await inventory.findOne({
+                            where: {
+                                [Op.and]: [{
+                                    stickerId: element.dataValues.id
+                                },
+                                {
+                                    userId: req.user.id.id
+                                }]
                             }
-                        } 
-                    },
-                    where: {
-                        [Op.and]: [{eventId: eventId}, {isInAlbum: true},{userId: req.user.id.id}]
-                    }
-                });
-                console.log(inventorys);
-                res.status(200).json({
-                    success: true,
+                        });
+                        if (!inventorys) {
+                            element.dataValues.isAttached = false;
+                        } else {
+                            if (inventorys.dataValues.isInAlbum == true) {
+                                element.dataValues.isAttached = true;
+                            } else {
+                                element.dataValues.isAttached = false;
+                            } 
+                        }
+                    return element;
+                 });
+                    const stickersAlbum2 = await Promise.all(stickersAlbum);
+                    res.status(200).json({
+                        success: true,
                     item: {
                         album: {
                             currentTeam: {  
@@ -431,9 +443,9 @@ router.get('/public-events/:eventId/album/:teamId', async (req, res) => {
                                 name: teams.dataValues.name
                             }
                         },
-                       stickers: inventorys
+                       stickers: stickersAlbum2
                     }
-                })
+                });
             }
 
         }

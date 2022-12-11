@@ -1,5 +1,5 @@
 
-const { Sticker }= require('../databases/db');
+const { Sticker }= require('../../databases/db');
 
 //funcion de subir imagenes de los cromos
 exports.uploadFileSticker = async (req, res) => {
