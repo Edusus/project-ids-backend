@@ -9,7 +9,7 @@ module.exports=(sequelize,type)=>{
         name: {
             type:type.STRING,
             allowNull:false,
-            unique: true
+            unique: false
         },
         role: {
             type:type.STRING,
@@ -18,7 +18,7 @@ module.exports=(sequelize,type)=>{
         email: {
             type:type.STRING,
             allowNull:false,
-            unique: true
+            unique:true
         },
         password: {
             type:type.STRING,

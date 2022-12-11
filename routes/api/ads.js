@@ -1,5 +1,6 @@
 const router = require('express').Router();
-const { ad, random, Op } = require('../../databases/db');
+const { Op } = require('sequelize');
+const { ad, random } = require('../../databases/db');
 const controllerFile = require('../../controllers/img/upload');
 const controllerAd = require('../../controllers/ads/uploadAd')
 

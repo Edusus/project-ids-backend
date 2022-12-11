@@ -3,12 +3,11 @@ module.exports=(sequelize,type)=>{
         id:{
             type:type.INTEGER,
             primaryKey:true,
-            autoIncrement:true,
-            allowNull:true
+            autoIncrement:true
         },
         eventName: {
             type:type.STRING,
-            allowNull: false
+            allowNull:false
         },
         status: {
             type:type.BOOLEAN,
