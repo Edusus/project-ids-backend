@@ -1,12 +1,12 @@
 const { Sequelize, DataTypes } = require('sequelize');
-const adsModel = require('../models/adsModel');
+const promotionsModel = require('../models/promotionsModel');
 
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD, {
 	host: process.env.DBHOST,
 	dialect: 'mysql'
 });
 
-const ad = adsModel(sequelize, DataTypes);
+const promotion = promotionsModel(sequelize, DataTypes);
 
 sequelize.sync()
 	.then(() => {
@@ -17,5 +17,5 @@ sequelize.sync()
   });
 
 module.exports = {
-	ad
+	promotion
 };

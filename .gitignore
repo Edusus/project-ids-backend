@@ -1,3 +1,11 @@
 node_modules
-index.http
-ads
+.env
+uploads/**
+!uploads/img
+!uploads/csv
+!.gitkeep
+uploads/img/**
+!offside.png
+!.gitkeep
+uploads/csv/**
+!.gitkeep

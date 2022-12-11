@@ -8,7 +8,7 @@ const app = express();
 
 require('./databases/db');
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
