@@ -2,7 +2,7 @@ const router = require('express').Router();
 
 const { Sticker, random, Op, team, inventory } = require('../../databases/db');
 
-const controllerFile = require('../../controllers/img/upload');
+const controllerFile = require('../../controllers/files/upload');
 const controllerSticker = require('../../controllers/stickers/uploadStickers')
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
 

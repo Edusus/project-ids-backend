@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { Op } = require('sequelize');
 const { ad, random } = require('../../databases/db');
-const controllerFile = require('../../controllers/img/upload');
+const controllerFile = require('../../controllers/files/upload');
 const controllerAd = require('../../controllers/ads/uploadAd')
 
 const allowedFields = ['announcer', 'adType', 'redirecTo', 'img'];
