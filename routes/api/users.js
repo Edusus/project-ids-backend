@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt');
 router.get('/', async (req,res)=>{
     //paginacion
     const {page = 0, size = 10} = req.query;
-    
+
     let options = {
         limit: +size,
         offset: (+page) * (+size)

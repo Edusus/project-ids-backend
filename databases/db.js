@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 
 const UserModel = require('./../models/users');
-const ItemModel = require('../models/item');
+const StickerModel = require('../models/sticker');
 const EventModel = require('./../models/events');
 const adsModel = require('../models/adsModel');
 const gamesModel = require('../models/games');
@@ -14,7 +14,7 @@ const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.
 });
 
 const User = UserModel(sequelize,Sequelize);
-const Item = ItemModel(sequelize,Sequelize);
+const Sticker = StickerModel(sequelize,Sequelize);
 const Event = EventModel(sequelize,Sequelize);
 const ad = adsModel(sequelize,Sequelize);
 const game = gamesModel(sequelize, Sequelize);
@@ -46,14 +46,14 @@ game.belongsTo(team, {
   as: 'teamTwo'
 })
 
-team.hasMany(Item, { 
+team.hasMany(Sticker, { 
   foreignKey: {
       name: "teamId",
       allowNull: false
    } 
 });
 
-Item.belongsTo(team,{
+Sticker.belongsTo(team,{
   targetkey: 'id',
   foreignKey: {
     name: "teamId",
@@ -63,16 +63,16 @@ Item.belongsTo(team,{
 
 
 //Relaciones entre usuarios, sticker para formar un inventario
-User.belongsToMany(Item, { 
+User.belongsToMany(Sticker, { 
   through: inventory,
 });
-Item.belongsToMany(User, { 
+Sticker.belongsToMany(User, { 
   through: inventory
 });
 User.hasMany(inventory);
 inventory.belongsTo(User);
-Item.hasMany(inventory);
-inventory.belongsTo(Item);
+Sticker.hasMany(inventory);
+inventory.belongsTo(Sticker);
 Event.hasOne(inventory);
 inventory.belongsTo(Event);
 
@@ -85,5 +85,5 @@ const random = sequelize.random();
 const { Op } = Sequelize;
 
 module.exports ={
-    User, Item, Event, ad, game, team, random, Op, inventory
+    User, Sticker, Event, ad, game, team, random, Op, inventory
 }

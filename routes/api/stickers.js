@@ -1,9 +1,9 @@
 const router = require('express').Router();
 
-const { Item, random, Op, team, inventory } = require('../../databases/db');
+const { Sticker, random, Op, team, inventory } = require('../../databases/db');
 
 const controllerFile = require('../../controller/upload');
-const controllerItem = require('../../controller/uploadItems')
+const controllerSticker = require('../../controller/uploadStickers')
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
 
 //endpoint para listar cromos
@@ -15,7 +15,7 @@ router.get('/',isAdmin, async (req,res)=>{
         limit: +size,
         offset: (+page) * (+size)
     };
-    const items = await Item.findAndCountAll({
+    const stickers = await Sticker.findAndCountAll({
       options,
       attributes: ['id','playerName', 'country', 'position', 'img', 'height', 'weight', 'appearanceRate', 'createdAt', 'updatedAt'],
       include: {
@@ -23,20 +23,20 @@ router.get('/',isAdmin, async (req,res)=>{
         attributes: ['id', 'name', 'badge']
       }
     });
-    res.status(200).json({message: 'Lista de cromos', items});
+    res.status(200).json({message: 'Lista de cromos', stickers});
 });
 
 //endpoint para obtener 5 cromos al azar
 router.get('/obtain/:eventId', async (req, res) => {
-  if (await Item.findOne()) {
-    const items = [];
+  if (await Sticker.findOne()) {
+    const stickers = [];
     const idUser = req.user.id.id;
     let appearanceRate = 0;
-    let singleItem;
+    let singleSticker;
     do {
       do {
         appearanceRate = Math.random()*100;
-        singleItem = await Item.findOne({
+        singleSticker = await Sticker.findOne({
           order: random,
           attributes: ['id','playerName', 'country', 'position', 'img', 'height', 'weight', 'appearanceRate', 'createdAt', 'updatedAt'],
           include : {
@@ -49,11 +49,11 @@ router.get('/obtain/:eventId', async (req, res) => {
             }
           }
         });
-      } while (!singleItem)
+      } while (!singleSticker)
       
       await inventory.findOne({
         where: {
-          [Op.and]: [{itemId: singleItem.dataValues.id},{eventId : req.params.eventId},{userId: idUser}]
+          [Op.and]: [{stickerId: singleSticker.dataValues.id},{eventId : req.params.eventId},{userId: idUser}]
         }
      }).then( async inventorys => {
          if(!inventorys) {
@@ -61,7 +61,7 @@ router.get('/obtain/:eventId', async (req, res) => {
                 isInAlbum: false,
                 Quantity: 1,
                 userId: idUser,
-                itemId: singleItem.dataValues.id,
+                stickerId: singleSticker.dataValues.id,
                 eventId: req.params.eventId
                });
          } else {
@@ -70,37 +70,37 @@ router.get('/obtain/:eventId', async (req, res) => {
               Quantity : quant+1,
              },{
               where:{
-                [Op.and]: [{itemId: singleItem.dataValues.id},{userId : idUser},{eventId: req.params.eventId}]
+                [Op.and]: [{stickerId: singleSticker.dataValues.id},{userId : idUser},{eventId: req.params.eventId}]
                }
             })
           }
     });
       
-      items.push(singleItem);
+      stickers.push(singleSticker);
 
-    } while (items.length < 5)
+    } while (stickers.length < 5)
     res.status(200).json({
       success: true,
-      items : items
+      stickers : stickers
     }) 
   } else {
-    console.error('NO ITEMS IN DB');
+    console.error('NO STICKERS IN DB');
     res.status(500).send('Servicio en mantenimiento...');
   }
 });
 
 //endpoint para crear cromos
-router.post('/',isAdmin, controllerFile.upload, controllerItem.uploadFileItem);
+router.post('/',isAdmin, controllerFile.upload, controllerSticker.uploadFileSticker);
 
 //endpoint para editar cromos
-router.put('/:playerId',isAdmin, controllerFile.upload, controllerItem.uploadUpdatedFileItem);
+router.put('/:playerId',isAdmin, controllerFile.upload, controllerSticker.uploadUpdatedFileSticker);
 
 //endpoint para borrar cromos
 router.delete('/:playerId',isAdmin, async (req,res)=>{
-    await Item.destroy({
+    await Sticker.destroy({
         where:{ id: req.params.playerId }
     });
-    res.json({ success:true,message:'Se ha eliminado'});
+    res.json({ success:'Se ha eliminado'});
 });
 
 

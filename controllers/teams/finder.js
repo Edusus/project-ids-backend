@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { team, Item, Event } = require('../../databases/db');
+const { team, Sticker, Event } = require('../../databases/db');
 
 /**
  * If the resource is found, send a 200 status code with the resource in the response body. If the
@@ -72,7 +72,7 @@ const findAll = async (req, res) => {
   const teams = await team.findAll({
     include: [
       {
-         model: Item
+         model: Sticker
       },
       {
          model: Event
