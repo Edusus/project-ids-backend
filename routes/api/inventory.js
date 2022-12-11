@@ -399,31 +399,40 @@ router.get('/public-events/:eventId/album/:teamId', async (req, res) => {
                 });
             } else {
                 const inventorys = await inventory.findAll({
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt', 'Quantity', 'userId', 'stickerId']
+                      },
                     include: {
                         model: Sticker,
+                        attributes: {
+                            exclude: ['createdAt', 'updatedAt', 'appearanceRate']
+                        },
                         where: {
                             teamId: teamId
-                        }
+                        },
+                        include: {
+                            model: team,
+                            attributes: {
+                                exclude: ['createdAt', 'updatedAt']
+                            }
+                        } 
                     },
                     where: {
-                        [Op.and]: [{
-                            eventId: eventId
-                        }, {
-                            isInAlbum: true
-                        },{
-                            userId: req.user.id.id
-                        }]
+                        [Op.and]: [{eventId: eventId}, {isInAlbum: true},{userId: req.user.id.id}]
                     }
                 });
+                console.log(inventorys);
                 res.status(200).json({
                     success: true,
-                    album: {
-                        currentTeam: {
-                            id: teams.dataValues.id,
-                            name: teams.dataValues.name
-                        }
-                    },
-                    item: inventorys
+                    item: {
+                        album: {
+                            currentTeam: {  
+                                id: teams.dataValues.id,
+                                name: teams.dataValues.name
+                            }
+                        },
+                       stickers: inventorys
+                    }
                 })
             }
 
