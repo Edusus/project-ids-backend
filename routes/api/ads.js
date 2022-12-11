@@ -53,8 +53,31 @@ router.get('/search', async (req, res) => {
 router.get('/watch', async (req, res) => {
   //return res.status(500).json({ success: false, message: "Error random del servidor :3" });
   if (await ad.findOne()) {
-    const singleAd = await ad.findOne({ order: random });
+    const cont = 1;
+    const singleAd = await ad.findOne({ order: random});
+    let valorActual = singleAd.dataValues.requestedQuantities;
+    let valorNuevo = valorActual + cont;
+    singleAd.update({ requestedQuantities: valorNuevo });
     return res.status(200).json({ success: true, ad: singleAd });
+  } else {
+    console.error('NO ADS IN DB ');
+    return res.status(500).json({
+      success: false,
+      message: "No hay anuncios que mostrar :)"
+    });
+  }
+});
+
+router.get('/watch-detailed/:adId', async (req, res) => {
+  //return res.status(500).json({ success: false, message: "Error random del servidor :3" });
+  if (await findAdById(req.params.adId)) {
+     const reqAd = await findAdById(req.params.adId);
+     const cont = 1;
+     let valorActual = reqAd.dataValues.clickedQuantities;
+     let valorNuevo = valorActual + cont;
+     reqAd.update({ clickedQuantities: valorNuevo });
+     let URL = reqAd.dataValues.redirecTo;
+     return res.redirect(302, URL);
   } else {
     console.error('NO ADS IN DB ');
     return res.status(500).json({

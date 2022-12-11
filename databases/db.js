@@ -6,6 +6,7 @@ const EventModel = require('./../models/events');
 const adsModel = require('../models/adsModel');
 const gamesModel = require('../models/games');
 const teamsModel = require('../models/teamsModel');
+const PlayersGamesModel = require('../models/playersGames');
 
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD,{
     host: process.env.DBHOST,
@@ -18,22 +19,109 @@ const Event = EventModel(sequelize,Sequelize);
 const ad = adsModel(sequelize,Sequelize);
 const game = gamesModel(sequelize, Sequelize);
 const team = teamsModel(sequelize, Sequelize);
+const PlayersGame = PlayersGamesModel(sequelize, Sequelize);
 
 /* Defining associations */
 team.belongsTo(Event, {
   foreignKey: {
-    name: "idEvents"
+    name: "idEvents",
+    allowNull: false
   }
 });
-Event.hasMany(team);
-
-team.hasOne(game, {
-  as: 'teamOne'
+Event.hasMany(team, {
+  foreignKey: {
+    name: "idEvents",
+    allowNull: false
+  }
 });
-team.hasOne(game, {
-  as: 'teamTwo'
-})
-game.belongsTo(team);
+
+game.belongsTo(team, {
+  as: 'teamOne',
+  foreignKey: {
+    allowNull: false
+  }
+});
+game.belongsTo(team, {
+  as: 'teamTwo',
+  foreignKey: {
+    allowNull: false
+  }
+});
+team.hasMany(game, {
+  foreignKey: {
+    name: 'teamOneId',
+    allowNull: false
+  }
+});
+team.hasMany(game, {
+  foreignKey: {
+    name: 'teamTwoId',
+    allowNull: false
+  }
+});
+
+game.belongsTo(Event, {
+  foreignKey: {
+    name: 'eventId',
+    allowNull: false
+  }
+});
+Event.hasMany(game, {
+  foreignKey: {
+    name: 'eventId',
+    allowNull: false
+  }
+});
+
+Sticker.belongsToMany(game, {
+  through: PlayersGame, 
+  foreignKey: { 
+    name: 'playerId',
+    allowNull: false 
+  }, 
+  otherKey: { 
+    name: 'gameId',
+    allowNull: false 
+  } 
+});
+game.belongsToMany(Sticker, {
+  as: 'players', 
+  through: PlayersGame,
+  foreignKey: {
+    name: 'gameId',
+    allowNull: false
+  }, 
+  otherKey: { 
+    name: 'playerId',
+    allowNull: false 
+  } 
+});
+Sticker.hasMany(PlayersGame, {
+  foreignKey: {
+    name: 'playerId',
+    allowNull: false
+  }
+});
+PlayersGame.belongsTo(Sticker, {
+  as: 'players',
+  foreignKey: {
+    name: 'playerId',
+    allowNull: false
+  }
+});
+game.hasMany(PlayersGame, {
+  foreignKey: {
+    name: 'gameId',
+    allowNull: false
+  }
+});
+PlayersGame.belongsTo(game, {
+  as: 'games',
+  foreignKey: {
+    name: 'gameId',
+    allowNull: false
+  }
+});
 
 team.hasMany(Sticker, { 
     as: "team", 
@@ -60,5 +148,5 @@ const random = sequelize.random();
 const { Op } = Sequelize;
 
 module.exports ={
-    User, Sticker, Event, ad, game, team, random, Op
+    User, Sticker, Event, ad, game, team, PlayersGame, random, Op
 }

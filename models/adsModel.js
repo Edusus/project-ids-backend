@@ -44,6 +44,18 @@ module.exports = (sequelize, type) => {
 			type: type.STRING,
       defaultValue: process.env.OFFSIDEIMGURL,
 			allowNull: false
-		}
+		},
+
+		requestedQuantities : {
+			type: type.INTEGER,
+			allowNull: true,
+			defaultValue: 0
+		},
+
+		clickedQuantities  : {
+			type: type.INTEGER,
+			allowNull: true,
+			defaultValue: 0
+		},
 	});
 };

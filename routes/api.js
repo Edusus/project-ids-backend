@@ -1,5 +1,4 @@
 const { Router, static } = require('express');
-const path = require('path');
 const apiUsersRouter = require('./api/users');
 const apiAuthRouter = require('./api/auth');
 const apiStickerRouter = require('./api/stickers');
@@ -8,9 +7,9 @@ const gamesEndpoints = require('./api/games');
 const apiEventsRouter = require('./api/events');
 const adsRouter = require('./api/ads');
 const teamsRouter = require('./api/teams.js');
+const { uploads_dir } = require('../controllers/filesControllers');
 
 const auth = require('../middlewares/auth');
-const current_dir = path.dirname(__filename);
 const router = Router();
 
 router.use('/users', auth, apiUsersRouter);
@@ -21,7 +20,7 @@ router.use('/ads', adsRouter);
 router.use('/test-endpoints', testEndpoints);
 router.use('/games', gamesEndpoints);
 router.use('/teams', teamsRouter);
-router.use('/uploads', static(path.join(current_dir, '..', 'uploads')));
+router.use('/uploads', static(uploads_dir));
 
 module.exports = router;
 
