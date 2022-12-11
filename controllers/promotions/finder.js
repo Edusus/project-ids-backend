@@ -10,10 +10,7 @@ const responses = require('../../utils/responses/responses');
  */
 const findAll = async (req, res) => {
   const promotions = await promotion.findAll();
-  if (promotions.length > 0)
-    return responses.multipleDTOsResponse(res, 200, 'Promociones recuperadas con exito', promotions);
-  
-  return responses.errorDTOResponse(res, 404, 'Promociones no encontradas'); 
+  return responses.multipleDTOsResponse(res, 200, 'Promociones recuperadas con exito', promotions);
 }
 
 /**
