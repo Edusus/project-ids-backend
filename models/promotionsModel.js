@@ -46,7 +46,7 @@ module.exports = (sequelize, type) => {
 		},
 		img: { 
 			type: type.STRING,
-      defaultValue: `${process.env.OFFSIDEURL}${img_relative_dir}offside.png`,
+      defaultValue: `${process.env.DOMAIN}${img_relative_dir}offside.png`,
 			allowNull: false
 		},
     description: {
