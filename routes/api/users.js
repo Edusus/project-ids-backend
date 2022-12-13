@@ -23,7 +23,6 @@ router.get('/', async (req,res)=>{
             pages: Math.trunc(count/size),
             perPage:size
         },
-        message: 'Lista de usuarios',
         users: rows
     });
 });
