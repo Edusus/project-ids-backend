@@ -23,7 +23,7 @@ router.get('/', async (req,res)=>{
             pages: Math.trunc(count/size),
             perPage:size
         },
-        users: rows
+        Items: rows
     });
 });
 
@@ -50,8 +50,8 @@ router.post('/',[
         if(verifyName){
             res.json({error:'No puede usar un nombre registrado'});
         }else{
-            const user = await User.create(req.body);
-            res.status(200).json({message:'Usuario creado', user });
+            const Item = await User.create(req.body);
+            res.status(200).json({message:'Item creado', Item });
         }
     }
 });
