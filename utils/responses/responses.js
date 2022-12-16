@@ -64,10 +64,10 @@ const multipleDTOsResponse = (res, status, message, items) => {
  * @param msg - The message you want to send back to the user
  * @returns A function that takes in a response object, a status code, and a message.
  */
-const successDTOResponse = (res, status, msg) => {
+const successDTOResponse = (res, status, message) => {
   return res.status(status).json({
     success: true,
-    message: msg
+    message
   });
 }
 
