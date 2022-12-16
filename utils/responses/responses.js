@@ -49,11 +49,11 @@ const paginatedDTOsResponse = (res, status, msg, items, total, page, perPage) =>
  * @returns A function that takes in a response object, a status code, a message, and an array of
  * items.
  */
-const multipleDTOsResponse = (res, status, msg, items) => {
+const multipleDTOsResponse = (res, status, message, items) => {
   return res.status(status).json({
     success: true,
-    message: msg,
-    items: items
+    message,
+    items
   });
 }
 
