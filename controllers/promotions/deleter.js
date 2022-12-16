@@ -13,11 +13,11 @@ const getImagePath = require('../../utils/helpers/get-image-path');
 const destroy = async (req, res) => {
   const promotionId = req.params.promotionId;
   try {
-    const Promotion = await promotion.findByPk(promotionId);
-    if (typeof Promotion === 'undefined' || Promotion === null)
+    const promotion = await Promotion.findByPk(promotionId);
+    if (typeof promotion === 'undefined' || promotion === null)
       return responses.errorDTOResponse(res, 404, 'Promocion no encontrada');
 
-    const { img: fileurl } = Promotion;
+    const { img: fileurl } = promotion;
     await promotion.destroy({
       where: { id: promotionId }
     });
