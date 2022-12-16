@@ -26,17 +26,17 @@ const singleDTOResponse = (res, status, msg, item) => {
  * @returns A function that takes in a response object, a status code, a message, an array of items, a
  * total count, a page number, and a perPage count.
  */
-const paginatedDTOsResponse = (res, status, msg, items, total, page, perPage) => {
+const paginatedDTOsResponse = (res, status, message, items, total, page, perPage) => {
   return res.status(status).json({
     success: true,
-    message: msg,
+    message,
     paginate: {
-      total: total,
-      page: page,
+      total,
+      page,
       pages: Math.ceil(total/perPage),
-      perPage: perPage
+      perPage
     },
-    items: items
+    items
   });
 }
 
