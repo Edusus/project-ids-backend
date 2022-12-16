@@ -79,10 +79,10 @@ const successDTOResponse = (res, status, message) => {
  * @param msg - The message you want to send to the user
  * @returns A function that takes in a response object, a status code, and a message.
  */
-const errorDTOResponse = (res, status, msg) => {
+const errorDTOResponse = (res, status, message) => {
   return res.status(status).json({
     success: false,
-    message: msg
+    message
   });
 }
 
