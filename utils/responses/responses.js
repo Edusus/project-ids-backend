@@ -6,11 +6,11 @@
  * @param item - the item you want to return
  * @returns A function that takes in a response, status, message, and item.
  */
-const singleDTOResponse = (res, status, msg, item) => {
+const singleDTOResponse = (res, status, message, item) => {
   return res.status(status).json({
     success: true,
-    message: msg,
-    item: item
+    message,
+    item
   });
 }
 
