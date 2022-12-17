@@ -90,7 +90,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                                 const {
                                     rows
                                 } = await inventory.findAndCountAll(options);
-                                const cantPages = Math.round(count/sizeAsNumber);
+                                const cantPages = Math.ceil(count/sizeAsNumber);
                                 res.status(200).json({
                                     success: true,
                                     paginate: {
@@ -152,7 +152,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                             const {
                                 rows
                             } = await inventory.findAndCountAll(options);
-                            const cantPages = Math.round(count/sizeAsNumber);
+                            const cantPages = Math.ceil(count/sizeAsNumber);
                             res.status(200).json({
                                 success: true,
                                 paginate: {
@@ -194,7 +194,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                                  }
                             const {count} = await inventory.findAndCountAll();
                             const {rows} = await inventory.findAndCountAll(options);
-                            const cantPages = Math.round(count/sizeAsNumber);
+                            const cantPages = Math.ceil(count/sizeAsNumber);
                             res.status(200).json({
                                 success: true,
                                 paginate: {
@@ -230,7 +230,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                     const {
                         rows
                     } = await inventory.findAndCountAll(options);
-                    const cantPages = Math.round(count/sizeAsNumber);
+                    const cantPages = Math.ceil(count/sizeAsNumber);
                     res.status(200).json({
                         success: true,
                         paginate: {
