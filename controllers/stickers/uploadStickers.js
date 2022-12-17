@@ -1,5 +1,5 @@
 
-const { Sticker }= require('../databases/db');
+const { Sticker }= require('../../databases/db');
 
 //funcion de subir imagenes de los cromos
 exports.uploadFileSticker = async (req, res) => {
@@ -13,10 +13,9 @@ exports.uploadFileSticker = async (req, res) => {
     try {
 
         const file = req.file.path;
-        const {playerName, team, country, position, height, weight, appearanceRate, teamId } = req.body;
+        const {playerName, country, position, height, weight, appearanceRate, teamId } = req.body;
         const newSticker = await Sticker.create({
           playerName,
-          team,
           country,
           position,
           img: `${process.env.DOMAIN}/${file}`,
@@ -35,16 +34,16 @@ exports.uploadFileSticker = async (req, res) => {
 exports.uploadUpdatedFileSticker = async (req, res) => {
     try {
       const file = req.file.path;
-      const {playerName, team, country, position, height, weight, appearanceRate } = req.body;
+      const {playerName, country, position, height, weight, appearanceRate, teamId } = req.body;
       await Sticker.update({
-        playerName,
-            team,
+            playerName,
             country,
             position,
             img: `${process.env.DOMAIN}/${file}`,
             height,
             weight,
-            appearanceRate
+            appearanceRate,
+            teamId
       }, { 
         where: { id: req.params.playerId }
       });

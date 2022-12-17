@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const controllerFile = require('../../controller/upload');
+const controllerFile = require('../../controllers/img/upload');
 
 /*
 const games = [

@@ -1,4 +1,4 @@
-const { ad } = require('../databases/db');
+const { ad } = require('../../databases/db');
 
 exports.uploadFileAd = async (req, res) => {
  

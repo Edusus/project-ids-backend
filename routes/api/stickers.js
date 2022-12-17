@@ -2,8 +2,8 @@ const router = require('express').Router();
 
 const { Sticker, random, Op, team, inventory } = require('../../databases/db');
 
-const controllerFile = require('../../controller/upload');
-const controllerSticker = require('../../controller/uploadStickers')
+const controllerFile = require('../../controllers/img/upload');
+const controllerSticker = require('../../controllers/stickers/uploadStickers')
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
 
 //endpoint para listar cromos
