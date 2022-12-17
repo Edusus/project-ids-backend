@@ -86,7 +86,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                             } else {
                                 const {
                                     count
-                                } = await inventory.findAndCountAll();
+                                } = await inventory.findAndCountAll({where:{userId: req.user.id.id}});
                                 const {
                                     rows
                                 } = await inventory.findAndCountAll(options);
@@ -148,7 +148,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                         } else {
                             const {
                                 count
-                            } = await inventory.findAndCountAll();
+                            } = await inventory.findAndCountAll({where:{userId: req.user.id.id}});
                             const {
                                 rows
                             } = await inventory.findAndCountAll(options);
@@ -192,7 +192,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                                        [Op.and]: [{userId: req.user.id.id},{stickerId: player.dataValues.id}, {eventId: eventId}]
                                      }
                                  }
-                            const {count} = await inventory.findAndCountAll();
+                            const {count} = await inventory.findAndCountAll({where:{userId: req.user.id.id}});
                             const {rows} = await inventory.findAndCountAll(options);
                             const cantPages = Math.ceil(count/sizeAsNumber);
                             res.status(200).json({
@@ -226,7 +226,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                     };
                     const {
                         count
-                    } = await inventory.findAndCountAll();
+                    } = await inventory.findAndCountAll({where:{userId: req.user.id.id}});
                     const {
                         rows
                     } = await inventory.findAndCountAll(options);
@@ -283,7 +283,7 @@ router.get('/public-events/:eventId/carousel', async (req,res) => {
                     }]
                 }
             };
-            const {count} = await inventory.findAndCountAll();
+            const {count} = await inventory.findAndCountAll({where:{userId: req.user.id.id}});
             const {rows} = await inventory.findAndCountAll(options);
             res.status(200).json({
                 success: true,
