@@ -20,7 +20,7 @@ router.get('/', async (req,res)=>{
             pages:Math.trunc(count/size),
             perPage:size
         },
-        events: rows
+        Items: rows
     });
 });
 
@@ -32,7 +32,7 @@ router.get('/active', async (req,res)=>{
     }else{
         res.status(200).json({
             success: true,
-            "events available": eventsAvailable 
+            "Active items ": eventsAvailable 
         });
     }
 
@@ -46,7 +46,7 @@ router.get('/all', async (req,res)=>{
     }else{
         res.status(200).json({
             success: true,
-            "idle events": eventsInactive 
+            "Inactive items": eventsInactive 
         });
     }
 
@@ -54,10 +54,10 @@ router.get('/all', async (req,res)=>{
 
 //endpoint para crear eventos
 router.post('/', async (req,res)=>{
-    const event = await Event.create(req.body);
+    const Item = await Event.create(req.body);
     res.json({
-        message:'Evento creado',
-        event 
+        message:'Item creado',
+        Item 
     });
 });
 
