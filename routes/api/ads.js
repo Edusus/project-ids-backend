@@ -88,7 +88,7 @@ router.get('/watch-detailed/:adId', async (req, res) => {
   }
 });
 
-router.get('/:adId',auth.isAdmin, async (req, res) => {
+router.get('/:adId', async (req, res) => {
   const reqAd = await findAdById(req.params.adId);
   httpGetResponse(res, reqAd, 'Required ad');
 });

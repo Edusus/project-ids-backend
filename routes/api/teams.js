@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const { finder, poster, updater, deleter } = require('../../controllers/teamsControllers');
 const { imgController } = require('../../controllers/filesControllers');
+const auth = require('../../middlewares/auth');
 
 const teamsRouter = Router();
 
@@ -15,7 +16,7 @@ const teamsRouter = Router();
  * representing the filter to the eventid, default value is % (any event id)
  */
 
-teamsRouter.get('/', finder.find);
+teamsRouter.get('/',auth.isAdmin, finder.find);
 
 
 
@@ -43,7 +44,7 @@ teamsRouter.get('/:teamId', finder.findById);
  * idEvents value must be an already existing event id
  */
 
-teamsRouter.post('/', imgController.uploadImg, poster.post);
+teamsRouter.post('/',auth.isAdmin, imgController.uploadImg, poster.post);
 
 
 
@@ -53,7 +54,7 @@ teamsRouter.post('/', imgController.uploadImg, poster.post);
  * idEvents value must be an already existing event id
  */
 
-teamsRouter.put('/:teamId', imgController.uploadImg, updater.update);
+teamsRouter.put('/:teamId',auth.isAdmin, imgController.uploadImg, updater.update);
 
 
 
@@ -63,7 +64,7 @@ teamsRouter.put('/:teamId', imgController.uploadImg, updater.update);
  * @param teamId: the id of the team to delete
  */
 
-teamsRouter.delete('/:teamId', deleter.destroy);
+teamsRouter.delete('/:teamId',auth.isAdmin, deleter.destroy);
 
 
 

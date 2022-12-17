@@ -16,11 +16,11 @@ const router = Router();
 router.use('/users', auth.verifyToken, auth.isAdmin, apiUsersRouter);
 router.use('/stickers',auth.verifyToken, apiStickerRouter);
 router.use('/auth',apiAuthRouter);
-router.use('/events',auth.verifyToken,auth.isAdmin,apiEventsRouter);
+router.use('/events',auth.verifyToken,apiEventsRouter);
 router.use('/ads',auth.verifyToken, adsRouter);
 router.use('/test-endpoints', testEndpoints);
 router.use('/games', gamesEndpoints);
-router.use('/teams',auth.verifyToken, auth.isAdmin, teamsRouter);
+router.use('/teams',auth.verifyToken, teamsRouter);
 router.use('/inventory',auth.verifyToken, inventoryRouter);
 router.use('/uploads', static(uploads_dir));
 
