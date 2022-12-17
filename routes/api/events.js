@@ -17,10 +17,17 @@ router.get('/', async (req,res)=>{
         paginate:{
             total:count,
             page:page,
-            pages:Math.trunc(count/size),
+            pages:Math.ceil(count/size),
             perPage:size
         },
-        Items: rows
+        items: rows
+    });
+});
+
+router.get('/all', async (req,res)=>{
+    const items = await Event.findAll();
+    res.status(200).json({
+        items:items
     });
 });
 
@@ -32,21 +39,21 @@ router.get('/active', async (req,res)=>{
     }else{
         res.status(200).json({
             success: true,
-            "Active items ": eventsAvailable 
+            "active items ": eventsAvailable 
         });
     }
 
 });
 
 ////endpoint para listar eventos inactivos
-router.get('/all', async (req,res)=>{
+router.get('/inactive', async (req,res)=>{
     const eventsInactive= await Event.findAll({where:{"status":false}});
      if(eventsInactive==''){
         res.json({error:'No existen eventos inactivos'});
     }else{
         res.status(200).json({
             success: true,
-            "Inactive items": eventsInactive 
+            "inactive items": eventsInactive 
         });
     }
 
@@ -54,10 +61,10 @@ router.get('/all', async (req,res)=>{
 
 //endpoint para crear eventos
 router.post('/', async (req,res)=>{
-    const Item = await Event.create(req.body);
+    const item = await Event.create(req.body);
     res.json({
-        message:'Item creado',
-        Item 
+        message:'item creado',
+        item 
     });
 });
 

@@ -28,7 +28,7 @@ router.get('/',isAdmin, async (req,res)=>{
       paginate:{
           total:count,
           page:page,
-          pages:Math.trunc(count/size),
+          pages:Math.ceil(count/size),
           perPage:size
       },
       stickers: rows
