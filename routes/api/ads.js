@@ -3,6 +3,7 @@ const { Op } = require('sequelize');
 const { ad, random } = require('../../databases/db');
 const { imgController } = require('../../controllers/filesControllers');
 const controllerAd = require('../../controllers/ads/uploadAd')
+const auth = require('../../middlewares/auth');
 
 const allowedFields = ['announcer', 'adType', 'redirecTo', 'img'];
 
@@ -18,12 +19,12 @@ const findAdById = (id) => {
   return ad.findByPk(id);
 }
 
-router.get('/', async (req, res) => {
+router.get('/', auth.isAdmin, async (req, res) => {
   const ads = await ad.findAll();
   httpGetResponse(res, ads, 'ads');
 });
 
-router.get('/search', async (req, res) => {
+router.get('/search',auth.isAdmin, async (req, res) => {
   try {
     let { page = 0, size = 10, announcer: ann = '.*', adtype: type = ['static', 'float'] } = req.query;
     const [ pageAsNumber, sizeAsNumber ] = [ Number.parseInt(page), Number.parseInt(size) ];
@@ -87,18 +88,18 @@ router.get('/watch-detailed/:adId', async (req, res) => {
   }
 });
 
-router.get('/:adId', async (req, res) => {
+router.get('/:adId',auth.isAdmin, async (req, res) => {
   const reqAd = await findAdById(req.params.adId);
   httpGetResponse(res, reqAd, 'Required ad');
 });
 
-router.post('/', imgController.uploadImg, controllerAd.uploadFileAd);
+router.post('/',auth.isAdmin, imgController.uploadImg, controllerAd.uploadFileAd);
 
-router.put('/:adId', imgController.uploadImg, controllerAd.uploadUpdatedFileAd);
+router.put('/:adId',auth.isAdmin, imgController.uploadImg, controllerAd.uploadUpdatedFileAd);
 
 
 
-router.delete('/:adId', async (req, res) => {
+router.delete('/:adId',auth.isAdmin, async (req, res) => {
   if (await findAdById(req.params.adId)) {
     await ad.destroy({
       where: { id: req.params.adId }
