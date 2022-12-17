@@ -20,10 +20,10 @@ router.get('/', async (req,res)=>{
         paginate:{
             total:count,
             page:page,
-            pages: Math.trunc(count/size),
+            pages: Math.ceil(count/size),
             perPage:size
         },
-        Items: rows
+        items: rows
     });
 });
 
@@ -50,8 +50,11 @@ router.post('/',[
         if(verifyName){
             res.json({error:'No puede usar un nombre registrado'});
         }else{
-            const Item = await User.create(req.body);
-            res.status(200).json({message:'Item creado', Item });
+            const item = await User.create(req.body);
+            res.status(200).json({
+                message:'item creado',
+                item 
+            });
         }
     }
 });

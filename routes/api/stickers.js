@@ -28,10 +28,10 @@ router.get('/',isAdmin, async (req,res)=>{
       paginate:{
           total:count,
           page:page,
-          pages:Math.trunc(count/size),
+          pages:Math.ceil(count/size),
           perPage:size
       },
-      stickers: rows
+      items: rows
   });
 });
 
@@ -111,7 +111,7 @@ router.delete('/:playerId',isAdmin, async (req,res)=>{
     });
     res.json({ 
       success:true, 
-      message:"Eliminación exitosa"
+      message:"item deleted"
     });
 });
 
