@@ -251,7 +251,7 @@ router.get('/public-events/:eventId', async (req, res) => {
     }
 });
 
-router.get('/public-events/:eventId/', async (req,res) => {
+router.get('/public-events/:eventId/carousel', async (req,res) => {
     try {
         const eventId = req.params.eventId;
         let {isAlbum = false} = req.query;
