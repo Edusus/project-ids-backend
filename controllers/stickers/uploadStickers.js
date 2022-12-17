@@ -30,7 +30,10 @@ exports.uploadFileSticker = async (req, res) => {
           appearanceRate,
           teamId
     });
-    res.status(201).json(newSticker);
+    res.status(200).json({
+      message:'item created',
+      item:newSticker
+    });
     } catch (error) {
             console.log(error);
             if (typeof req.file !== 'undefined') {
@@ -67,7 +70,11 @@ exports.uploadUpdatedFileSticker = async (req, res) => {
       }, { 
         where: { id: req.params.playerId }
       });
-      res.status(200).send("Modified Sticker " + req.params.playerId);
+      res.status(200).send({
+        success:true,
+        message:"Sticker update",
+        item: Sticker
+      });
     } catch (error) {
       console.error(error);
       if (typeof req.file !== 'undefined') {
