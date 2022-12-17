@@ -16,7 +16,7 @@ const teamsRouter = Router();
  * representing the filter to the eventid, default value is % (any event id)
  */
 
-teamsRouter.get('/', finder.find);
+teamsRouter.get('/',isAdmin, finder.find);
 
 
 
