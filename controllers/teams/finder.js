@@ -72,6 +72,7 @@ const findById = async (req, res) => {
  * @param res - the response object
  */
 const findAll = async (req, res) => {
+  const eventId = req.params.eventId;
   const teams = await team.findAll({
     include: [
       {
@@ -80,7 +81,10 @@ const findAll = async (req, res) => {
       {
          model: Event
       }
-  ]
+  ],
+  where: {
+    idEvents: eventId
+  }
   });
   httpGetResponse(res, teams, "teams");
 }
