@@ -7,7 +7,7 @@ exports.verifyToken = (req, res, next) => {
 
     // Comprobar que existe el token
     if(!req.headers.authorization) {
-        res.status(401).json({ msg: "Acceso no autorizado" });
+        res.status(401).json({success: false, message: "Acceso no autorizado" });
     } else {
 
         // Comrpobar la validez de este token
@@ -17,7 +17,7 @@ exports.verifyToken = (req, res, next) => {
         jwt.verify(token, authConfig.secret, (err, decoded) => {
 
             if(err) {
-                res.status(500).json({ msg: "Ha ocurrido un problema al decodificar el token", err });
+                res.status(500).json({success: false, message: "Ha ocurrido un problema al decodificar el token", err });
             } else {
                 req.user = decoded;
                 next();
@@ -30,7 +30,7 @@ exports.verifyToken = (req, res, next) => {
 
 exports.isAdmin = (req, res, next) => {
     if ((req.user.id.role !== "ADMIN") && (req.user.id.role !== "admin")) {
-        return res.status(401).json({ error: "Acceso no autorizado usted no es admin" });
+        return res.status(401).json({success: false, message: "Acceso no autorizado usted no es admin" });
     };
     next();
 };
