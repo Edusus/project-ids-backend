@@ -24,7 +24,10 @@ exports.uploadFileSticker = async (req, res) => {
           appearanceRate,
           teamId
     });
-    res.status(201).json(newSticker);
+    res.status(201).json({
+      message:'item created',
+      item:newSticker
+    });
     } catch (error) {
             console.log(error);
             res.status(400).send(error.message);
@@ -47,7 +50,10 @@ exports.uploadUpdatedFileSticker = async (req, res) => {
       }, { 
         where: { id: req.params.playerId }
       });
-      res.status(200).send("Modified Sticker " + req.params.playerId);
+      res.status(200).send({
+        success:true,
+        message:"item modified"
+      });
     } catch (error) {
       console.error(error);
       res.status(400).send(error.message);

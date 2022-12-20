@@ -42,9 +42,12 @@ const find = async (req, res) => {
     httpGetResponse(
       res, {
         success: true,
-        totalTeams: count,
-        pageNumber: pageAsNumber,
-        pageSize: sizeAsNumber,
+        paginate:{
+          totalTeams: count,
+          pageNumber: pageAsNumber,
+          pages:Math.trunc(count/sizeAsNumber),
+          pageSize: sizeAsNumber
+        },
         teams: rows 
       }, 'teams');
   } catch (err) {

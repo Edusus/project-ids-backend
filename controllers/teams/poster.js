@@ -25,9 +25,9 @@ const post = async (req, res) => {
       idEvents = eventsid;
     }
     const Team = await team.create({
-      "name": name,
-      "badge": filepath,
-      "idEvents": idEvents
+        "name": name,
+        "badge": filepath,
+        "idEvents": idEvents
     }, { fields: allowedFields });
     res.status(201).json(Team);
   } catch (error) {

@@ -15,7 +15,7 @@ router.get('/',isAdmin, async (req,res)=>{
         limit: +size,
         offset: (+page) * (+size)
     };
-    const stickers = await Sticker.findAndCountAll({
+    const {count,rows} = await Sticker.findAndCountAll({
       options,
       attributes: ['id','playerName', 'country', 'position', 'img', 'height', 'weight', 'appearanceRate', 'createdAt', 'updatedAt'],
       include: {
@@ -23,7 +23,16 @@ router.get('/',isAdmin, async (req,res)=>{
         attributes: ['id', 'name', 'badge']
       }
     });
-    res.status(200).json({message: 'Lista de cromos', stickers});
+    res.status(200).json({
+      success: true,
+      paginate:{
+          total:count,
+          page:page,
+          pages:Math.ceil(count/size),
+          perPage:size
+      },
+      items: rows
+  });
 });
 
 //endpoint para obtener 5 cromos al azar
@@ -100,7 +109,10 @@ router.delete('/:playerId',isAdmin, async (req,res)=>{
     await Sticker.destroy({
         where:{ id: req.params.playerId }
     });
-    res.json({ success:'Se ha eliminado'});
+    res.json({ 
+      success:true, 
+      message:"item deleted"
+    });
 });
 
 
