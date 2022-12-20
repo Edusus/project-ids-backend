@@ -14,14 +14,14 @@ router.put('/forgot-password', authcontroller.forgotPassword);
 router.put('/new-password', (req, res) => {
     console.log(req.headers);
     if(!req.headers.authorization) {
-        res.status(401).json({ msg: "Acceso no autorizado" });
+        res.status(401).json({success: false, message: "Acceso no autorizado" });
     } else {
         let token = req.headers.authorization.split(" ")[1];
 
         jwt.verify(token, authConfig.secret, (err, decoded) => {
 
             if(err) {
-                res.status(500).json({ msg: "Ha ocurrido un problema al decodificar el token", err });
+                res.status(500).json({success: false, message: "Ha ocurrido un problema al decodificar el token", err });
             } else {
                 req.user = decoded;
                 let {id} = req.user.id

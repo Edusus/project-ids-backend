@@ -46,24 +46,22 @@ module.exports = {
     },
 
     //Register
-    async signUp(req, res) {
-      const { name, email } = req.body;
-
-      const userOfEmail = await User.findOne({ where: { email: req.body.email } });
-      if (userOfEmail)  {
-        res.status(409).json({message: "Ya existe un usuario con este correo"});
-      }
-
-      const role = "user";
-      const password = bcrypt.hashSync(req.body.password, Number.parseInt(authconfig.rounds));
-
+     async signUp(req, res) {
       try {
+      const { name, email } = req.body;
+      const userOfEmail = await User.findOne({ where: { email: req.body.email } });
+        if (userOfEmail)  {
+        res.status(409).json({success: false, message: "Ya existe un usuario con este correo"});
+        } else {
+        const role = "user";
+        const password = bcrypt.hashSync(req.body.password, Number.parseInt(authconfig.rounds));
         const user = await User.create({ name, role, email, password });
-        //Creacion de token
-        const token = jwt.sign({id: user}, authconfig.secret, {
-            expiresIn: authconfig.expire
-        });
-        res.json({ user, token })
+          //Creacion de token
+          const token = jwt.sign({id: user}, authconfig.secret, {
+              expiresIn: authconfig.expire
+          });
+          res.json({ user, token })
+        }
       } catch (err) {
         res.status(500).json(err);
       }
@@ -75,7 +73,7 @@ module.exports = {
         let {email} = req.body;
 
            if (!(email)){
-            res.status(404).json({message: "Campo vacio"});
+            res.status(404).json({success: false, message: "Campo vacio"});
            } else {
           User.findOne({
             where: {
@@ -84,7 +82,7 @@ module.exports = {
         }).then(user => {
 
              if (!user){
-                res.status(404).json({message: "Usuario con este correo no encontrado"});
+                res.status(404).json({success: false, message: "Usuario con este correo no encontrado"});
              } else {
 
                 let transporter = nodemailer.createTransport({
@@ -116,10 +114,10 @@ module.exports = {
                   transporter.sendMail(mailOptions, function(error, info){
                     if (error) {
                       console.log(error);
-                      res.status(500).json({ message: 'fallo no se pq' })
+                      res.status(500).json({success: false, message: 'fallo no se pq' })
                     } else {
                       console.log('Email enviado: ' + info.response);
-                      res.status(250).json({ message: 'Correo enviado', user: user,
+                      res.status(250).json({success: true, message: 'Correo enviado', user: user,
                       token: token })
                     }
                   });
