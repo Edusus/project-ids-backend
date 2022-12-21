@@ -4,7 +4,7 @@ const responses = require('../../utils/responses/responses');
 
 const find = async (req, res) => {
   const userId = req.user.id.id;
-  const eventId = req.eventId;
+  const eventId = req.params.eventId
   const warehouses = await Warehouse.findAndCountAll({
     where: {
       userId,
