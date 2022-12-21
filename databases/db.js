@@ -7,7 +7,7 @@ const adsModel = require('../models/adsModel');
 const gamesModel = require('../models/games');
 const teamsModel = require('../models/teamsModel');
 const inventoryModel = require('../models/inventory');
-const DepositModel = require('../models/deposit');
+const WarehouseModel = require('../models/warehouses');
 
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD,{
     host: process.env.DBHOST,
@@ -21,7 +21,7 @@ const ad = adsModel(sequelize,Sequelize);
 const game = gamesModel(sequelize, Sequelize);
 const team = teamsModel(sequelize, Sequelize);
 const inventory = inventoryModel(sequelize, Sequelize);
-const Deposit = DepositModel(sequelize, Sequelize);
+const Warehouse = WarehouseModel(sequelize, Sequelize);
 
 /* Defining associations */
 team.belongsTo(Event, {
@@ -80,17 +80,18 @@ inventory.belongsTo(Event);
 
 //Relaciones entre usuarios y stickers para el almacen
 User.belongsToMany(Sticker, { 
-  through: Deposit,
+  through: Warehouse,
 });
 Sticker.belongsToMany(User, { 
-  through: Deposit
+  through: Warehouse
 });
-User.hasMany(Deposit);
-Deposit.belongsTo(User);
-Sticker.hasMany(Deposit);
-Deposit.belongsTo(Sticker);
-Event.hasOne(Deposit);
-Deposit.belongsTo(Event);
+User.hasMany(Warehouse);
+Warehouse.belongsTo(User);
+Sticker.hasMany(Warehouse);
+Warehouse.belongsTo(Sticker);
+
+Event.hasOne(Warehouse);
+Warehouse.belongsTo(Event);
 
 sequelize.authenticate()
     .then(()=>{
@@ -110,5 +111,5 @@ const random = sequelize.random();
 const { Op } = Sequelize;
 
 module.exports ={
-    User, Sticker, Event, ad, game, team, random, Op, inventory, Deposit
+    User, Sticker, Event, ad, game, team, random, Op, inventory, Warehouse
 }
