@@ -50,7 +50,7 @@ teamsRouter.post('/',isAdmin, imgController.uploadImg, poster.post);
 
 /**
  * Route to update an existing team
- * * Expected JSON: { "name": "value", "badge": "value", "idEvents": value }
+ * * Expected multiform/data: { "name": "value", "myFile": [file.jpg | file.jpeg | file.png], "idEvents": value }
  * idEvents value must be an already existing event id
  */
 

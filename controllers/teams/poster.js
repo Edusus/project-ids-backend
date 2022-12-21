@@ -15,9 +15,9 @@ const post = async (req, res) => {
     const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/') + '/';
     let filepath;
     if (process.env.USINGIMGHOST == 'true') {
-      filepath = `${process.env.DOMAIN}${img_relative_dir}${req.file.filename}`;
+      filepath = `${process.env.IMGURL}${img_relative_dir}${req.file.filename}`;
     } else {
-      filepath = `${process.env.DOMAIN}${img_relative_dir}${req.file.filename}`;
+      filepath = `${process.env.OFFSIDEURL}${img_relative_dir}${req.file.filename}`;
     }
     let idEvents = 0;
     if (typeof eventsid == 'object') {
@@ -36,14 +36,11 @@ const post = async (req, res) => {
     if (typeof req.file !== 'undefined') {
       fileController.deleteFile(req.file.path, req.file.filename);
       res.status(400).send(error.message);
-    } else {
-      res.status(400).send('Error: img not sent');
-    }
+   }
   }
 }
-
 const poster = {
   post
 }
 
-module.exports = poster;
+module.exports = poster

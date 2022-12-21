@@ -1,8 +1,7 @@
 const router = require('express').Router();
 
 const { Sticker, random, Op, team, inventory } = require('../../databases/db');
-
-const { imgController, fileController } = require('../../controllers/filesControllers');
+const {imgController} = require('../../controllers/filesControllers');
 const controllerSticker = require('../../controllers/stickers/uploadStickers')
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
 
@@ -84,7 +83,8 @@ router.get('/obtain/:eventId', async (req, res) => {
             })
           }
     });
-      
+
+
       stickers.push(singleSticker);
 
     } while (stickers.length < 5)

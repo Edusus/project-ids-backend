@@ -7,6 +7,7 @@ const adsModel = require('../models/adsModel');
 const gamesModel = require('../models/games');
 const teamsModel = require('../models/teamsModel');
 const inventoryModel = require('../models/inventory');
+const WarehouseModel = require('../models/warehouses');
 const PlayersGamesModel = require('../models/playersGames');
 
 
@@ -22,7 +23,9 @@ const ad = adsModel(sequelize,Sequelize);
 const game = gamesModel(sequelize, Sequelize);
 const team = teamsModel(sequelize, Sequelize);
 const inventory = inventoryModel(sequelize, Sequelize);
+const Warehouse = WarehouseModel(sequelize, Sequelize);
 const PlayersGame = PlayersGamesModel(sequelize, Sequelize);
+
 
 /* Defining associations */
 team.belongsTo(Event, {
@@ -153,14 +156,45 @@ PlayersGame.belongsTo(game, {
   }
 });
 
+//Relaciones entre usuarios y stickers para el almacen
+User.belongsToMany(Sticker, { 
+  through: Warehouse,
+});
+Sticker.belongsToMany(User, { 
+  through: Warehouse
+});
+User.hasMany(Warehouse);
+Warehouse.belongsTo(User);
+Sticker.hasMany(Warehouse);
+Warehouse.belongsTo(Sticker);
+
+Event.hasOne(Warehouse);
+Warehouse.belongsTo(Event);
+
+sequelize.authenticate()
+    .then(()=>{
+        console.log('Connection has been established successfully.');
+    }
+    )
+    .catch(err=>{
+        console.error('Unable to connect to the database:', err);
+    }
+    );
 sequelize.sync({ force: false })
     .then(()=>{
         console.log('Syncronized tables');
+    })
+    .catch((err) => {
+      console.error(err);
     });
 
 const random = sequelize.random();
 const { Op } = Sequelize;
 
 module.exports ={
-    User, Sticker, Event, ad, game, team, random, Op, inventory, PlayersGame
+<<<<<<<<< Temporary merge branch 1
+    User, Sticker, Event, random, Op
+=========
+    User, Sticker, Event, ad, game, team, random, Op, inventory
+>>>>>>>>> Temporary merge branch 2
 }

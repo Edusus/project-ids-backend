@@ -79,20 +79,16 @@ const findAll = async (req, res) => {
          model: Sticker
       },
       {
-         model: Event
+        model: Event
       }
   ],
   where: {
     idEvents: eventId
   }
   });
-  httpGetResponse(res, teams, "teams");
+  httpGetResponse(res, teams, 'teams');
 }
 
-const finder = {
-  find,
-  findById,
-  findAll
+module.exports = {
+  findAll, find, findById
 }
-
-module.exports = finder;
