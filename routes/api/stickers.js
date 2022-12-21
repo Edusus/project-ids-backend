@@ -1,8 +1,7 @@
 const router = require('express').Router();
 
 const { Sticker, random, Op, team, inventory } = require('../../databases/db');
-
-const controllerFile = require('../../controllers/img/upload');
+const {imgController} = require('../../controllers/filesControllers');
 const controllerSticker = require('../../controllers/stickers/uploadStickers')
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
 
@@ -99,10 +98,10 @@ router.get('/obtain/:eventId', async (req, res) => {
 });
 
 //endpoint para crear cromos
-router.post('/',isAdmin, controllerFile.upload, controllerSticker.uploadFileSticker);
+router.post('/',isAdmin, imgController.uploadImg, controllerSticker.uploadFileSticker);
 
 //endpoint para editar cromos
-router.put('/:playerId',isAdmin, controllerFile.upload, controllerSticker.uploadUpdatedFileSticker);
+router.put('/:playerId',isAdmin, imgController.uploadImg, controllerSticker.uploadUpdatedFileSticker);
 
 //endpoint para borrar cromos
 router.delete('/:playerId',isAdmin, async (req,res)=>{

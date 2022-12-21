@@ -84,3 +84,7 @@ const findAll = async (req, res) => {
   });
   httpGetResponse(res, teams, 'teams');
 }
+
+module.exports = {
+  findAll, find, findById
+}
