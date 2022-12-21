@@ -1,5 +1,4 @@
 const { Router, static } = require('express');
-const path = require('path');
 const apiUsersRouter = require('./api/users');
 const apiAuthRouter = require('./api/auth');
 const apiStickerRouter = require('./api/stickers');
@@ -7,15 +6,11 @@ const testEndpoints = require('./api/test-endpoints');
 const apiEventsRouter = require('./api/events');
 const adsRouter = require('./api/ads');
 const teamsRouter = require('./api/teams.js');
-<<<<<<< HEAD
 const inventoryRouter = require('./api/inventory');
 const benchesRouter = require('./api/bench');
 const squadsRouter = require('./api/squad');
-=======
-const inventoryRouter = require('./api/inventory')
 const { uploads_dir } = require('../controllers/filesControllers');
 
->>>>>>> main
 
 const auth = require('../middlewares/auth');
 const router = Router();
