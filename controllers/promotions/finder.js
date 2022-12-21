@@ -39,7 +39,7 @@ const find = async (req, res) => {
     const [ pageAsNumber, sizeAsNumber ] = [ Number.parseInt(page), Number.parseInt(size) ];
     let options = {
       limit: sizeAsNumber,
-      offset: (pageAsNumber-1) * sizeAsNumber, 
+      offset: pageAsNumber * sizeAsNumber, 
       where: {
         alias: {
           [Op.regexp]: ann
