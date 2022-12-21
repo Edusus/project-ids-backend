@@ -192,9 +192,5 @@ const random = sequelize.random();
 const { Op } = Sequelize;
 
 module.exports ={
-<<<<<<<<< Temporary merge branch 1
-    User, Sticker, Event, random, Op
-=========
-    User, Sticker, Event, ad, game, team, random, Op, inventory
->>>>>>>>> Temporary merge branch 2
+    User, Sticker, Event, ad, game, team, random, Op, inventory, Warehouse, PlayersGame
 }
