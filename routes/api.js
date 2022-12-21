@@ -19,7 +19,7 @@ const passEventId = (req, res, next) => {
   req.eventId = req.params.eventId;
   next();
 }
-
+//arreglo
 router.use('/users', auth.verifyToken, auth.isAdmin, apiUsersRouter);
 router.use('/stickers',auth.verifyToken, apiStickerRouter);
 router.use('/auth',apiAuthRouter);
