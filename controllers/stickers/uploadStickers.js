@@ -1,4 +1,3 @@
-const { imgController, fileController } = require('../filesControllers'); 
 const { Sticker }= require('../../databases/db');
 const { imgController, fileController } = require('../filesControllers'); 
 
