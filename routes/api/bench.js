@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { finder } = require('../../controllers/benchesControllers');
 
-router.get('/', finder.find);
+router.get('/public-events/:eventId/bench', finder.find);
 
 
 router.delete('/:playerId', );
