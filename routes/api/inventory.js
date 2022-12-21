@@ -5,7 +5,8 @@ const {
     Sticker,
     team,
     Op,
-    Event
+    Event,
+    Warehouse
 } = require('../../databases/db');
 
 router.get('/public-events/:eventId', async (req, res) => {
@@ -228,7 +229,7 @@ router.post('/public-events/:eventId/claim-sticker', async (req, res) => {
         const {
             stickerId
         } = req.body;
-        const eventId = req.params.eventId;
+        const eventId = req.params.eventId; 
         const inventorys = await inventory.findOne({
             where: {
                 [Op.and]: [{
@@ -264,6 +265,22 @@ router.post('/public-events/:eventId/claim-sticker', async (req, res) => {
                         }]
                     }
                 });
+
+                await Warehouse.findOne({
+                    where: {
+                       [Op.and]: [{stickerId: stickerId},{eventId : eventId},{userId: req.user.id.id}]
+                    }
+                  }).then(async warehouse => {
+                     if (!warehouse) {
+                       await Warehouse.create({
+                           isInSquad: false,
+                           userId: req.user.id.id,
+                           stickerId: stickerId,
+                           eventId: eventId
+                       });
+                     }
+               });  
+
                 res.status(200).json({
                     success: true,
                     message: 'Sticker pegado con exito'

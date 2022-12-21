@@ -3,7 +3,6 @@ const { finder } = require('../../controllers/benchesControllers');
 
 router.get('/', finder.find);
 
-router.post('/', );
 
 router.delete('/:playerId', );
 
