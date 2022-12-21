@@ -78,17 +78,9 @@ const findAll = async (req, res) => {
          model: Sticker
       },
       {
-         model: Event
+        model: Event
       }
-  ]
+    ]
   });
-  httpGetResponse(res, teams, "teams");
+  httpGetResponse(res, teams, 'teams');
 }
-
-const finder = {
-  find,
-  findById,
-  findAll
-}
-
-module.exports = finder;

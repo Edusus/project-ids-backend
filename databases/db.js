@@ -29,7 +29,8 @@ team.belongsTo(Event, {
 });
 Event.hasMany(team, {
   foreignKey: {
-    name: "idEvents"
+    name: "idEvents",
+    allowNull: false
   }
 });
 
@@ -79,6 +80,9 @@ inventory.belongsTo(Event);
 sequelize.sync({ force: false })
     .then(()=>{
         console.log('Syncronized tables');
+    })
+    .catch((err) => {
+      console.error(err);
     });
 
 const random = sequelize.random();
