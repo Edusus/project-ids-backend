@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { promotion } = require('../../databases/db');
+const { Promotion } = require('../../databases/db');
 const responses = require('../../utils/responses/responses');
 
 /**
@@ -9,7 +9,7 @@ const responses = require('../../utils/responses/responses');
  * @returns the response of the function findAll.
  */
 const findAll = async (req, res) => {
-  const promotions = await promotion.findAll();
+  const promotions = await Promotion.findAll();
   return responses.multipleDTOsResponse(res, 200, 'Promociones recuperadas con exito', promotions);
 }
 
@@ -20,9 +20,9 @@ const findAll = async (req, res) => {
  * @returns the response of the function findByPk.
  */
 const findById = async (req, res) => {
-  const Promotion = await promotion.findByPk(req.params.promotionId);
-  if (Promotion)
-    return responses.singleDTOResponse(res, 200, 'Promocion recuperada con exito', Promotion);
+  const promotion = await Promotion.findByPk(req.params.promotionId);
+  if (promotion)
+    return responses.singleDTOResponse(res, 200, 'Promocion recuperada con exito', promotion);
 
   return responses.errorDTOResponse(res, 404, 'Promocion no encontrada');
 }
@@ -39,7 +39,7 @@ const find = async (req, res) => {
     const [ pageAsNumber, sizeAsNumber ] = [ Number.parseInt(page), Number.parseInt(size) ];
     let options = {
       limit: sizeAsNumber,
-      offset: pageAsNumber * sizeAsNumber, 
+      offset: (pageAsNumber-1) * sizeAsNumber, 
       where: {
         alias: {
           [Op.regexp]: ann
@@ -47,7 +47,7 @@ const find = async (req, res) => {
         promotionType: type
       },
     };
-    const { count, rows } = await promotion.findAndCountAll(options);
+    const { count, rows } = await Promotion.findAndCountAll(options);
     return responses.paginatedDTOsResponse(res, 200, 'Promociones recuperadas con exito', rows, count,
     pageAsNumber, sizeAsNumber);
   } catch (error) {

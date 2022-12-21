@@ -1,4 +1,4 @@
-const { promotion } = require('../../databases/db');
+const { Promotion } = require('../../databases/db');
 const responses = require('../../utils/responses/responses');
 const { fileController } = require('../filesControllers');
 const getImageUrl = require('../../utils/helpers/get-image-url');
@@ -20,14 +20,14 @@ const post = async (req, res) => {
     let lowPromotionType = undefined;  //promotionType, si no recibe nada, es undefined
     if (typeof promotionType !== 'undefined' && promotionType !== null)
       lowPromotionType = promotionType.toLowerCase();
-    const Promotion = await promotion.create({
+    const promotion = await Promotion.create({
       'alias': alias,
       'promotionType': lowPromotionType,
       'redirecTo': redirecTo,
       'img': imageUrl,
       'description': description
     }, { fields: allowedFields });
-    return responses.singleDTOResponse(res, 201, 'Promocion creada con exito', Promotion);
+    return responses.singleDTOResponse(res, 201, 'Promocion creada con exito', promotion);
   } catch (error) {
     console.error(error);
     if (typeof req.file !== 'undefined') {

@@ -1,4 +1,4 @@
-const { promotion } = require('../../databases/db');
+const { Promotion } = require('../../databases/db');
 const responses = require('../../utils/responses/responses');
 const { fileController } = require('../filesControllers');
 const getImagePath = require('../../utils/helpers/get-image-path');
@@ -18,11 +18,11 @@ const mimetypes = ['image/jpeg', 'image/png'];
 const update = async (req, res) => {
   const promotionId = req.params.promotionId;
   try {
-    const Promotion = await promotion.findByPk(promotionId);
-    if (typeof Promotion === 'undefined' || Promotion === null)
+    const promotion = await Promotion.findByPk(promotionId);
+    if (typeof promotion === 'undefined' || promotion === null)
       return responses.errorDTOResponse(res, 404, 'Promocion no encontrada');
     
-    const { img: prevFileurl } = Promotion;
+    const { img: prevImgUrl } = promotion;
     const { alias, promotionType, redirecTo, description = null } = req.body;
     let lowPromotionType = undefined;  //promotionType, si no recibe nada, es undefined
     if (typeof promotionType !== 'undefined' && promotionType !== null)
@@ -41,7 +41,7 @@ const update = async (req, res) => {
       fields: allowedFields 
     });
     if (typeof imageUrl !== 'undefined' && imageUrl !== null)
-      fileController.deleteFile(getImagePath(prevFileurl), prevFileurl.split('/')[5]);
+      fileController.deleteFile(getImagePath(prevImgUrl), prevImgUrl.split('/')[5]);
     return responses.successDTOResponse(res, 200, 'Promocion actualizada con exito');
   } catch (error) {
     console.error(error);

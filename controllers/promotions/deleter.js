@@ -1,4 +1,4 @@
-const { promotion } = require('../../databases/db');
+const { Promotion } = require('../../databases/db');
 const responses = require('../../utils/responses/responses');
 const { fileController } = require('../filesControllers');
 const getImagePath = require('../../utils/helpers/get-image-path');

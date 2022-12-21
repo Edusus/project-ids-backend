@@ -6,7 +6,7 @@ const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.
 	dialect: 'mysql'
 });
 
-const promotion = promotionsModel(sequelize, DataTypes);
+const Promotion = promotionsModel(sequelize, DataTypes);
 
 sequelize.sync()
 	.then(() => {
@@ -17,5 +17,5 @@ sequelize.sync()
   });
 
 module.exports = {
-	promotion
+	Promotion
 };
