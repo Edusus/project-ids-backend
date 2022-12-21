@@ -42,9 +42,12 @@ const find = async (req, res) => {
     httpGetResponse(
       res, {
         success: true,
-        totalTeams: count,
-        pageNumber: pageAsNumber,
-        pageSize: sizeAsNumber,
+        paginate:{
+          totalTeams: count,
+          pageNumber: pageAsNumber,
+          pages:Math.trunc(count/sizeAsNumber),
+          pageSize: sizeAsNumber
+        },
         teams: rows 
       }, 'teams');
   } catch (err) {
@@ -75,17 +78,13 @@ const findAll = async (req, res) => {
          model: Sticker
       },
       {
-         model: Event
+        model: Event
       }
-  ]
+    ]
   });
-  httpGetResponse(res, teams, "teams");
+  httpGetResponse(res, teams, 'teams');
 }
 
-const finder = {
-  find,
-  findById,
-  findAll
+module.exports = {
+  findAll, find, findById
 }
-
-module.exports = finder;

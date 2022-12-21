@@ -8,12 +8,23 @@ const bcrypt = require('bcrypt');
 router.get('/', async (req,res)=>{
     //paginacion
     const {page = 0, size = 10} = req.query;
+
     let options = {
         limit: +size,
         offset: (+page) * (+size)
     };
-    const users = await User.findAndCountAll(options);
-    res.status(200).json({message: 'Lista de usuarios', users });
+    const {count,rows} = await User.findAndCountAll(options);
+
+    res.status(200).json({
+        success: true,
+        paginate:{
+            total:count,
+            page:page,
+            pages: Math.ceil(count/size),
+            perPage:size
+        },
+        items: rows
+    });
 });
 
 //endpoint para crear usuarios
@@ -39,8 +50,11 @@ router.post('/',[
         if(verifyName){
             res.json({error:'No puede usar un nombre registrado'});
         }else{
-            const user = await User.create(req.body);
-            res.status(200).json({message:'Usuario creado', user });
+            const item = await User.create(req.body);
+            res.status(200).json({
+                message:'item creado',
+                item 
+            });
         }
     }
 });

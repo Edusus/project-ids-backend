@@ -31,7 +31,8 @@ team.belongsTo(Event, {
 });
 Event.hasMany(team, {
   foreignKey: {
-    name: "idEvents"
+    name: "idEvents",
+    allowNull: false
   }
 });
 
@@ -105,10 +106,14 @@ sequelize.authenticate()
 sequelize.sync({ force: false })
     .then(()=>{
         console.log('Syncronized tables');
+    })
+    .catch((err) => {
+      console.error(err);
     });
 
 const random = sequelize.random();
 const { Op } = Sequelize;
+
 
 module.exports ={
     User, Sticker, Event, ad, game, team, random, Op, inventory, Warehouse

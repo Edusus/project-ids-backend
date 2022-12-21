@@ -1,10 +1,9 @@
 const router = require('express').Router();
 
 const { Sticker, random, Op, team, inventory } = require('../../databases/db');
-
-const controllerFile = require('../../controller/upload');
-const controllerSticker = require('../../controller/uploadStickers')
-const {isAdmin } = require('../../middlewares/auth');
+const {imgController} = require('../../controllers/filesControllers');
+const controllerSticker = require('../../controllers/stickers/uploadStickers')
+const { verifyToken, isAdmin } = require('../../middlewares/auth');
 
 //endpoint para listar cromos
 router.get('/',isAdmin, async (req,res)=>{  
@@ -15,7 +14,7 @@ router.get('/',isAdmin, async (req,res)=>{
         limit: +size,
         offset: (+page) * (+size)
     };
-    const stickers = await Sticker.findAndCountAll({
+    const {count,rows} = await Sticker.findAndCountAll({
       options,
       attributes: ['id','playerName', 'country', 'position', 'img', 'height', 'weight', 'appearanceRate', 'createdAt', 'updatedAt'],
       include: {
@@ -23,7 +22,16 @@ router.get('/',isAdmin, async (req,res)=>{
         attributes: ['id', 'name', 'badge']
       }
     });
-    res.status(200).json({message: 'Lista de cromos', stickers});
+    res.status(200).json({
+      success: true,
+      paginate:{
+          total:count,
+          page:page,
+          pages:Math.ceil(count/size),
+          perPage:size
+      },
+      items: rows
+  });
 });
 
 //endpoint para obtener 5 cromos al azar
@@ -91,17 +99,20 @@ router.get('/obtain/:eventId', async (req, res) => {
 });
 
 //endpoint para crear cromos
-router.post('/',isAdmin, controllerFile.upload, controllerSticker.uploadFileSticker);
+router.post('/',isAdmin, imgController.uploadImg, controllerSticker.uploadFileSticker);
 
 //endpoint para editar cromos
-router.put('/:playerId',isAdmin, controllerFile.upload, controllerSticker.uploadUpdatedFileSticker);
+router.put('/:playerId',isAdmin, imgController.uploadImg, controllerSticker.uploadUpdatedFileSticker);
 
 //endpoint para borrar cromos
 router.delete('/:playerId',isAdmin, async (req,res)=>{
     await Sticker.destroy({
         where:{ id: req.params.playerId }
     });
-    res.json({ success:'Se ha eliminado'});
+    res.json({ 
+      success:true, 
+      message:"item deleted"
+    });
 });
 
 
