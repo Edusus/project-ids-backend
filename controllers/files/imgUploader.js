@@ -2,7 +2,6 @@ const multer = require('multer');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
-const responses = require('../../utils/responses/responses');
 const { img_dir } = require('./fileManager')
 const mimetypes = ['image/jpeg', 'image/png'];
 
