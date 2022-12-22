@@ -3,7 +3,8 @@ const Sequelize = require('sequelize');
 const UserModel = require('./../models/users');
 const StickerModel = require('../models/sticker');
 const EventModel = require('./../models/events');
-const adsModel = require('../models/adsModel');
+const adsModel = require('../models/adsModel'); //Vieja implementacion de ads
+const PromotionsModel = require('../models/promotionsModel'); //Nueva implementacion de ads
 const gamesModel = require('../models/games');
 const teamsModel = require('../models/teamsModel');
 const inventoryModel = require('../models/inventory');
@@ -16,7 +17,8 @@ const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.
 const User = UserModel(sequelize,Sequelize);
 const Sticker = StickerModel(sequelize,Sequelize);
 const Event = EventModel(sequelize,Sequelize);
-const ad = adsModel(sequelize,Sequelize);
+const ad = adsModel(sequelize,Sequelize); //Vieja implementacion de ads
+const Promotion = PromotionsModel(sequelize, Sequelize); //Nueva implementacion de ads
 const game = gamesModel(sequelize, Sequelize);
 const team = teamsModel(sequelize, Sequelize);
 const inventory = inventoryModel(sequelize, Sequelize);
@@ -88,7 +90,6 @@ sequelize.sync({ force: false })
 const random = sequelize.random();
 const { Op } = Sequelize;
 
-
 module.exports ={
-    User, Sticker, Event, ad, game, team, random, Op, inventory
+    User, Sticker, Event, Promotion, ad, game, team, random, Op, inventory
 }
