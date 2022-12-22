@@ -5,7 +5,7 @@ const { imgController } = require('../../controllers/filesControllers');
 const promotionsRouter = Router();
 
 /**
- * Route to get a page of promotions, can be filtered by a regexp of the alias of the announcer
+ * Route to get a page of promotions, can be filtered by a regexp of the alias of the announcement
  * and by promotiontype.
  * * Query params:
  * @param page: an integer representing the page to get, default value is 0
