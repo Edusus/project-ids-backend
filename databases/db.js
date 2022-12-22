@@ -1,12 +1,12 @@
 const { Sequelize, DataTypes } = require('sequelize');
-const promotionsModel = require('../models/promotionsModel');
+const PromotionsModel = require('../models/promotionsModel');
 
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD, {
 	host: process.env.DBHOST,
 	dialect: 'mysql'
 });
 
-const Promotion = promotionsModel(sequelize, DataTypes);
+const Promotion = PromotionsModel(sequelize, DataTypes);
 
 sequelize.sync()
 	.then(() => {
