@@ -44,7 +44,7 @@ exports.uploadFileSticker = async (req, res) => {
 
 exports.uploadUpdatedFileSticker = async (req, res) => {
     try {
-      const { badge: prevFileurl } = Team;
+      const { img: prevFileurl } = Sticker;
       const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/');
       const prevFilepath = prevFileurl.split(img_relative_dir)[1];
       fileController.deleteFile(path.join(imgController.img_dir, prevFilepath), prevFilepath);
