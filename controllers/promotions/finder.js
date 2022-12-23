@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { Promotion, random } = require('../../databases/db');
+const { Promotion } = require('../../databases/db');
 const responses = require('../../utils/responses/responses');
 
 /**
@@ -56,51 +56,10 @@ const find = async (req, res) => {
   }
 }
 
-const watch = async (req, res) =>  {
-    const encontro = await Promotion.findOne();
-    console.log(encontro);
-  try {
-    if (await Promotion.findOne()) {
-      const cont = 1;
-      const singleAd = await Promotion.findOne({ order: random});
-      let valorActual = singleAd.dataValues.requestedQuantities;
-      let valorNuevo = valorActual + cont;
-      singleAd.update({ requestedQuantities: valorNuevo });
-      return res.status(200).json({ success: true, data: singleAd });
-    } else {
-      return res.status(404).json({ success: false, message: "No hay anuncios disponibles" });
-    }
-  } catch (error) {
-    console.error(error)
-    return responses.errorDTOResponse(res, 400, error.message);
-  }
-}
-
-const watch_detailed = async (req, res) =>  {  
-  try {
-    if (await findPromotionById(req.params.promotionId)) {
-      const reqAd = await findPromotionById(req.params.promotionId);
-      const cont = 1;
-      let valorActual = reqAd.dataValues.clickedQuantities;
-      let valorNuevo = valorActual + cont;
-      reqAd.update({ clickedQuantities: valorNuevo });
-      let URL = reqAd.dataValues.redirecTo;
-      return res.redirect(302, URL);
-   } else {
-      return res.status(404).json({ success: false, message: "No hay anuncios disponibles" });
-   }
-  } catch (error) {
-    console.error(error);
-    return responses.errorDTOResponse(res, 500, error.message);
-  }
-}
-
 const finder = {
   find,
   findById,
   findAll,
-  watch,
-  watch_detailed
 }
 
 module.exports = finder;
