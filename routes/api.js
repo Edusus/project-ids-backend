@@ -24,7 +24,7 @@ router.use('/users', auth.verifyToken, auth.isAdmin, apiUsersRouter);
 router.use('/stickers',auth.verifyToken, apiStickerRouter);
 router.use('/auth',apiAuthRouter);
 router.use('/events',auth.verifyToken,apiEventsRouter);
-router.use('/ads',auth.verifyToken, adsRouter);
+router.use('/ads', adsRouter);
 router.use('/test-endpoints', testEndpoints);
 router.use('/games', gamesEndpoints);
 router.use('/teams',auth.verifyToken, teamsRouter);

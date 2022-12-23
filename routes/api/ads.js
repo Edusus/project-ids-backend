@@ -2,7 +2,6 @@ const router = require('express').Router();
 const { ad, random, Op } = require('../../databases/db');
 const {imgController} = require('../../controllers/filesControllers');
 const controllerAd = require('../../controllers/ads/uploadAd')
-const { verifyToken, isAdmin } = require('../../middlewares/auth');
 
 const allowedFields = ['announcer', 'adType', 'redirecTo', 'img'];
 
@@ -18,12 +17,12 @@ const findAdById = (id) => {
   return ad.findByPk(id);
 }
 
-router.get('/',isAdmin, async (req, res) => {
+router.get('/', async (req, res) => {
   const ads = await ad.findAll();
   httpGetResponse(res, ads, 'ads');
 });
 
-router.get('/search',isAdmin, async (req, res) => {
+router.get('/search', async (req, res) => {
   try {
     let { page = 0, size = 10, announcer: ann = '.*', adtype: type = ['static', 'float'] } = req.query;
     const [ pageAsNumber, sizeAsNumber ] = [ Number.parseInt(page), Number.parseInt(size) ];
@@ -92,9 +91,9 @@ router.get('/:adId', async (req, res) => {
   httpGetResponse(res, reqAd, 'Required ad');
 });
 
-router.post('/', imgController.uploadImg , controllerAd.uploadFileAd);
+router.post('/',isAdmin, imgController.uploadImg , controllerAd.uploadFileAd);
 
-router.put('/:adId', imgController.uploadImg, controllerAd.uploadUpdatedFileAd);
+router.put('/:adId',isAdmin, imgController.uploadImg, controllerAd.uploadUpdatedFileAd);
 
 
 
