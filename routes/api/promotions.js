@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const { finder, poster, updater, deleter } = require('../../controllers/promotionsControllers');
 const { imgController } = require('../../controllers/filesControllers');
+const { Promotion, random } = require('../../databases/db');
 
 const promotionsRouter = Router();
 
@@ -14,6 +15,23 @@ const promotionsRouter = Router();
  * @param promotiontype: a string representing the filter to the promotion's type, can be static or popup,
  * default value is ['static', 'popup'] (any promotion)
  */
+
+promotionsRouter.get('/public-ad', async (req, res) => {
+  if (await Promotion.findOne()) {
+    const cont = 1;
+    const singleAd = await Promotion.findOne({ order: random});
+    let valorActual = singleAd.dataValues.requestedQuantities;
+    let valorNuevo = valorActual + cont;
+    singleAd.update({ requestedQuantities: valorNuevo });
+    return res.status(200).json({ success: true, data: singleAd });
+  } else {
+    console.error(error);
+    return res.status(404).json({
+      success: false,
+      message: "No hay anuncios que mostrar"
+    });
+  }
+});
 
 promotionsRouter.get('/', finder.find);
 
@@ -36,10 +54,23 @@ promotionsRouter.get('/all', finder.findAll);
 promotionsRouter.get('/:promotionId', finder.findById);
 
 
-promotionsRouter.post('/public-ad/:promotionId', finder.watch_detailed);
 
-
-promotionsRouter.get('/public-ad', finder.watch);
+promotionsRouter.post('/public-ad/click/:promotionId', async (req, res) => {
+    if (await Promotion.findOne()) {
+       const promotion = await Promotion.findByPk(req.params.promotionId);
+       const cont = 1;
+       let valorActual = promotion.dataValues.clickedQuantities;
+       let valorNuevo = valorActual + cont;
+       await promotion.update({ clickedQuantities: valorNuevo });
+       res.status(200).json({ success: true });
+    } else {
+      console.error(error);
+      return res.status(404).json({
+        success: false,
+        message: "No hay anuncios que mostrar"
+      });
+    }
+});
 
 /**
  * Route to post a new promotion
