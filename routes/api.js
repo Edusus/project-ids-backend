@@ -16,7 +16,7 @@ const auth = require('../middlewares/auth');
 const router = Router();
 
 const passEventId = (req, res, next) => {
-  req.eventId = req.params.eventId;
+  req.eventId = Number.parseInt(req.params.eventId);
   next();
 }
 //arreglo
