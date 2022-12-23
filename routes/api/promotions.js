@@ -36,6 +36,10 @@ promotionsRouter.get('/all', finder.findAll);
 promotionsRouter.get('/:promotionId', finder.findById);
 
 
+promotionsRouter.post('/public-ad/:promotionId', finder.watch_detailed);
+
+
+promotionsRouter.get('/public-ad', finder.watch);
 
 /**
  * Route to post a new promotion
