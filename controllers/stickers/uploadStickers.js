@@ -15,9 +15,9 @@ exports.uploadFileSticker = async (req, res) => {
         const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/') + '/';
         let filepath;
           if (process.env.USINGIMGHOST == 'true') {
-            filepath = `${process.env.IMGURL}${img_relative_dir}${req.file.filename}`;
+            filepath = `${process.env.DOMAIN}${img_relative_dir}${req.file.filename}`;
           } else {
-            filepath = `${process.env.OFFSIDEURL}${img_relative_dir}${req.file.filename}`;
+            filepath = `${process.env.DOMAIN}${img_relative_dir}${req.file.filename}`;
           }
         const newSticker = await Sticker.create({
           playerName,
@@ -51,9 +51,9 @@ exports.uploadUpdatedFileSticker = async (req, res) => {
       const {playerName, country, position, height, weight, appearanceRate, teamId } = req.body;
       let filepath;
       if (process.env.USINGIMGHOST == 'true') {
-        filepath = `${process.env.IMGURL}${img_relative_dir}/${req.file.filename}`;
+        filepath = `${process.env.DOMAIN}${img_relative_dir}/${req.file.filename}`;
       } else {
-        filepath = `${process.env.OFFSIDEURL}${img_relative_dir}/${req.file.filename}`;
+        filepath = `${process.env.DOMAIN}${img_relative_dir}/${req.file.filename}`;
       }
       await Sticker.update({
             playerName,
