@@ -38,7 +38,7 @@ exports.uploadFileAd = async (req, res) => {
 
   exports.uploadUpdatedFileAd = async (req, res) => {
     try {
-    const { img: prevFileurl } = Sticker;
+    const { img: prevFileurl } = ad;
     const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/');
     const prevFilepath = prevFileurl.split(img_relative_dir)[1];
     fileController.deleteFile(path.join(imgController.img_dir, prevFilepath), prevFilepath);
