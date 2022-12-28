@@ -1,5 +1,6 @@
 const { Sticker }= require('../../databases/db');
 const { imgController, fileController } = require('../filesControllers'); 
+const path = require('path');
 
 //funcion de subir imagenes de los cromos
 exports.uploadFileSticker = async (req, res) => {
@@ -43,8 +44,12 @@ exports.uploadFileSticker = async (req, res) => {
 };
 
 exports.uploadUpdatedFileSticker = async (req, res) => {
+  const playerId = req.params.playerId;  
     try {
-      const { img: prevFileurl } = Sticker;
+      const player = await ad.findByPk(playerId);
+         if (typeof player === 'undefined' || player === null)
+          throw new Error('Error: ad not found');
+      const { img: prevFileurl } = player;
       const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/');
       const prevFilepath = prevFileurl.split(img_relative_dir)[1];
       fileController.deleteFile(path.join(imgController.img_dir, prevFilepath), prevFilepath);

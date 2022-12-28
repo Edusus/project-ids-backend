@@ -1,5 +1,7 @@
 const { ad } = require('../../databases/db');
-const { imgController, fileController } = require('../filesControllers'); 
+const { imgController, fileController } = require('../filesControllers');
+const path = require('path');
+
 
 exports.uploadFileAd = async (req, res) => {
  
@@ -37,8 +39,13 @@ exports.uploadFileAd = async (req, res) => {
   };
 
   exports.uploadUpdatedFileAd = async (req, res) => {
+    const adId = req.params.adId;
     try {
-    const { img: prevFileurl } = ad;
+    const ads = await ad.findByPk(adId);
+      if (typeof ads === 'undefined' || ads === null)
+        throw new Error('Error: ad not found');
+
+    const { img: prevFileurl } = ads;
     const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/');
     const prevFilepath = prevFileurl.split(img_relative_dir)[1];
     fileController.deleteFile(path.join(imgController.img_dir, prevFilepath), prevFilepath);
