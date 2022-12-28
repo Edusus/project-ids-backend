@@ -4,7 +4,7 @@ const UserModel = require('./../models/users');
 const StickerModel = require('../models/sticker');
 const EventModel = require('./../models/events');
 const adsModel = require('../models/adsModel');
-const gamesModel = require('../models/games');
+const GamesModel = require('../models/games');
 const teamsModel = require('../models/teamsModel');
 const PlayersGamesModel = require('../models/playersGames');
 
@@ -17,7 +17,7 @@ const User = UserModel(sequelize,Sequelize);
 const Sticker = StickerModel(sequelize,Sequelize);
 const Event = EventModel(sequelize,Sequelize);
 const ad = adsModel(sequelize,Sequelize);
-const game = gamesModel(sequelize, Sequelize);
+const Game = GamesModel(sequelize, Sequelize);
 const team = teamsModel(sequelize, Sequelize);
 const PlayersGame = PlayersGamesModel(sequelize, Sequelize);
 
@@ -35,45 +35,60 @@ Event.hasMany(team, {
   }
 });
 
-game.belongsTo(team, {
+Game.belongsTo(team, {
   as: 'teamOne',
   foreignKey: {
     allowNull: false
   }
 });
-game.belongsTo(team, {
+Game.belongsTo(team, {
   as: 'teamTwo',
   foreignKey: {
     allowNull: false
   }
 });
-team.hasMany(game, {
+team.hasMany(Game, {
   foreignKey: {
     name: 'teamOneId',
     allowNull: false
   }
 });
-team.hasMany(game, {
+team.hasMany(Game, {
   foreignKey: {
     name: 'teamTwoId',
     allowNull: false
   }
 });
 
-game.belongsTo(Event, {
+Game.belongsTo(Event, {
   foreignKey: {
     name: 'eventId',
     allowNull: false
   }
 });
-Event.hasMany(game, {
+Event.hasMany(Game, {
   foreignKey: {
     name: 'eventId',
     allowNull: false
   }
 });
 
-Sticker.belongsToMany(game, {
+team.hasMany(Sticker, { 
+  foreignKey: {
+      name: "teamId",
+      allowNull: false
+   } 
+});
+
+Sticker.belongsTo(team,{
+  targetkey: 'id',
+  foreignKey: {
+    name: "teamId",
+    allowNull: false
+  }
+});
+
+Sticker.belongsToMany(Game, {
   through: PlayersGame, 
   foreignKey: { 
     name: 'playerId',
@@ -84,7 +99,7 @@ Sticker.belongsToMany(game, {
     allowNull: false 
   } 
 });
-game.belongsToMany(Sticker, {
+Game.belongsToMany(Sticker, {
   as: 'players', 
   through: PlayersGame,
   foreignKey: {
@@ -103,27 +118,27 @@ Sticker.hasMany(PlayersGame, {
   }
 });
 PlayersGame.belongsTo(Sticker, {
-  as: 'players',
+  as: 'player',
   foreignKey: {
     name: 'playerId',
     allowNull: false
   }
 });
-game.hasMany(PlayersGame, {
+Game.hasMany(PlayersGame, {
   foreignKey: {
     name: 'gameId',
     allowNull: false
   }
 });
-PlayersGame.belongsTo(game, {
-  as: 'games',
+PlayersGame.belongsTo(Game, {
+  as: 'game',
   foreignKey: {
     name: 'gameId',
     allowNull: false
   }
 });
 
-sequelize.sync({ force: false })
+sequelize.sync({ alter: false })
     .then(()=>{
         console.log('Syncronized tables');
     });
@@ -132,5 +147,5 @@ const random = sequelize.random();
 const { Op } = Sequelize;
 
 module.exports ={
-    User, Sticker, Event, ad, game, team, PlayersGame, random, Op
+    User, Sticker, Event, ad, Game, team, PlayersGame, random, Op
 }

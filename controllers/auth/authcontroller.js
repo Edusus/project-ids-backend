@@ -1,7 +1,7 @@
-const { User } = require('../databases/db');
+const { User } = require('../../databases/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const authconfig = require('../config/auth');
+const authconfig = require('../../config/auth');
 const nodemailer = require('nodemailer');
 
 module.exports = {
@@ -9,18 +9,16 @@ module.exports = {
     //Login
     signIn(req, res) {
 
-        let {email, password } = req.body;
+        let { email, password } = req.body;
 
         //Buscar usuario
 
         User.findOne({
-            where: {
-                email: email
-            }
+            where: { email }
         }).then(user => {
 
              if (!user){
-                res.status(404).json({message: "Usuario con este correo no encontrado"});
+                res.status(404).json({ success: false, message: "Usuario con este correo no encontrado" });
              } else {
 
                if (bcrypt.compareSync(password, user.password)) {
@@ -36,7 +34,7 @@ module.exports = {
 
                }else {
                    //Acceso no autorizado 
-                 res.status(401).json({message: "Contraseña incorrecta"});
+                 res.status(401).json({ success: false, message: "Contraseña incorrecta" });
                }
 
              }
@@ -48,32 +46,26 @@ module.exports = {
     },
 
     //Register
-    signUp(req, res) {
-        
+     async signUp(req, res) {
+      try {
+      const { name, email } = req.body;
+      const userOfEmail = await User.findOne({ where: { email: req.body.email } });
+        if (userOfEmail)  {
+        res.status(409).json({success: false, message: "Ya existe un usuario con este correo"});
+        } else {
         const role = "user";
-        let password = bcrypt.hashSync(req.body.password, Number.parseInt(authconfig.rounds));
+        const password = bcrypt.hashSync(req.body.password, Number.parseInt(authconfig.rounds));
+        const user = await User.create({ name, role, email, password });
+          //Creacion de token
+          const token = jwt.sign({id: user}, authconfig.secret, {
+              expiresIn: authconfig.expire
+          });
+          res.json({ user, token })
+        }
+      } catch (err) {
+        res.status(500).json(err);
+      }
 
-         User.create({
-            name: req.body.name,
-            role: role,
-            email: req.body.email,
-            password: password
-         }).then(user => {  
-
-            //Creacion de token
-            let token = jwt.sign({id: user}, authconfig.secret, {
-                expiresIn: authconfig.expire
-            });
-
-            res.json({
-                user: user,
-                token: token
-            })
-
-         }).catch(err => {
-             res.status(500).json(err);
-         });
-         
     },
     
     //Forgot password
@@ -81,7 +73,7 @@ module.exports = {
         let {email} = req.body;
 
            if (!(email)){
-            res.status(404).json({message: "Campo vacio"});
+            res.status(404).json({success: false, message: "Campo vacio"});
            } else {
           User.findOne({
             where: {
@@ -90,7 +82,7 @@ module.exports = {
         }).then(user => {
 
              if (!user){
-                res.status(404).json({message: "Usuario con este correo no encontrado"});
+                res.status(404).json({success: false, message: "Usuario con este correo no encontrado"});
              } else {
 
                 let transporter = nodemailer.createTransport({
@@ -122,10 +114,10 @@ module.exports = {
                   transporter.sendMail(mailOptions, function(error, info){
                     if (error) {
                       console.log(error);
-                      res.status(500).json({ message: 'fallo no se pq' })
+                      res.status(500).json({success: false, message: 'fallo no se pq' })
                     } else {
                       console.log('Email enviado: ' + info.response);
-                      res.status(250).json({ message: 'Correo enviado', user: user,
+                      res.status(250).json({success: true, message: 'Correo enviado', user: user,
                       token: token })
                     }
                   });

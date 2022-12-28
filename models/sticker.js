@@ -10,10 +10,6 @@ module.exports=(sequelize,type)=>{
             type:type.STRING,
             allowNull:false
         },
-        team:{
-            type:type.STRING,
-            allowNull:false
-        },
         country:{
             type:type.STRING,
             allowNull:false

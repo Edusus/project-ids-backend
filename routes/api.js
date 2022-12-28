@@ -12,7 +12,7 @@ const { uploads_dir } = require('../controllers/filesControllers');
 const auth = require('../middlewares/auth');
 const router = Router();
 
-router.use('/users', auth, apiUsersRouter);
+router.use('/users', auth.verifyToken, apiUsersRouter);
 router.use('/stickers',apiStickerRouter);
 router.use('/auth',apiAuthRouter);
 router.use('/events',apiEventsRouter);

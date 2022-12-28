@@ -1,6 +1,7 @@
-const { game, PlayersGame } = require('../../databases/db');
-const { csvController, fileController } = require('../filesControllers');
+const { Game, PlayersGame } = require('../../databases/db');
 const csv = require('csvtojson');
+const { fileController } = require('../filesControllers');
+const responses = require('../../utils/responses/responses');
 
 const post = async (req, res) => {
   try {
@@ -10,28 +11,27 @@ const post = async (req, res) => {
       noheader: false,
       headers: ['playerId', 'points'],
       colParser: {
-        "playerId": "string",
+        "playerId": "number",
         "points": "number"
       }
     });
-    const { teamOneId, teamTwoId, eventId, matchedAt } = req.body;
+    const { teamOneId, teamTwoId, eventId, gameDate } = req.body;
     const playersPoints = await csvParser.fromFile(req.file.path);
-    const Game = await game.create({
-      "teamOneId": teamOneId,
-      "teamTwoId": teamTwoId,
-      "matchedAt": matchedAt,
-      "eventId": eventId
+    const game = await Game.create({
+      teamOneId,
+      teamTwoId,
+      gameDate,
+      eventId
     });
-    console.log(Game.id);
-    playersPoints.map(playersPoint => playersPoint.gameId = Game.id);
+    playersPoints.map(playersPoint => playersPoint.gameId = game.id);
     console.log(playersPoints);
-    const PlayersGames = await PlayersGame.bulkCreate(playersPoints);
+    const playersGames = await PlayersGame.bulkCreate(playersPoints);
     res.status(201).json({
       success: true,
       message: 'Partido creado con exito',
       item: {
-        Game,
-        players: PlayersGames
+        game,
+        players: playersGames
       }
     });
   } catch (error) {
