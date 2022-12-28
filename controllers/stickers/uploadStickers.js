@@ -46,7 +46,7 @@ exports.uploadFileSticker = async (req, res) => {
 exports.uploadUpdatedFileSticker = async (req, res) => {
   const playerId = req.params.playerId;  
     try {
-      const player = await ad.findByPk(playerId);
+      const player = await Sticker.findByPk(playerId);
          if (typeof player === 'undefined' || player === null)
           throw new Error('Error: ad not found');
       const { img: prevFileurl } = player;
