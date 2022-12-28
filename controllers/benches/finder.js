@@ -1,7 +1,5 @@
 const { Op } = require('sequelize');
 const { Warehouse, Sticker, team } = require('../../databases/db');
-const sticker = require('../../models/sticker');
-const warehouses = require('../../models/warehouses');
 const responses = require('../../utils/responses/responses');
 
 

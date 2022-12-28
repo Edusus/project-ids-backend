@@ -1,10 +1,13 @@
 const router = require('express').Router();
-const { Warehouse } = require('../../databases/db');
-/*
-router.get();
+const { find } = require('../../controllers/squad/finder');
+const { poster } = require('../../controllers/squad/poster');
+const { deleter } = require('../../controllers/squad/deleter');
 
-router.post();
+router.get('/players', find);
 
-router.delete();
-*/
+router.post('/player', poster);
+
+router.delete('/player/:playerId', deleter);
+
+
 module.exports = router;
