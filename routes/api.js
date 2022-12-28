@@ -20,7 +20,7 @@ router.use('/events',apiEventsRouter);
 router.use('/ads', adsRouter); //Vieja implementacion de ads
 router.use('/promotions', promotionsRouter); //Nueva implementacion de ads
 router.use('/test-endpoints', testEndpoints);
-router.use('/teams', teamsRouter);
+router.use('/teams',auth.verifyToken, teamsRouter);
 router.use('/uploads', static(uploads_dir));
 router.use('/inventory',auth.verifyToken, inventoryRouter);
 
