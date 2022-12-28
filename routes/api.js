@@ -29,7 +29,7 @@ router.use('/test-endpoints', testEndpoints);
 router.use('/teams', teamsRouter);
 router.use('/uploads', static(uploads_dir));
 router.use('/inventory',auth.verifyToken, inventoryRouter);
-router.use('/public-events/:eventId/bench', auth.verifyToken, passEventId, benchesRouter);
+router.use('/public-events/:eventId/squad', auth.verifyToken, passEventId, benchesRouter);
 router.use('/public-events/:eventId/squad', auth.verifyToken, passEventId, squadsRouter);
 
 module.exports = router;
