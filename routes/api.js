@@ -30,7 +30,7 @@ router.use('/games', gamesEndpoints);
 router.use('/teams',auth.verifyToken, teamsRouter);
 router.use('/inventory',auth.verifyToken, inventoryRouter);
 router.use('/uploads', static(uploads_dir));
-router.use('/public-events/:eventId/bench', auth.verifyToken, passEventId, benchesRouter);
+router.use('/public-events/:eventId/squad', auth.verifyToken, passEventId, benchesRouter);
 router.use('/public-events/:eventId/squad', auth.verifyToken, passEventId, squadsRouter);
 
 module.exports = router;
