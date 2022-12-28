@@ -25,7 +25,7 @@ teamsRouter.get('/', finder.find);
  * Route to get all teams
  */
 
-teamsRouter.get('/all', finder.findAll);
+teamsRouter.get('/all/:eventId', finder.findAll);
 
 
 
