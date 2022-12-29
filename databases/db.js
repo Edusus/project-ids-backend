@@ -8,6 +8,11 @@ const PromotionsModel = require('../models/promotionsModel'); //Nueva implementa
 const gamesModel = require('../models/games');
 const teamsModel = require('../models/teamsModel');
 const inventoryModel = require('../models/inventory');
+const WarehouseModel = require('../models/warehouses');
+const PlayersGamesModel = require('../models/playersGames');
+const moneyModel = require('../models/moneyModel');
+
+
 
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD,{
     host: process.env.DBHOST,
@@ -22,7 +27,10 @@ const Promotion = PromotionsModel(sequelize, Sequelize); //Nueva implementacion 
 const game = gamesModel(sequelize, Sequelize);
 const team = teamsModel(sequelize, Sequelize);
 const inventory = inventoryModel(sequelize, Sequelize);
-const Deposit = 
+const Warehouse = WarehouseModel(sequelize, Sequelize);
+const PlayersGame = PlayersGamesModel(sequelize, Sequelize);
+const money= moneyModel(sequelize,Sequelize);
+
 /* Defining associations */
 team.belongsTo(Event, {
   foreignKey: {
@@ -168,6 +176,19 @@ Warehouse.belongsTo(Sticker);
 Event.hasOne(Warehouse);
 Warehouse.belongsTo(Event);
 
+//Relaciones entre usuarios y eventos para formar un fantasy
+User.belongsToMany(Event,{
+  through: money
+});
+Event.belongsToMany(User,{
+  through: money
+});
+User.hasMany(money);
+money.belongsTo(User);
+Event.hasOne(money);
+money.belongsTo(Event);
+
+
 sequelize.authenticate()
     .then(()=>{
         console.log('Connection has been established successfully.');
@@ -189,5 +210,5 @@ const random = sequelize.random();
 const { Op } = Sequelize;
 
 module.exports ={
-    User, Sticker, Event, Promotion, ad, game, team, random, Op, inventory
+    User, Sticker, Event, Promotion, ad, game, team, random, Op, inventory, Warehouse, PlayersGame, money
 }
