@@ -6,6 +6,9 @@ const { Event, money, Op }= require('../../databases/db');
 router.get('/', async (req,res)=>{
 
     const eventsPublics= await Event.findAll({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt', 'status']
+         },
         raw:true,
         where:{"status":true}
     });
@@ -34,6 +37,7 @@ router.get('/', async (req,res)=>{
 
         const eventUsers = await Promise.all(eventUser);
         console.log(eventUsers);
+        console.log(req.user.id);
     }
 
 });
