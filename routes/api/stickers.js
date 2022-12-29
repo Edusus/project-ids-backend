@@ -98,13 +98,13 @@ router.get('/obtain/:eventId', async (req, res) => {
 });
 
 //endpoint para crear cromos
-router.post('/',isAdmin, imgController.uploadImg, controllerSticker.uploadFileSticker);
+router.post('/',verifyToken, isAdmin, imgController.uploadImg, controllerSticker.uploadFileSticker);
 
 //endpoint para editar cromos
-router.put('/:playerId',isAdmin, imgController.uploadImg, controllerSticker.uploadUpdatedFileSticker);
+router.put('/:playerId',verifyToken, isAdmin, imgController.uploadImg, controllerSticker.uploadUpdatedFileSticker);
 
 //endpoint para borrar cromos
-router.delete('/:playerId',isAdmin, async (req,res)=>{
+router.delete('/:playerId',verifyToken, isAdmin, async (req,res)=>{
     await Sticker.destroy({
         where:{ id: req.params.playerId }
     });
