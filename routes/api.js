@@ -24,6 +24,6 @@ router.use('/test-endpoints', testEndpoints);
 router.use('/teams',auth.verifyToken, teamsRouter);
 router.use('/uploads', static(uploads_dir));
 router.use('/inventory',auth.verifyToken, inventoryRouter);
-router.use('/money',moneyRouter);
+router.use('/public-events',auth.verifyToken, moneyRouter);
 
 module.exports = router;
