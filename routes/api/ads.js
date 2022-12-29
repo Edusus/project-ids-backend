@@ -2,6 +2,7 @@ const router = require('express').Router();
 const { ad, random, Op } = require('../../databases/db');
 const {imgController} = require('../../controllers/filesControllers');
 const controllerAd = require('../../controllers/ads/uploadAd')
+const { verifyToken, isAdmin } = require('../../middlewares/auth');
 
 const allowedFields = ['announcer', 'adType', 'redirecTo', 'img'];
 
@@ -91,13 +92,13 @@ router.get('/:adId', async (req, res) => {
   httpGetResponse(res, reqAd, 'Required ad');
 });
 
-router.post('/', imgController.uploadImg , controllerAd.uploadFileAd);
+router.post('/',isAdmin, imgController.uploadImg , controllerAd.uploadFileAd);
 
-router.put('/:adId', imgController.uploadImg, controllerAd.uploadUpdatedFileAd);
+router.put('/:adId',isAdmin, imgController.uploadImg, controllerAd.uploadUpdatedFileAd);
 
 
 
-router.delete('/:adId', async (req, res) => {
+router.delete('/:adId',isAdmin, async (req, res) => {
   if (await findAdById(req.params.adId)) {
     await ad.destroy({
       where: { id: req.params.adId }
