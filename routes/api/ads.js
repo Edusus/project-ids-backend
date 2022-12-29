@@ -92,13 +92,13 @@ router.get('/:adId', async (req, res) => {
   httpGetResponse(res, reqAd, 'Required ad');
 });
 
-router.post('/',isAdmin, imgController.uploadImg , controllerAd.uploadFileAd);
+router.post('/',verifyToken,isAdmin, imgController.uploadImg , controllerAd.uploadFileAd);
 
-router.put('/:adId',isAdmin, imgController.uploadImg, controllerAd.uploadUpdatedFileAd);
+router.put('/:adId',verifyToken,isAdmin, imgController.uploadImg, controllerAd.uploadUpdatedFileAd);
 
 
 
-router.delete('/:adId',isAdmin, async (req, res) => {
+router.delete('/:adId',verifyToken,isAdmin, async (req, res) => {
   if (await findAdById(req.params.adId)) {
     await ad.destroy({
       where: { id: req.params.adId }
