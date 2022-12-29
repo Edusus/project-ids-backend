@@ -106,12 +106,11 @@ router.put('/:userId', async (req,res) =>{
        
 });
 
-
 router.delete('/:userId', async (req,res)=>{
     await User.destroy({
         where:{ id: req.params.userId}
     });
     res.status(200).json({ success: true, message:'Se ha eliminado'});
 });
-
+//exportacion de usuarios
 module.exports = router;
