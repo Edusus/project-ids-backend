@@ -4,7 +4,6 @@ const {imgController} = require('../../controllers/filesControllers');
 const controllerAd = require('../../controllers/ads/uploadAd')
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
 
-
 const allowedFields = ['announcer', 'adType', 'redirecTo', 'img'];
 
 const httpGetResponse = (res, resource, resourceName) => {
