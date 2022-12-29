@@ -44,7 +44,7 @@ teamsRouter.get('/:teamId', finder.findById);
  * idEvents value must be an already existing event id
  */
 
-teamsRouter.post('/',isAdmin, imgController.uploadImg, poster.post);
+teamsRouter.post('/',verifyToken, isAdmin, imgController.uploadImg, poster.post);
 
 
 
@@ -54,7 +54,7 @@ teamsRouter.post('/',isAdmin, imgController.uploadImg, poster.post);
  * idEvents value must be an already existing event id
  */
 
-teamsRouter.put('/:teamId',isAdmin, imgController.uploadImg, updater.update);
+teamsRouter.put('/:teamId',verifyToken, isAdmin, imgController.uploadImg, updater.update);
 
 
 
@@ -64,7 +64,7 @@ teamsRouter.put('/:teamId',isAdmin, imgController.uploadImg, updater.update);
  * @param teamId: the id of the team to delete
  */
 
-teamsRouter.delete('/:teamId',isAdmin, deleter.destroy);
+teamsRouter.delete('/:teamId',verifyToken, isAdmin, deleter.destroy);
 
 
 

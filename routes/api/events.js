@@ -1,5 +1,5 @@
 const router= require('express').Router();
-
+const { verifyToken, isAdmin } = require('../../middlewares/auth');
 const { Event }= require('../../databases/db');
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
 
@@ -61,7 +61,7 @@ router.get('/inactive',isAdmin, async (req,res)=>{
 });
 
 //endpoint para crear eventos
-router.post('/',isAdmin, async (req,res)=>{
+router.post('/',verifyToken,isAdmin, async (req,res)=>{
     const item = await Event.create(req.body);
     res.json({
         message:'item creado',
@@ -70,7 +70,7 @@ router.post('/',isAdmin, async (req,res)=>{
 });
 
 //endpoint para editar eventos
-router.put('/:eventId',isAdmin, async (req,res)=>{
+router.put('/:eventId',verifyToken,isAdmin, async (req,res)=>{
     await Event.update(req.body,{
         where:{ id: req.params.eventId}
     });
@@ -81,7 +81,7 @@ router.put('/:eventId',isAdmin, async (req,res)=>{
 });
 
 //endpoint para borrar eventos
-router.delete('/:eventId',isAdmin, async (req,res)=>{
+router.delete('/:eventId',verifyToken,isAdmin, async (req,res)=>{
     await Event.destroy({
         where:{ id: req.params.eventId}
     });

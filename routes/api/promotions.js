@@ -44,7 +44,7 @@ promotionsRouter.get('/:promotionId', finder.findById);
  * * "promotionType": ['static' | 'popup'], "redirecTo": 'url', "description": "value" (can be omitted) }
  */
 
-promotionsRouter.post('/',isAdmin, imgController.uploadImg, poster.post);
+promotionsRouter.post('/',verifyToken, isAdmin, imgController.uploadImg, poster.post);
 
 
 
@@ -56,7 +56,7 @@ promotionsRouter.post('/',isAdmin, imgController.uploadImg, poster.post);
  * * "promotionType": ['static' | 'popup'], "redirecTo": 'url', "description": "value" (can be omitted) }
  */
 
-promotionsRouter.put('/:promotionId',isAdmin, imgController.uploadImg, updater.update);
+promotionsRouter.put('/:promotionId',verifyToken, isAdmin, imgController.uploadImg, updater.update);
 
 
 
@@ -66,6 +66,6 @@ promotionsRouter.put('/:promotionId',isAdmin, imgController.uploadImg, updater.u
  * @param promotionId: the id of the promotion to delete
  */
 
-promotionsRouter.delete('/:promotionId',isAdmin, deleter.destroy);
+promotionsRouter.delete('/:promotionId',verifyToken, isAdmin, deleter.destroy);
 
 module.exports = promotionsRouter;
