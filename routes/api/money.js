@@ -36,8 +36,8 @@ router.get('/', async (req,res)=>{
         });
 
         const eventUsers = await Promise.all(eventUser);
-        console.log(eventUsers);
-        console.log(req.user.id);
+        //console.log(eventUsers);
+        res.status(200).json(eventUsers);
     }
 
 });
