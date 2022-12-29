@@ -74,8 +74,8 @@ router.get('/:eventId', async (req,res)=>{
         }else{
             res.status(200).json({
                 success: true,
-                points:user.points,
-                money:user.money
+                points: user.points,
+                money: user.money
             })
         }
     }
@@ -92,7 +92,7 @@ router.post('/:eventId/join-game', async (req,res)=>{
             message: "Evento no encontrado"
         });
     }else{
-        if(event.status==false){
+        if(event.status == false){
             res.status(403).json({
                 success: false,
                 message: "Este evento no esta activo"
@@ -118,14 +118,22 @@ router.post('/:eventId/join-game', async (req,res)=>{
                     message: "Ya estas participando en ese evento"
                 })
             }else{
-                const item = await money.create(req.body);
+                await money.create({
+                    eventId: req.params.eventId,
+                    userId: req.user.id.id,
+                    points: 0,
+                    money: 0
+                });
                 res.status(200).json({
                     success: true,
-                    message:"Felicidades te haz unido al fantasy"
+                    message: "Felicidades te haz unido al fantasy "+event.eventName
                 })
             }
         }
     }
 });
+
+
+
 
 module.exports = router;
