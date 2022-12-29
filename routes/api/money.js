@@ -41,6 +41,7 @@ router.get('/', async (req,res)=>{
 
 });
 
+//Endpoint para regresar el dinero y puntaje del jugador
 router.get('/:eventId', async (req,res)=>{
     const event = await Event.findOne({
         where: {id : req.params.eventId}
@@ -76,6 +77,53 @@ router.get('/:eventId', async (req,res)=>{
                 points:user.points,
                 money:user.money
             })
+        }
+    }
+});
+
+router.post('/:eventId/join-game', async (req,res)=>{
+    const event = await Event.findOne({
+        raw:true,
+        where: {id : req.params.eventId}
+    });
+    if (!event) {
+        res.status(404).json({
+            success: false,
+            message: "Evento no encontrado"
+        });
+    }else{
+        if(event.status==false){
+            res.status(403).json({
+                success: false,
+                message: "Este evento no esta activo"
+            })
+        }else{
+            const user = await money.findOne({
+                raw:true,
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt', 'id','userId','eventId']
+                },
+                where: {
+                    [Op.and]:[{
+                        eventId : req.params.eventId
+                    },
+                    {
+                        userId : req.user.id.id
+                    }]
+                }
+            });
+            if (user) {
+                res.status(409).json({
+                    success: false,
+                    message: "Ya estas participando en ese evento"
+                })
+            }else{
+                const item = await money.create(req.body);
+                res.status(200).json({
+                    success: true,
+                    message:"Felicidades te haz unido al fantasy"
+                })
+            }
         }
     }
 });
