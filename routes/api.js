@@ -9,6 +9,7 @@ const promotionsRouter = require('./api/promotions'); //Nueva implementacion de 
 const teamsRouter = require('./api/teams.js');
 const inventoryRouter = require('./api/inventory')
 const { uploads_dir } = require('../controllers/filesControllers');
+const moneyRouter =require('./api/money');
 
 const auth = require('../middlewares/auth');
 const router = Router();
@@ -23,5 +24,6 @@ router.use('/test-endpoints', testEndpoints);
 router.use('/teams',auth.verifyToken, teamsRouter);
 router.use('/uploads', static(uploads_dir));
 router.use('/inventory',auth.verifyToken, inventoryRouter);
+router.use('/money',moneyRouter);
 
 module.exports = router;
