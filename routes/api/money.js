@@ -2,7 +2,7 @@ const router= require('express').Router();
 
 const { Event, money, Op }= require('../../databases/db');
 
-////endpoint para listar eventos activos
+////endpoint para listar eventos en los que pueda participar el usuario(en los que no esté participando)
 router.get('/', async (req,res)=>{
 
     const eventsPublics= await Event.findAll({
@@ -36,10 +36,48 @@ router.get('/', async (req,res)=>{
         });
 
         const eventUsers = await Promise.all(eventUser);
-        //console.log(eventUsers);
         res.status(200).json(eventUsers);
     }
 
+});
+
+router.get('/:eventId', async (req,res)=>{
+    const event = await Event.findOne({
+        where: {id : req.params.eventId}
+    });
+    if (!event) {
+        res.status(404).json({
+            success: false,
+            message: "Evento no encontrado"
+        })
+    }else{
+        const user = await money.findOne({
+            raw:true,
+            attributes: {
+                exclude: ['createdAt', 'updatedAt', 'id','userId','eventId']
+            },
+            where: {
+                [Op.and]:[{
+                    eventId : req.params.eventId
+                },
+                {
+                    userId : req.user.id.id
+                }]
+            }
+        });
+        if (!user) {
+            res.status(404).json({
+                success: false,
+                message: "El usuario no esta participando en ese evento"
+            })
+        }else{
+            res.status(200).json({
+                success: true,
+                points:user.points,
+                money:user.money
+            })
+        }
+    }
 });
 
 module.exports = router;
