@@ -11,6 +11,7 @@ const { uploads_dir } = require('../controllers/filesControllers');
 const benchesRouter = require('./api/bench');
 const squadsRouter = require('./api/squad');
 const gamesEndpoints = require('./api/games');
+const moneyRouter =require('./api/money');
 
 const auth = require('../middlewares/auth');
 const router = Router();
@@ -32,6 +33,7 @@ router.use('/inventory',auth.verifyToken, inventoryRouter);
 router.use('/uploads', static(uploads_dir));
 router.use('/public-events/:eventId/squad', auth.verifyToken, passEventId, benchesRouter);
 router.use('/public-events/:eventId/squad', auth.verifyToken, passEventId, squadsRouter);
+router.use('/public-events',auth.verifyToken, moneyRouter);
 
 module.exports = router;
 

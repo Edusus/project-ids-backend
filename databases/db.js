@@ -8,9 +8,6 @@ const PromotionsModel = require('../models/promotionsModel'); //Nueva implementa
 const gamesModel = require('../models/games');
 const teamsModel = require('../models/teamsModel');
 const inventoryModel = require('../models/inventory');
-const WarehouseModel = require('../models/warehouses');
-const PlayersGamesModel = require('../models/playersGames');
-
 
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD,{
     host: process.env.DBHOST,
@@ -25,10 +22,7 @@ const Promotion = PromotionsModel(sequelize, Sequelize); //Nueva implementacion 
 const game = gamesModel(sequelize, Sequelize);
 const team = teamsModel(sequelize, Sequelize);
 const inventory = inventoryModel(sequelize, Sequelize);
-const Warehouse = WarehouseModel(sequelize, Sequelize);
-const PlayersGame = PlayersGamesModel(sequelize, Sequelize);
-
-
+const Deposit = 
 /* Defining associations */
 team.belongsTo(Event, {
   foreignKey: {
@@ -93,6 +87,7 @@ Event.hasMany(game, {
     allowNull: false
   }
 });
+
 
 //Relaciones entre usuarios, sticker para formar un inventario
 User.belongsToMany(Sticker, { 
@@ -194,5 +189,5 @@ const random = sequelize.random();
 const { Op } = Sequelize;
 
 module.exports ={
-    User, Sticker, Event, ad, game, team, random, Op, inventory, Warehouse, PlayersGame
+    User, Sticker, Event, Promotion, ad, game, team, random, Op, inventory
 }
