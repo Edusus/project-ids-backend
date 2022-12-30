@@ -16,12 +16,14 @@ const find = async (req, res) => {
     const userId = req.user.id.id;
     const eventId = req.eventId;
     let options = {
+      attributes: { 
+        exclude: ['stickerId', 'userId', 'eventId','createdAt', 'updatedAt']
+      },
       limit: sizeAsNumber,
       offset: pageAsNumber * sizeAsNumber,
       where: {
         userId,
         eventId,
-        isInLineup: false
       },
       include: {
         model: Sticker,
@@ -44,11 +46,10 @@ const find = async (req, res) => {
       }
     }
     const { count, rows } = await Warehouse.findAndCountAll(options);
-
     const warehouses = JSON.parse(JSON.stringify(rows));
     const items = [];
     for (let i = 0; i < warehouses.length; i++) {
-      items.push(warehouses[i].sticker);
+      items.push(warehouses[i]);
     }
 
     responses.paginatedDTOsResponse(res, 200, 'Almacen recuperado con exito', items, count, pageAsNumber, sizeAsNumber);
