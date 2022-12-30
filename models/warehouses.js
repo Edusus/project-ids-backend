@@ -8,6 +8,6 @@ module.exports = (sequelize, type) => {
     isInLineup: {
       type: type.BOOLEAN,
       defaultValue: false,
-    },
+    }
   });
 }
