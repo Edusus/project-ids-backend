@@ -8,6 +8,7 @@ const poster = async (req, res) => {
         const eventId = req.eventId;
         const { playerId } = req.body;
         
+
         const warehouse = await Warehouse.findOne({
             raw: true,
             where: {
@@ -38,24 +39,108 @@ const poster = async (req, res) => {
                         }]
                     }
                 })
+
+                const goalkeeper = await Warehouse.count({
+                    where: {
+                        [Op.and]: [{
+                            userId: userId
+                        }, {
+                            eventId: eventId
+                        }, {
+                            isInLineup: true
+                        }]
+                    },
+                    include : {
+                        model: Sticker,
+                        where: {
+                            position: 'arquero'
+                        }
+                    }
+                });
+
+                const defender = await Warehouse.count({
+                    where: {
+                        [Op.and]: [{
+                            userId: userId
+                        }, {
+                            eventId: eventId
+                        }, {
+                            isInLineup: true
+                        }]
+                    },
+                    include : {
+                        model: Sticker,
+                        where: {
+                            position: 'defensa'
+                        }
+                    }
+                });
+
+                const midfielder = await Warehouse.count({
+                    where: {
+                        [Op.and]: [{
+                            userId: userId
+                        }, {
+                            eventId: eventId
+                        }, {
+                            isInLineup: true
+                        }]
+                    },
+                    include : {
+                        model: Sticker,
+                        where: {
+                            position: 'medio campo'
+                        }
+                    }
+                });
+
+                const forward = await Warehouse.count({
+                    where: {
+                        [Op.and]: [{
+                            userId: userId
+                        }, {
+                            eventId: eventId
+                        }, {
+                            isInLineup: true
+                        }]
+                    },
+                    include : {
+                        model: Sticker,
+                        where: {
+                            position: 'delantero'
+                        }
+                    }
+                });
+
                 if (cont >= 11) {
                     responses.errorDTOResponse(res, 403, 'Ya tienes 11 stickers en la alineacion')
                 } else {
-                    const updatedWarehouse = await Warehouse.update({
-                        isInLineup: true
-                    }, {
-                        where: {
-                            [Op.and]: [{
-                                stickerId: playerId
-                            }, {
-                                eventId: eventId
-                            },{
-                                userId: userId
-                            }]
-                        }
-                    });
-                    responses.successDTOResponse(res, 200, 'Sticker agregado a la alineacion')
-                }  
+                    if (goalkeeper >= 1) {
+                        responses.errorDTOResponse(res, 403, 'Ya tienes un arquero en la alineacion')
+                    } else if (defender >= 4) {
+                        responses.errorDTOResponse(res, 403, 'Ya tienes 4 defensas en la alineacion')
+                    } else if (midfielder >= 3) {
+                        responses.errorDTOResponse(res, 403, 'Ya tienes 3 medio campo en la alineacion')
+                    } else  if (forward >= 3) {
+                        responses.errorDTOResponse(res, 403, 'Ya tienes 3 delantero en la alineacion')
+                    } else {
+                        const updatedWarehouse = await Warehouse.update({
+                            isInLineup: true
+                        }, {
+                            where: {
+                                [Op.and]: [{
+                                    stickerId: playerId
+                                }, {
+                                    eventId: eventId
+                                },{
+                                    userId: userId
+                                }]
+                            }
+                        });
+                        responses.successDTOResponse(res, 200, 'Sticker agregado a la alineacion')  
+                    }
+                    
+                }
             }
         }
     } catch (error) {
