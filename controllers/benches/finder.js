@@ -21,7 +21,6 @@ const find = async (req, res) => {
       where: {
         userId,
         eventId,
-        isInLineup: false
       },
       include: {
         model: Sticker,
