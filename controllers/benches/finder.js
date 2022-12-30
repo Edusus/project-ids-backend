@@ -11,7 +11,7 @@ const responses = require('../../utils/responses/responses');
  */
 const find = async (req, res) => {
   try {
-    let { page = 0, size = 10, playername: playerName = '.*', teamname = '%', position = ['arquero', 'defensa', 'delantero', 'medio campo'] } = req.query;
+    let { page = 0, size = 10, playername: playerName = '.*', teamname = '%', position = ['arquero', 'defensa', 'delantero', 'MedioCampo'] } = req.query;
     const [ pageAsNumber, sizeAsNumber ] = [ Number.parseInt(page), Number.parseInt(size) ];
     const userId = req.user.id.id;
     const eventId = req.eventId;
@@ -23,7 +23,7 @@ const find = async (req, res) => {
       offset: pageAsNumber * sizeAsNumber,
       where: {
         userId,
-        eventId,
+        eventId
       },
       include: {
         model: Sticker,
