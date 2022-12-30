@@ -45,7 +45,7 @@ const find = async (req, res) => {
         paginate:{
           totalTeams: count,
           pageNumber: pageAsNumber,
-          pages:Math.trunc(count/sizeAsNumber),
+          pages:Math.ceil(count/sizeAsNumber),
           pageSize: sizeAsNumber
         },
         teams: rows 
