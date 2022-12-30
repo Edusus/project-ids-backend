@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const { finder, poster, updater, deleter } = require('../../controllers/promotionsControllers');
 const { imgController } = require('../../controllers/filesControllers');
+const { verifyToken, isAdmin } = require('../../middlewares/auth');
 
 const promotionsRouter = Router();
 
@@ -43,7 +44,7 @@ promotionsRouter.get('/:promotionId', finder.findById);
  * * "promotionType": ['static' | 'popup'], "redirecTo": 'url', "description": "value" (can be omitted) }
  */
 
-promotionsRouter.post('/', imgController.uploadImg, poster.post);
+promotionsRouter.post('/',verifyToken, isAdmin, imgController.uploadImg, poster.post);
 
 
 
@@ -55,7 +56,7 @@ promotionsRouter.post('/', imgController.uploadImg, poster.post);
  * * "promotionType": ['static' | 'popup'], "redirecTo": 'url', "description": "value" (can be omitted) }
  */
 
-promotionsRouter.put('/:promotionId', imgController.uploadImg, updater.update);
+promotionsRouter.put('/:promotionId',verifyToken, isAdmin, imgController.uploadImg, updater.update);
 
 
 
@@ -65,6 +66,6 @@ promotionsRouter.put('/:promotionId', imgController.uploadImg, updater.update);
  * @param promotionId: the id of the promotion to delete
  */
 
-promotionsRouter.delete('/:promotionId', deleter.destroy);
+promotionsRouter.delete('/:promotionId',verifyToken, isAdmin, deleter.destroy);
 
 module.exports = promotionsRouter;
