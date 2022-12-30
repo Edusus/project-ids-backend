@@ -1,5 +1,6 @@
 const { imgController, fileController } = require('../filesControllers'); 
 const { Sticker }= require('../../databases/db');
+const path = require('path');
 
 //funcion de subir imagenes de los cromos
 exports.uploadFileSticker = async (req, res) => {
@@ -15,9 +16,9 @@ exports.uploadFileSticker = async (req, res) => {
         const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/') + '/';
         let filepath;
           if (process.env.USINGIMGHOST == 'true') {
-            filepath = `${process.env.IMGURL}${img_relative_dir}${req.file.filename}`;
+            filepath = `${process.env.DOMAIN}${img_relative_dir}${req.file.filename}`;
           } else {
-            filepath = `${process.env.OFFSIDEURL}${img_relative_dir}${req.file.filename}`;
+            filepath = `${process.env.DOMAIN}${img_relative_dir}${req.file.filename}`;
           }
         const newSticker = await Sticker.create({
           playerName,
@@ -43,17 +44,21 @@ exports.uploadFileSticker = async (req, res) => {
 };
 
 exports.uploadUpdatedFileSticker = async (req, res) => {
+  const playerId = req.params.playerId;  
     try {
-      const { badge: prevFileurl } = Team;
+      const player = await Sticker.findByPk(playerId);
+         if (typeof player === 'undefined' || player === null)
+          throw new Error('Error: ad not found');
+      const { img: prevFileurl } = player;
       const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/');
       const prevFilepath = prevFileurl.split(img_relative_dir)[1];
       fileController.deleteFile(path.join(imgController.img_dir, prevFilepath), prevFilepath);
       const {playerName, country, position, height, weight, appearanceRate, teamId } = req.body;
       let filepath;
       if (process.env.USINGIMGHOST == 'true') {
-        filepath = `${process.env.IMGURL}${img_relative_dir}/${req.file.filename}`;
+        filepath = `${process.env.DOMAIN}${img_relative_dir}/${req.file.filename}`;
       } else {
-        filepath = `${process.env.OFFSIDEURL}${img_relative_dir}/${req.file.filename}`;
+        filepath = `${process.env.DOMAIN}${img_relative_dir}/${req.file.filename}`;
       }
       await Sticker.update({
             playerName,

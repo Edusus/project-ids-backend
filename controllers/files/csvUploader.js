@@ -2,12 +2,12 @@ const multer = require('multer');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
-const { img_dir } = require('./fileManager')
-const mimetypes = ['image/jpeg', 'image/png'];
+const { csv_dir } = require('./fileManager');
+const mimetypes = ['text/csv'];
 
-const imgStorage = multer.diskStorage({
+const csvStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, img_dir);
+    cb(null, csv_dir);
   },
   filename: (req, file, cb) => {
     let { name, ext } = path.parse(file.originalname);
@@ -17,23 +17,19 @@ const imgStorage = multer.diskStorage({
   }
 });
 
-const imgUploader = multer({
-  storage: imgStorage,
+const csvUploader = multer({
+  storage: csvStorage,
   fileFilter: (req, file, cb) => {
     if (mimetypes.includes(file.mimetype)) {
       cb(null, true);
       return;
     }
-    cb(null, false);
-  },
-  limits: {
-    fieldSize: 15000000,
-    fileSize: 10000000
+    cb(new Error('Solo se aceptan archivos de tipo ' + mimetypes.join(', ')));
   }
 });
 
-const uploadImg = imgUploader.single('myFile');
+const uploadCsv = csvUploader.single('myFile');
 
 module.exports = {
-  uploadImg
-};
+  uploadCsv
+}
