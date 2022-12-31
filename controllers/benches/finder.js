@@ -17,7 +17,7 @@ const find = async (req, res) => {
     const eventId = req.eventId;
     let options = {
       attributes: { 
-        exclude: ['stickerId', 'userId', 'eventId','createdAt', 'updatedAt']
+        exclude: ['id', 'stickerId', 'userId', 'eventId','createdAt', 'updatedAt']
       },
       limit: sizeAsNumber,
       offset: pageAsNumber * sizeAsNumber,
@@ -49,7 +49,9 @@ const find = async (req, res) => {
     const warehouses = JSON.parse(JSON.stringify(rows));
     const items = [];
     for (let i = 0; i < warehouses.length; i++) {
-      items.push(warehouses[i]);
+      let warehouse = warehouses[i].sticker;
+      warehouse.isInLineup = warehouses[i].isInLineup;
+      items.push(warehouse);
     }
 
     responses.paginatedDTOsResponse(res, 200, 'Almacen recuperado con exito', items, count, pageAsNumber, sizeAsNumber);

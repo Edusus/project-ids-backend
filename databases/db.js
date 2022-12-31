@@ -3,11 +3,11 @@ const Sequelize = require('sequelize');
 const UserModel = require('./../models/users');
 const StickerModel = require('../models/sticker');
 const EventModel = require('./../models/events');
-const adsModel = require('../models/adsModel'); //Vieja implementacion de ads
+const AdsModel = require('../models/adsModel'); //Vieja implementacion de ads
 const PromotionsModel = require('../models/promotionsModel'); //Nueva implementacion de ads
-const gamesModel = require('../models/games');
-const teamsModel = require('../models/teamsModel');
-const inventoryModel = require('../models/inventory');
+const GamesModel = require('../models/games');
+const TeamsModel = require('../models/teamsModel');
+const InventoryModel = require('../models/inventory');
 const WarehouseModel = require('../models/warehouses');
 
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD,{
@@ -18,47 +18,47 @@ const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.
 const User = UserModel(sequelize,Sequelize);
 const Sticker = StickerModel(sequelize,Sequelize);
 const Event = EventModel(sequelize,Sequelize);
-const ad = adsModel(sequelize,Sequelize); //Vieja implementacion de ads
+const Ad = AdsModel(sequelize,Sequelize); //Vieja implementacion de ads
 const Promotion = PromotionsModel(sequelize, Sequelize); //Nueva implementacion de ads
-const game = gamesModel(sequelize, Sequelize);
-const team = teamsModel(sequelize, Sequelize);
-const inventory = inventoryModel(sequelize, Sequelize);
+const Game = GamesModel(sequelize, Sequelize);
+const Team = TeamsModel(sequelize, Sequelize);
+const Inventory = InventoryModel(sequelize, Sequelize);
 const Warehouse = WarehouseModel(sequelize, Sequelize);
 
 /* Defining associations */
-team.belongsTo(Event, {
+Team.belongsTo(Event, {
   foreignKey: {
     name: "idEvents"
   }
 });
-Event.hasMany(team, {
+Event.hasMany(Team, {
   foreignKey: {
     name: "idEvents",
     allowNull: false
   }
 });
 
-team.hasOne(game, {
+Team.hasOne(Game, {
   as: 'teamOne'
 });
-team.hasOne(game, {
+Team.hasOne(Game, {
   as: 'teamTwo'
 })
-game.belongsTo(team, {
+Game.belongsTo(Team, {
   as: 'teamOne'
 });
-game.belongsTo(team, {
+Game.belongsTo(Team, {
   as: 'teamTwo'
 })
 
-team.hasMany(Sticker, { 
+Team.hasMany(Sticker, { 
   foreignKey: {
-      name: "teamId",
-      allowNull: false
+    name: "teamId",
+    allowNull: false
    } 
 });
 
-Sticker.belongsTo(team,{
+Sticker.belongsTo(Team,{
   targetkey: 'id',
   foreignKey: {
     name: "teamId",
@@ -69,17 +69,17 @@ Sticker.belongsTo(team,{
 
 //Relaciones entre usuarios, sticker para formar un inventario
 User.belongsToMany(Sticker, { 
-  through: inventory,
+  through: Inventory,
 });
 Sticker.belongsToMany(User, { 
-  through: inventory
+  through: Inventory
 });
-User.hasMany(inventory);
-inventory.belongsTo(User);
-Sticker.hasMany(inventory);
-inventory.belongsTo(Sticker);
-Event.hasOne(inventory);
-inventory.belongsTo(Event);
+User.hasMany(Inventory);
+Inventory.belongsTo(User);
+Sticker.hasMany(Inventory);
+Inventory.belongsTo(Sticker);
+Event.hasOne(Inventory);
+Inventory.belongsTo(Event);
 
 //Relaciones entre usuarios y stickers para el almacen
 User.belongsToMany(Sticker, { 
@@ -93,7 +93,7 @@ Warehouse.belongsTo(User);
 Sticker.hasMany(Warehouse);
 Warehouse.belongsTo(Sticker);
 
-Event.hasOne(Warehouse);
+Event.hasMany(Warehouse);
 Warehouse.belongsTo(Event);
 
 sequelize.authenticate()
@@ -105,7 +105,7 @@ sequelize.authenticate()
         console.error('Unable to connect to the database:', err);
     }
     );
-sequelize.sync({ force: false })
+sequelize.sync({ alter: false })
     .then(()=>{
         console.log('Syncronized tables');
     })
@@ -117,5 +117,5 @@ const random = sequelize.random();
 const { Op } = Sequelize;
 
 module.exports ={
-    User, Sticker, Event, ad, game, team, random, Op, inventory, Warehouse, Promotion
+    User, Sticker, Event, Ad, Game, Team, random, Op, Inventory, Warehouse, Promotion
 }
