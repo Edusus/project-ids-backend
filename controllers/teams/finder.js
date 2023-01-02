@@ -48,7 +48,7 @@ const find = async (req, res) => {
           pages:Math.ceil(count/sizeAsNumber),
           pageSize: sizeAsNumber
         },
-        teams: rows 
+        items: rows 
       }, 'teams');
   } catch (err) {
     console.error(err);
