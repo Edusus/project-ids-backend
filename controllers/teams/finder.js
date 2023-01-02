@@ -43,10 +43,10 @@ const find = async (req, res) => {
       res, {
         success: true,
         paginate:{
-          totalTeams: count,
-          pageNumber: pageAsNumber,
+          total: count,
+          page: pageAsNumber,
           pages:Math.ceil(count/sizeAsNumber),
-          pageSize: sizeAsNumber
+          perPage: sizeAsNumber
         },
         items: rows 
       }, 'teams');
