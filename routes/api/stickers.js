@@ -4,7 +4,6 @@ const { Sticker, random, Op, team, inventory } = require('../../databases/db');
 const {imgController} = require('../../controllers/filesControllers');
 const controllerSticker = require('../../controllers/stickers/uploadStickers')
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
-const { NUMBER } = require('sequelize');
 
 //endpoint para listar cromos
 router.get('/', async (req,res)=>{  
