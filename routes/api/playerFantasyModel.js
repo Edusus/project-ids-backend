@@ -133,7 +133,7 @@ router.post('/:eventId/join-game', async (req,res)=>{
 
     return res.status(200).json({
         success: true,
-        message: "Felicidades te haz unido al fantasy "+event.eventName
+        message: "Felicidades te has unido al fantasy "+event.eventName
     });
 });
 
