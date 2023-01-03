@@ -11,19 +11,19 @@ const responses = require('../../utils/responses/responses');
  */
 const find = async (req, res) => {
   try {
-    let { page = 0, size = 10, playername: playerName = '.*', teamname = '%', position = ['arquero', 'defensa', 'delantero', 'medio campo'] } = req.query;
+    let { page = 0, size = 10, playername: playerName = '.*', teamname = '%', position = ['goalkeeper', 'defender', 'forward', 'midfielder'] } = req.query;
     const [ pageAsNumber, sizeAsNumber ] = [ Number.parseInt(page), Number.parseInt(size) ];
     const userId = req.user.id.id;
     const eventId = req.eventId;
     let options = {
       attributes: { 
-        exclude: ['stickerId', 'userId', 'eventId','createdAt', 'updatedAt']
+        exclude: ['id', 'stickerId', 'userId', 'eventId','createdAt', 'updatedAt']
       },
       limit: sizeAsNumber,
       offset: pageAsNumber * sizeAsNumber,
       where: {
         userId,
-        eventId,
+        eventId
       },
       include: {
         model: Sticker,
@@ -49,7 +49,9 @@ const find = async (req, res) => {
     const warehouses = JSON.parse(JSON.stringify(rows));
     const items = [];
     for (let i = 0; i < warehouses.length; i++) {
-      items.push(warehouses[i]);
+      let warehouse = warehouses[i].sticker;
+      warehouse.isInLineup = warehouses[i].isInLineup;
+      items.push(warehouse);
     }
 
     responses.paginatedDTOsResponse(res, 200, 'Almacen recuperado con exito', items, count, pageAsNumber, sizeAsNumber);

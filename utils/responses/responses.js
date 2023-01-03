@@ -1,3 +1,5 @@
+const numberOfPages = require('../helpers/get-number-of-pages');
+
 /**
  * This function returns a JSON response with a success message and a single item.
  * @param res - the response object
@@ -6,11 +8,11 @@
  * @param item - the item you want to return
  * @returns A function that takes in a response, status, message, and item.
  */
-const singleDTOResponse = (res, status, msg, item) => {
+const singleDTOResponse = (res, status, message, item) => {
   return res.status(status).json({
     success: true,
-    message: msg,
-    item: item
+    message,
+    item
   });
 }
 
@@ -26,17 +28,18 @@ const singleDTOResponse = (res, status, msg, item) => {
  * @returns A function that takes in a response object, a status code, a message, an array of items, a
  * total count, a page number, and a perPage count.
  */
-const paginatedDTOsResponse = (res, status, msg, items, total, page, perPage) => {
+const paginatedDTOsResponse = (res, status, message, items, total, page, perPage) => {
+  const pages = numberOfPages(total, perPage);
   return res.status(status).json({
     success: true,
-    message: msg,
+    message,
     paginate: {
-      total: total,
-      page: page,
-      pages: Math.ceil(total/perPage),
-      perPage: perPage
+      total,
+      page,
+      pages,
+      perPage
     },
-    items: items
+    items
   });
 }
 
@@ -49,11 +52,11 @@ const paginatedDTOsResponse = (res, status, msg, items, total, page, perPage) =>
  * @returns A function that takes in a response object, a status code, a message, and an array of
  * items.
  */
-const multipleDTOsResponse = (res, status, msg, items) => {
+const multipleDTOsResponse = (res, status, message, items) => {
   return res.status(status).json({
     success: true,
-    message: msg,
-    items: items
+    message,
+    items
   });
 }
 
@@ -64,10 +67,10 @@ const multipleDTOsResponse = (res, status, msg, items) => {
  * @param msg - The message you want to send back to the user
  * @returns A function that takes in a response object, a status code, and a message.
  */
-const successDTOResponse = (res, status, msg) => {
+const successDTOResponse = (res, status, message) => {
   return res.status(status).json({
     success: true,
-    message: msg
+    message
   });
 }
 
@@ -79,10 +82,10 @@ const successDTOResponse = (res, status, msg) => {
  * @param msg - The message you want to send to the user
  * @returns A function that takes in a response object, a status code, and a message.
  */
-const errorDTOResponse = (res, status, msg) => {
+const errorDTOResponse = (res, status, message) => {
   return res.status(status).json({
     success: false,
-    message: msg
+    message
   });
 }
 

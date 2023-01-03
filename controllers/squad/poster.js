@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { Warehouse, Sticker, team } = require('../../databases/db');
+const { Warehouse, Sticker, Team } = require('../../databases/db');
 const responses = require('../../utils/responses/responses');
 
 const poster = async (req, res) => {
@@ -8,6 +8,15 @@ const poster = async (req, res) => {
         const eventId = req.eventId;
         const { playerId } = req.body;
         
+        let existe = await Warehouse.findOne({
+            where: {
+                eventId: eventId
+            }
+        });
+
+        if (!existe) {
+           return responses.errorDTOResponse(res, 403, 'Evento no encontrado');
+        }
 
         const warehouse = await Warehouse.findOne({
             raw: true,
@@ -22,12 +31,13 @@ const poster = async (req, res) => {
             }
         });
         if (!warehouse) {
-            responses.errorDTOResponse(res, 404, 'No posees este Sticker')
-        } else {
+            return responses.errorDTOResponse(res, 404, 'No posees este Sticker')
+        }
             const isInLineup = warehouse.isInLineup;
             if (isInLineup) {
-                responses.errorDTOResponse(res, 403, 'Este sticker ya esta en la alineacion')
-            } else {
+                return responses.errorDTOResponse(res, 403, 'Este sticker ya esta en la alineacion')
+            }
+            
                 const cont = await Warehouse.count({
                     where: {
                         [Op.and]: [{
@@ -40,12 +50,11 @@ const poster = async (req, res) => {
                     }
                 })
 
-                
-
                 if (cont >= 11) {
-                    responses.errorDTOResponse(res, 403, 'Ya tienes 11 stickers en la alineacion')
-                } else {
-                        const updatedWarehouse = await Warehouse.update({
+                    return responses.errorDTOResponse(res, 403, 'Ya tienes 11 stickers en la alineacion')
+                } 
+
+                    const updatedWarehouse = await Warehouse.update({
                             isInLineup: true
                         }, {
                             where: {
@@ -72,7 +81,7 @@ const poster = async (req, res) => {
                             include : {
                                 model: Sticker,
                                 where: {
-                                    position: 'arquero'
+                                    position: 'goalkeeper'
                                 }
                             }
                         });
@@ -90,7 +99,7 @@ const poster = async (req, res) => {
                             include : {
                                 model: Sticker,
                                 where: {
-                                    position: 'arquero'
+                                    position: 'defender'
                                 }
                             }
                         });
@@ -108,7 +117,7 @@ const poster = async (req, res) => {
                             include : {
                                 model: Sticker,
                                 where: {
-                                    position: 'medio campo'
+                                    position: 'midfielder'
                                 }
                             }
                         });
@@ -126,7 +135,7 @@ const poster = async (req, res) => {
                             include : {
                                 model: Sticker,
                                 where: {
-                                    position: 'delantero'
+                                    position: 'forward'
                                 }
                             }
                         });
@@ -196,9 +205,6 @@ const poster = async (req, res) => {
                             responses.successDTOResponse(res, 200, 'Sticker agregado a la alineacion')  
                          }
 
-                    }   
-            }
-        }
     } catch (error) {
         console.error(error);
         responses.errorDTOResponse(res, 403, error.message);
