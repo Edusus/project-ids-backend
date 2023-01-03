@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { ad, random, Op } = require('../../databases/db');
+const { Ad, random, Op } = require('../../databases/db');
 const {imgController} = require('../../controllers/filesControllers');
 const controllerAd = require('../../controllers/ads/uploadAd')
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
@@ -15,11 +15,11 @@ const httpGetResponse = (res, resource, resourceName) => {
 }
 
 const findAdById = (id) => {
-  return ad.findByPk(id);
+  return Ad.findByPk(id);
 }
 
 router.get('/', async (req, res) => {
-  const ads = await ad.findAll();
+  const ads = await Ad.findAll();
   httpGetResponse(res, ads, 'ads');
 });
 
@@ -37,7 +37,7 @@ router.get('/search', async (req, res) => {
         adtype: type
       },
     };
-    const { count, rows } = await ad.findAndCountAll(options);
+    const { count, rows } = await Ad.findAndCountAll(options);
     httpGetResponse(res, {
       totalAds: count,
       pageNumber: pageAsNumber,
@@ -54,7 +54,7 @@ router.get('/watch', async (req, res) => {
   //return res.status(500).json({ success: false, message: "Error random del servidor :3" });
   if (await ad.findOne()) {
     const cont = 1;
-    const singleAd = await ad.findOne({ order: random});
+    const singleAd = await Ad.findOne({ order: random});
     let valorActual = singleAd.dataValues.requestedQuantities;
     let valorNuevo = valorActual + cont;
     singleAd.update({ requestedQuantities: valorNuevo });
@@ -100,7 +100,7 @@ router.put('/:adId',verifyToken,isAdmin, imgController.uploadImg, controllerAd.u
 
 router.delete('/:adId',verifyToken,isAdmin, async (req, res) => {
   if (await findAdById(req.params.adId)) {
-    await ad.destroy({
+    await Ad.destroy({
       where: { id: req.params.adId }
     });
     res.status(200).send('Deleted ad ' + req.params.adId);
