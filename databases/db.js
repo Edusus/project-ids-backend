@@ -105,7 +105,7 @@ sequelize.authenticate()
         console.error('Unable to connect to the database:', err);
     }
     );
-sequelize.sync({ alter: false })
+sequelize.sync({ force: false })
     .then(()=>{
         console.log('Syncronized tables');
     })
