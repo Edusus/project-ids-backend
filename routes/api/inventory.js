@@ -11,7 +11,7 @@ const {
 
 router.get('/public-events/:eventId', async (req, res) => {
     try {
-        let existe = await Inventory.findOne({
+        let existe = await Event.findOne({
             where: {
                 eventId: req.params.eventId
             }
@@ -19,8 +19,9 @@ router.get('/public-events/:eventId', async (req, res) => {
         if (!existe) {
             res.status(404).json({
                 success: false,
-                message: 'evento no encontrado'
+                message: 'Evento no encontrado'
             });
+
         } else {
             const {eventId} = req.params;
             let {page = 0, size = 10, teamName = '.*', playerName = '.*' } = req.query;
@@ -298,51 +299,6 @@ router.get('/public-events/:eventId/carousel', async (req,res) => {
     }
 });
 
-router.get('/public-events/:eventId/carousel', async (req,res) => {
-    try {
-        const eventId = req.params.eventId;
-        let {isAlbum = false} = req.query;
-        const event = await Event.findOne({
-            where: {
-                id: eventId
-            }
-        });
-        if (!event) {
-            res.status(404).json({
-                success: false,
-                message: 'Evento no encontrado'
-            });
-        } else {
-            let options = {
-                include: {
-                    model: Sticker,
-                    include: {
-                        model: Team
-                    },
-                },
-                where: {
-                    [Op.and]: [{
-                        eventId: eventId
-                    }, {
-                        userId: req.user.id.id
-                    }, {
-                        isInAlbum : isAlbum
-                    }]
-                }
-            };
-            const {count} = await Inventory.findAndCountAll({where:{userId: req.user.id.id}});
-            const {rows} = await Inventory.findAndCountAll(options);
-            res.status(200).json({
-                success: true,
-                total : count,
-                items: rows
-            });
-        }
-    } catch (err) {
-        console.error(err);
-        res.status(400).send(err.message);
-    }
-});
 
 
 router.post('/public-events/:eventId/claim-sticker', async (req, res) => {
@@ -372,7 +328,7 @@ router.post('/public-events/:eventId/claim-sticker', async (req, res) => {
             const notSticker = inventorys.dataValues.isInAlbum
             if (contAct > 0 && notSticker == false) {
                 const cont = contAct - 1;
-                await inventory.update({
+                await Inventory.update({
                     isInAlbum: true,
                     Quantity: cont
                 }, {
