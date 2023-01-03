@@ -19,7 +19,7 @@ router.get('/', async (req,res)=>{
         attributes: ['id', 'name', 'badge']
       }
     }
-    const {count,rows} = await Sticker.findAndCountAll({options});
+    const {count,rows} = await Sticker.findAndCountAll(options);
     res.status(200).json({
       success: true,
       paginate:{
