@@ -100,7 +100,7 @@ router.post('/:eventId/join-game', async (req,res)=>{
         return res.status(403).json({
             success: false,
             message: "Este evento no esta activo"
-        })
+        });
     }
 
     const user = await PlayerFantasy.findOne({
@@ -122,7 +122,7 @@ router.post('/:eventId/join-game', async (req,res)=>{
         return res.status(409).json({
             success: false,
             message: "Ya estas participando en ese evento"
-        })
+        });
     }
     await PlayerFantasy.create({
         eventId: req.params.eventId,
@@ -134,7 +134,7 @@ router.post('/:eventId/join-game', async (req,res)=>{
     return res.status(200).json({
         success: true,
         message: "Felicidades te haz unido al fantasy "+event.eventName
-    })
-})
+    });
+});
 
 module.exports = router;
