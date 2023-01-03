@@ -4,31 +4,31 @@ const { Sticker, random, Op, team, inventory } = require('../../databases/db');
 const {imgController} = require('../../controllers/filesControllers');
 const controllerSticker = require('../../controllers/stickers/uploadStickers')
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
+const { NUMBER } = require('sequelize');
 
 //endpoint para listar cromos
 router.get('/', async (req,res)=>{  
     //paginacion
     const {page = 0, size = 10} = req.query;
+    const [pageAsNumber, sizeAsNumber] = [Number.parseInt(page), Number.parseInt(size)];
 
     let options = {
-        limit: +size,
-        offset: (+page) * (+size)
+        limit: sizeAsNumber,
+        offset: (pageAsNumber) * (sizeAsNumber),
+        attributes: ['id','playerName', 'country', 'position', 'img', 'height', 'weight', 'appearanceRate', 'createdAt', 'updatedAt'],
+        include: {
+          model: team,
+          attributes: ['id', 'name', 'badge']
+        }
     };
-    const {count,rows} = await Sticker.findAndCountAll({
-      options,
-      attributes: ['id','playerName', 'country', 'position', 'img', 'height', 'weight', 'appearanceRate', 'createdAt', 'updatedAt'],
-      include: {
-        model: team,
-        attributes: ['id', 'name', 'badge']
-      }
-    });
+    const {count,rows} = await Sticker.findAndCountAll(options);
     res.status(200).json({
       success: true,
       paginate:{
           total:count,
-          page:page,
-          pages:Math.ceil(count/size),
-          perPage:size
+          page:pageAsNumber,
+          pages:Math.ceil(count/sizeAsNumber),
+          perPage:sizeAsNumber
       },
       items: rows
   });
