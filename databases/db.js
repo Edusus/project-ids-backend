@@ -10,7 +10,7 @@ const TeamsModel = require('../models/teamsModel');
 const InventoryModel = require('../models/inventory');
 const WarehouseModel = require('../models/warehouses');
 const PlayersGamesModel = require('../models/playersGames');
-const moneyModel = require('../models/moneyModel');
+const MoneyModel = require('../models/moneyModel');
 
 
 
@@ -29,7 +29,7 @@ const Team = TeamsModel(sequelize, Sequelize);
 const Inventory = InventoryModel(sequelize, Sequelize);
 const Warehouse = WarehouseModel(sequelize, Sequelize);
 const PlayersGame = PlayersGamesModel(sequelize, Sequelize);
-const money= moneyModel(sequelize,Sequelize);
+const Money = MoneyModel(sequelize,Sequelize);
 
 /* Defining associations */
 Team.belongsTo(Event, {
@@ -44,25 +44,25 @@ Event.hasMany(Team, {
   }
 });
 
-game.belongsTo(team, {
+Game.belongsTo(Team, {
   as: 'teamOne',
   foreignKey: {
     allowNull: false
   }
 });
-game.belongsTo(team, {
+Game.belongsTo(Team, {
   as: 'teamTwo',
   foreignKey: {
     allowNull: false
   }
 });
-team.hasMany(game, {
+Team.hasMany(Game, {
   foreignKey: {
     name: 'teamOneId',
     allowNull: false
   }
 });
-team.hasMany(game, {
+Team.hasMany(Game, {
   foreignKey: {
     name: 'teamTwoId',
     allowNull: false
@@ -83,13 +83,13 @@ Sticker.belongsTo(Team,{
   }
 });
 
-game.belongsTo(Event, {
+Game.belongsTo(Event, {
   foreignKey: {
     name: 'eventId',
     allowNull: false
   }
 });
-Event.hasMany(game, {
+Event.hasMany(Game, {
   foreignKey: {
     name: 'eventId',
     allowNull: false
@@ -111,7 +111,7 @@ Inventory.belongsTo(Sticker);
 Event.hasOne(Inventory);
 Inventory.belongsTo(Event);
 
-Sticker.belongsToMany(game, {
+Sticker.belongsToMany(Game, {
   through: PlayersGame, 
   foreignKey: { 
     name: 'playerId',
@@ -122,7 +122,7 @@ Sticker.belongsToMany(game, {
     allowNull: false 
   } 
 });
-game.belongsToMany(Sticker, {
+Game.belongsToMany(Sticker, {
   as: 'players', 
   through: PlayersGame,
   foreignKey: {
@@ -147,13 +147,13 @@ PlayersGame.belongsTo(Sticker, {
     allowNull: false
   }
 });
-game.hasMany(PlayersGame, {
+Game.hasMany(PlayersGame, {
   foreignKey: {
     name: 'gameId',
     allowNull: false
   }
 });
-PlayersGame.belongsTo(game, {
+PlayersGame.belongsTo(Game, {
   as: 'games',
   foreignKey: {
     name: 'gameId',
@@ -178,15 +178,15 @@ Warehouse.belongsTo(Event);
 
 //Relaciones entre usuarios y eventos para formar un fantasy
 User.belongsToMany(Event,{
-  through: money
+  through: Money
 });
 Event.belongsToMany(User,{
-  through: money
+  through: Money
 });
-User.hasMany(money);
-money.belongsTo(User);
-Event.hasOne(money);
-money.belongsTo(Event);
+User.hasMany(Money);
+Money.belongsTo(User);
+Event.hasOne(Money);
+Money.belongsTo(Event);
 
 
 sequelize.authenticate()
@@ -210,5 +210,5 @@ const random = sequelize.random();
 const { Op } = Sequelize;
 
 module.exports ={
-    User, Sticker, Event, Promotion, Ad, game, Team, random, Op, Inventory, Warehouse, PlayersGame, money, Promotion
+    User, Sticker, Event, Promotion, Ad, Game, Team, random, Op, Inventory, Warehouse, PlayersGame, Money, Promotion
 }

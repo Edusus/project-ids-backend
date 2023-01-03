@@ -1,6 +1,6 @@
 const router= require('express').Router();
 
-const { Event, money, Op }= require('../../databases/db');
+const { Event, Money, Op }= require('../../databases/db');
 
 ////endpoint para listar eventos en los que pueda participar el usuario(en los que no esté participando)
 router.get('/', async (req,res)=>{
@@ -16,7 +16,7 @@ router.get('/', async (req,res)=>{
         res.json({error:'No existen eventos activos'});
     }else{
         const eventUser = eventsPublics.map(async function(element) {
-            const moneyEvent = await money.findOne({
+            const moneyEvent = await Money.findOne({
                 raw: true,
                 where: {
                     [Op.and]: [{
@@ -52,7 +52,7 @@ router.get('/:eventId', async (req,res)=>{
             message: "Evento no encontrado"
         })
     }else{
-        const user = await money.findOne({
+        const user = await Money.findOne({
             raw:true,
             attributes: {
                 exclude: ['createdAt', 'updatedAt', 'id','userId','eventId']
@@ -98,7 +98,7 @@ router.post('/:eventId/join-game', async (req,res)=>{
                 message: "Este evento no esta activo"
             })
         }else{
-            const user = await money.findOne({
+            const user = await Money.findOne({
                 raw:true,
                 attributes: {
                     exclude: ['createdAt', 'updatedAt', 'id','userId','eventId']
@@ -118,7 +118,7 @@ router.post('/:eventId/join-game', async (req,res)=>{
                     message: "Ya estas participando en ese evento"
                 })
             }else{
-                await money.create({
+                await Money.create({
                     eventId: req.params.eventId,
                     userId: req.user.id.id,
                     points: 0,
