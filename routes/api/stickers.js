@@ -7,31 +7,29 @@ const { verifyToken, isAdmin } = require('../../middlewares/auth');
 
 //endpoint para listar cromos
 router.get('/', async (req,res)=>{  
-    //paginacion
-    const {page = 0, size = 10} = req.query;
-
-    let options = {
-        limit: +size,
-        offset: (+page) * (+size)
-    };
-    const {count,rows} = await Sticker.findAndCountAll({
-      options,
-      attributes: ['id','playerName', 'country', 'position', 'img', 'height', 'weight', 'appearanceRate', 'createdAt', 'updatedAt'],
-      include: {
-        model: team,
-        attributes: ['id', 'name', 'badge']
-      }
-    });
-    res.status(200).json({
-      success: true,
-      paginate:{
-          total:count,
-          page:page,
-          pages:Math.ceil(count/size),
-          perPage:size
-      },
-      items: rows
-  });
+  //paginacion
+  let {page = 0, size = 10 } = req.query;
+  const [pageAsNumber, sizeAsNumber] = [Number.parseInt(page), Number.parseInt(size)];
+  let options = {
+    limit: sizeAsNumber,
+    offset: pageAsNumber * sizeAsNumber,
+    attributes: ['id','playerName', 'country', 'position', 'img', 'height', 'weight', 'appearanceRate', 'createdAt', 'updatedAt'],
+    include: {
+      model: team,
+      attributes: ['id', 'name', 'badge']
+    }
+  }
+  const {count,rows} = await Sticker.findAndCountAll(options);
+  res.status(200).json({
+    success: true,
+    paginate:{
+      total: count,
+      page: pageAsNumber,
+      pages: Math.ceil(count/sizeAsNumber),
+      perPage: sizeAsNumber
+    },
+    items: rows
+});
 });
 
 //endpoint para obtener 5 cromos al azar
