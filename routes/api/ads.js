@@ -52,7 +52,7 @@ router.get('/search', async (req, res) => {
 
 router.get('/watch', async (req, res) => {
   //return res.status(500).json({ success: false, message: "Error random del servidor :3" });
-  if (await ad.findOne()) {
+  if (await Ad.findOne()) {
     const cont = 1;
     const singleAd = await Ad.findOne({ order: random});
     let valorActual = singleAd.dataValues.requestedQuantities;
