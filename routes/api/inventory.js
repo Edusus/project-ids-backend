@@ -214,7 +214,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                         include: {
                             model: Sticker,
                             include: {
-                                model: team
+                                model: Team
                             }
                         },
                         where: {
