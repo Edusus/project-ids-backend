@@ -13,15 +13,13 @@ router.get('/', async (req,res)=>{
     let options = {
       limit: sizeAsNumber,
       offset: pageAsNumber * sizeAsNumber,
-    }
-    const {count,rows} = await Sticker.findAndCountAll({
-      options,
       attributes: ['id','playerName', 'country', 'position', 'img', 'height', 'weight', 'appearanceRate', 'createdAt', 'updatedAt'],
       include: {
         model: team,
         attributes: ['id', 'name', 'badge']
       }
-    });
+    }
+    const {count,rows} = await Sticker.findAndCountAll({options});
     res.status(200).json({
       success: true,
       paginate:{
