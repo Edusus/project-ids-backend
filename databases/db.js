@@ -8,7 +8,7 @@ const PromotionsModel = require('../models/promotionsModel'); //Nueva implementa
 const gamesModel = require('../models/games');
 const teamsModel = require('../models/teamsModel');
 const inventoryModel = require('../models/inventory');
-const moneyModel = require('../models/moneyModel');
+const playerFantasyModel = require('../models/playerFantasyModel');
 
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD,{
     host: process.env.DBHOST,
@@ -24,8 +24,8 @@ const game = gamesModel(sequelize, Sequelize);
 const team = teamsModel(sequelize, Sequelize);
 const inventory = inventoryModel(sequelize, Sequelize);
 //const Deposit =
-const money= moneyModel(sequelize,Sequelize);
-
+const PlayerFantasy= playerFantasyModel(sequelize,Sequelize);
+//PlayerFantasy = playerFantasyModel
 /* Defining associations */
 team.belongsTo(Event, {
   foreignKey: {
@@ -69,15 +69,15 @@ Sticker.belongsTo(team,{
 
 //Relaciones entre usuarios y eventos para formar un fantasy
 User.belongsToMany(Event,{
-  through: money
+  through: PlayerFantasy
 });
 Event.belongsToMany(User,{
-  through: money
+  through: PlayerFantasy
 });
-User.hasMany(money);
-money.belongsTo(User);
-Event.hasOne(money);
-money.belongsTo(Event);
+User.hasMany(PlayerFantasy);
+PlayerFantasy.belongsTo(User);
+Event.hasMany(PlayerFantasy);
+PlayerFantasy.belongsTo(Event);
 
 //Relaciones entre usuarios, sticker para formar un inventario
 User.belongsToMany(Sticker, { 
@@ -105,5 +105,5 @@ const random = sequelize.random();
 const { Op } = Sequelize;
 
 module.exports ={
-    User, Sticker, Event, Promotion, ad, game, team, random, Op, inventory, money
+    User, Sticker, Event, Promotion, ad, game, team, random, Op, inventory, PlayerFantasy
 }

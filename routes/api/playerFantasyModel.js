@@ -1,6 +1,6 @@
 const router= require('express').Router();
 
-const { Event, money, Op }= require('../../databases/db');
+const { Event, PlayerFantasy, Op }= require('../../databases/db');
 
 ////endpoint para listar eventos en los que pueda participar el usuario(en los que no esté participando)
 router.get('/', async (req,res)=>{
@@ -13,10 +13,13 @@ router.get('/', async (req,res)=>{
         where:{"status":true}
     });
      if(eventsPublics==''){
-        res.json({error:'No existen eventos activos'});
+        res.json({
+            succes:false,
+            message:'No existen eventos activos'
+        });
     }else{
         const eventUser = eventsPublics.map(async function(element) {
-            const moneyEvent = await money.findOne({
+            const moneyEvent = await PlayerFantasy.findOne({
                 raw: true,
                 where: {
                     [Op.and]: [{
@@ -52,7 +55,7 @@ router.get('/:eventId', async (req,res)=>{
             message: "Evento no encontrado"
         })
     }else{
-        const user = await money.findOne({
+        const user = await PlayerFantasy.findOne({
             raw:true,
             attributes: {
                 exclude: ['createdAt', 'updatedAt', 'id','userId','eventId']
@@ -87,53 +90,51 @@ router.post('/:eventId/join-game', async (req,res)=>{
         where: {id : req.params.eventId}
     });
     if (!event) {
-        res.status(404).json({
+        return res.status(404).json({
             success: false,
             message: "Evento no encontrado"
         });
-    }else{
-        if(event.status == false){
-            res.status(403).json({
-                success: false,
-                message: "Este evento no esta activo"
-            })
-        }else{
-            const user = await money.findOne({
-                raw:true,
-                attributes: {
-                    exclude: ['createdAt', 'updatedAt', 'id','userId','eventId']
-                },
-                where: {
-                    [Op.and]:[{
-                        eventId : req.params.eventId
-                    },
-                    {
-                        userId : req.user.id.id
-                    }]
-                }
-            });
-            if (user) {
-                res.status(409).json({
-                    success: false,
-                    message: "Ya estas participando en ese evento"
-                })
-            }else{
-                await money.create({
-                    eventId: req.params.eventId,
-                    userId: req.user.id.id,
-                    points: 0,
-                    money: 0
-                });
-                res.status(200).json({
-                    success: true,
-                    message: "Felicidades te haz unido al fantasy "+event.eventName
-                })
-            }
-        }
     }
-});
 
+    if(event.status == false){
+        return res.status(403).json({
+            success: false,
+            message: "Este evento no esta activo"
+        })
+    }
 
+    const user = await PlayerFantasy.findOne({
+        raw:true,
+        attributes: {
+            exclude: ['createdAt', 'updatedAt', 'id','userId','eventId']
+        },
+        where: {
+            [Op.and]:[{
+                eventId : req.params.eventId
+            },
+            {
+                userId : req.user.id.id
+            }]
+        }
+    });
 
+    if (user) {
+        return res.status(409).json({
+            success: false,
+            message: "Ya estas participando en ese evento"
+        })
+    }
+    await PlayerFantasy.create({
+        eventId: req.params.eventId,
+        userId: req.user.id.id,
+        points: 0,
+        money: 0
+    });
+
+    return res.status(200).json({
+        success: true,
+        message: "Felicidades te haz unido al fantasy "+event.eventName
+    })
+})
 
 module.exports = router;
