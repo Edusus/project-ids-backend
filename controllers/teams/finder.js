@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { team, Sticker, Event } = require('../../databases/db');
+const { Team, Sticker, Event } = require('../../databases/db');
 
 /**
  * If the resource is found, send a 200 status code with the resource in the response body. If the
@@ -38,7 +38,7 @@ const find = async (req, res) => {
         }
       }
     }
-    const { count, rows } = await team.findAndCountAll(options);
+    const { count, rows } = await Team.findAndCountAll(options);
     httpGetResponse(
       res, {
         success: true,
@@ -73,7 +73,7 @@ const findById = async (req, res) => {
  */
 const findAll = async (req, res) => {
   const eventId = req.params.eventId;
-  const teams = await team.findAll({
+  const teams = await Team.findAll({
     include: [
       {
          model: Sticker
