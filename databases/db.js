@@ -10,7 +10,7 @@ const TeamsModel = require('../models/teamsModel');
 const InventoryModel = require('../models/inventory');
 const WarehouseModel = require('../models/warehouses');
 const PlayersGamesModel = require('../models/playersGames');
-const MoneyModel = require('../models/moneyModel');
+const playerFantasyModel = require('../models/playerFantasyModel');
 
 
 
@@ -29,7 +29,7 @@ const Team = TeamsModel(sequelize, Sequelize);
 const Inventory = InventoryModel(sequelize, Sequelize);
 const Warehouse = WarehouseModel(sequelize, Sequelize);
 const PlayersGame = PlayersGamesModel(sequelize, Sequelize);
-const Money = MoneyModel(sequelize,Sequelize);
+const PlayerFantasy= playerFantasyModel(sequelize,Sequelize);
 
 /* Defining associations */
 Team.belongsTo(Event, {
@@ -178,15 +178,15 @@ Warehouse.belongsTo(Event);
 
 //Relaciones entre usuarios y eventos para formar un fantasy
 User.belongsToMany(Event,{
-  through: Money
+  through: PlayerFantasy
 });
 Event.belongsToMany(User,{
-  through: Money
+  through: PlayerFantasy
 });
-User.hasMany(Money);
-Money.belongsTo(User);
-Event.hasOne(Money);
-Money.belongsTo(Event);
+User.hasMany(PlayerFantasy);
+PlayerFantasy.belongsTo(User);
+Event.hasMany(PlayerFantasy);
+PlayerFantasy.belongsTo(Event);
 
 
 sequelize.authenticate()
@@ -210,5 +210,5 @@ const random = sequelize.random();
 const { Op } = Sequelize;
 
 module.exports ={
-    User, Sticker, Event, Promotion, Ad, Game, Team, random, Op, Inventory, Warehouse, PlayersGame, Money, Promotion
+    User, Sticker, Event, Promotion, Ad, Game, Team, random, Op, Inventory, Warehouse, PlayersGame, Money, Promotion, PlayerFantasy
 }
