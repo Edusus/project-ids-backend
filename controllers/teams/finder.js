@@ -62,8 +62,8 @@ const find = async (req, res) => {
  * @param res - response object
  */
 const findById = async (req, res) => {
-  const Team = await team.findByPk(req.params.teamId);
-  httpGetResponse(res, Team, "team");
+  const team = await Team.findByPk(req.params.teamId);
+  httpGetResponse(res, team, "team");
 }
 
 /**

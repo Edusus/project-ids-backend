@@ -253,6 +253,52 @@ router.get('/public-events/:eventId', async (req, res) => {
     }
 });
 
+router.get('/public-events/:eventId/', async (req,res) => {
+    try {
+        const eventId = req.params.eventId;
+        let {isAlbum = false} = req.query;
+        const event = await Event.findOne({
+            where: {
+                id: eventId
+            }
+        });
+        if (!event) {
+            res.status(404).json({
+                success: false,
+                message: 'Evento no encontrado'
+            });
+        } else {
+            let options = {
+                include: {
+                    model: Sticker,
+                    include: {
+                        model: Team
+                    },
+                },
+                where: {
+                    [Op.and]: [{
+                        eventId: eventId
+                    }, {
+                        userId: req.user.id.id
+                    }, {
+                        isInAlbum : isAlbum
+                    }]
+                }
+            };
+            const {count} = await Inventory.findAndCountAll({where:{userId: req.user.id.id}});
+            const {rows} = await Inventory.findAndCountAll(options);
+            res.status(200).json({
+                success: true,
+                total : count,
+                items: rows
+            });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(400).send(err.message);
+    }
+});
+
 router.get('/public-events/:eventId/carousel', async (req,res) => {
     try {
         const eventId = req.params.eventId;

@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { Warehouse, Sticker, team } = require('../../databases/db');
+const { Warehouse } = require('../../databases/db');
 const responses = require('../../utils/responses/responses');
 
 const deleter = async (req, res) => {
