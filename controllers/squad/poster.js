@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { Warehouse, Sticker, Team } = require('../../databases/db');
+const { Warehouse, Sticker } = require('../../databases/db');
 const responses = require('../../utils/responses/responses');
 
 const poster = async (req, res) => {

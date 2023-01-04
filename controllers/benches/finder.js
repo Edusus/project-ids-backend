@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { Warehouse, Sticker, team } = require('../../databases/db');
+const { Warehouse, Sticker, Team } = require('../../databases/db');
 const responses = require('../../utils/responses/responses');
 
 
@@ -35,7 +35,7 @@ const find = async (req, res) => {
           position
         },
         include: {
-          model: team,
+          model: Team,
           attributes: ['id', 'name', 'badge'],
           where: {
             name: {

@@ -1,4 +1,4 @@
-const { ad } = require('../../databases/db');
+const { Ad } = require('../../databases/db');
 const { imgController, fileController } = require('../filesControllers');
 const path = require('path');
 
@@ -20,7 +20,7 @@ exports.uploadFileAd = async (req, res) => {
       } else {
         filepath = `${process.env.DOMAIN}${img_relative_dir}${req.file.filename}`;
       }
-      const newAd = await ad.create({
+      const newAd = await Ad.create({
         announcer,
         adType,
         redirecTo,
@@ -41,7 +41,7 @@ exports.uploadFileAd = async (req, res) => {
   exports.uploadUpdatedFileAd = async (req, res) => {
     const adId = req.params.adId;
     try {
-    const ads = await ad.findByPk(adId);
+    const ads = await Ad.findByPk(adId);
       if (typeof ads === 'undefined' || ads === null)
         throw new Error('Error: ad not found');
 
@@ -56,7 +56,7 @@ exports.uploadFileAd = async (req, res) => {
       filepath = `${process.env.DOMAIN}${img_relative_dir}/${req.file.filename}`;
     }
       const { announcer, adType, redirecTo } = req.body;
-      await ad.update({
+      await Ad.update({
         announcer,
         adType,
         redirecTo,
