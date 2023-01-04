@@ -1,4 +1,4 @@
-const { team } = require('../../databases/db');
+const { Team } = require('../../databases/db');
 const { imgController, fileController } = require('../filesControllers'); 
 
 const allowedFields = ['name', 'badge', 'idEvents'];
@@ -25,12 +25,12 @@ const post = async (req, res) => {
     } else {
       idEvents = eventsid;
     }
-    const Team = await team.create({
+    const team = await Team.create({
         "name": name,
         "badge": filepath,
         "idEvents": idEvents
     }, { fields: allowedFields });
-    res.status(201).json(Team);
+    res.status(201).json(team);
   } catch (error) {
     console.error(error);
     if (typeof req.file !== 'undefined') {
