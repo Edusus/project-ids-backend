@@ -67,7 +67,7 @@ const findById = async (req, res) => {
 }
 
 /**
- * It finds all the teams and then sends them back to the client.
+ * It finds all the teams of a specific event, and then sends them back to the client.
  * @param req - The request object
  * @param res - the response object
  */

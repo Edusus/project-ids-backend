@@ -4,8 +4,8 @@ uploads/**
 !uploads/img
 !uploads/csv
 !.gitkeep
-uploads/img/**
 !offside.png
+uploads/img/**
 !.gitkeep
 uploads/csv/**
 !.gitkeep

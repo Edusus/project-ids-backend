@@ -10,6 +10,7 @@ const TeamsModel = require('../models/teamsModel');
 const InventoryModel = require('../models/inventory');
 const WarehouseModel = require('../models/warehouses');
 const playerFantasyModel = require('../models/playerFantasyModel');
+const PlayersGamesModel = require('../models/playersGames');
 
 
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD,{
@@ -27,12 +28,14 @@ const Team = TeamsModel(sequelize, Sequelize);
 const Inventory = InventoryModel(sequelize, Sequelize);
 const Warehouse = WarehouseModel(sequelize, Sequelize);
 const PlayerFantasy= playerFantasyModel(sequelize,Sequelize);
+const PlayersGame = PlayersGamesModel(sequelize, Sequelize);
 
 
 /* Defining associations */
 Team.belongsTo(Event, {
   foreignKey: {
-    name: "idEvents"
+    name: "idEvents",
+    allowNull: false
   }
 });
 Event.hasMany(Team, {
@@ -42,18 +45,43 @@ Event.hasMany(Team, {
   }
 });
 
-Team.hasOne(Game, {
-  as: 'teamOne'
-});
-Team.hasOne(Game, {
-  as: 'teamTwo'
-})
 Game.belongsTo(Team, {
-  as: 'teamOne'
+  as: 'teamOne',
+  foreignKey: {
+    allowNull: false
+  }
 });
 Game.belongsTo(Team, {
-  as: 'teamTwo'
-})
+  as: 'teamTwo',
+  foreignKey: {
+    allowNull: false
+  }
+});
+Team.hasMany(Game, {
+  foreignKey: {
+    name: 'teamOneId',
+    allowNull: false
+  }
+});
+Team.hasMany(Game, {
+  foreignKey: {
+    name: 'teamTwoId',
+    allowNull: false
+  }
+});
+
+Game.belongsTo(Event, {
+  foreignKey: {
+    name: 'eventId',
+    allowNull: false
+  }
+});
+Event.hasMany(Game, {
+  foreignKey: {
+    name: 'eventId',
+    allowNull: false
+  }
+});
 
 Team.hasMany(Sticker, { 
   foreignKey: {
@@ -81,6 +109,64 @@ User.hasMany(PlayerFantasy);
 PlayerFantasy.belongsTo(User);
 Event.hasMany(PlayerFantasy);
 PlayerFantasy.belongsTo(Event);
+
+Sticker.belongsToMany(Game, {
+  through: PlayersGame, 
+  foreignKey: { 
+    name: 'playerId',
+    allowNull: false 
+  }, 
+  otherKey: { 
+    name: 'gameId',
+    allowNull: false 
+  },
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE' 
+});
+Game.belongsToMany(Sticker, {
+  as: 'players', 
+  through: PlayersGame,
+  foreignKey: {
+    name: 'gameId',
+    allowNull: false
+  }, 
+  otherKey: { 
+    name: 'playerId',
+    allowNull: false 
+  },
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE' 
+});
+Sticker.hasMany(PlayersGame, {
+  foreignKey: {
+    name: 'playerId',
+    allowNull: false
+  },
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE'
+});
+PlayersGame.belongsTo(Sticker, {
+  as: 'player',
+  foreignKey: {
+    name: 'playerId',
+    allowNull: false
+  }
+});
+Game.hasMany(PlayersGame, {
+  foreignKey: {
+    name: 'gameId',
+    allowNull: false
+  },
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE'
+});
+PlayersGame.belongsTo(Game, {
+  as: 'game',
+  foreignKey: {
+    name: 'gameId',
+    allowNull: false
+  }
+});
 
 //Relaciones entre usuarios, sticker para formar un inventario
 User.belongsToMany(Sticker, { 
@@ -120,7 +206,7 @@ sequelize.authenticate()
         console.error('Unable to connect to the database:', err);
     }
     );
-sequelize.sync({ force: false })
+sequelize.sync({ alter: false })
     .then(()=>{
         console.log('Syncronized tables');
     })
@@ -129,8 +215,11 @@ sequelize.sync({ force: false })
     });
 
 const random = sequelize.random();
+const createTransaction = () => {
+  return sequelize.transaction();
+}
 const { Op } = Sequelize;
 
 module.exports ={
-    User, Sticker, Event, Ad, Game, Team, random, Op, Inventory, Warehouse, Promotion, PlayerFantasy
+    User, Sticker, Event, Ad, Game, Team, random, Op, Inventory, Warehouse, Promotion, PlayerFantasy, createTransaction, PlayersGame
 }

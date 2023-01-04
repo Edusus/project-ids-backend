@@ -14,12 +14,7 @@ exports.uploadFileSticker = async (req, res) => {
     try {
         const {playerName, country, position, height, weight, appearanceRate, teamId } = req.body;
         const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/') + '/';
-        let filepath;
-          if (process.env.USINGIMGHOST == 'true') {
-            filepath = `${process.env.DOMAIN}${img_relative_dir}${req.file.filename}`;
-          } else {
-            filepath = `${process.env.DOMAIN}${img_relative_dir}${req.file.filename}`;
-          }
+        let filepath = `${process.env.DOMAIN}${img_relative_dir}${req.file.filename}`;;
         const newSticker = await Sticker.create({
           playerName,
           country,
@@ -32,7 +27,7 @@ exports.uploadFileSticker = async (req, res) => {
     });
     res.status(201).json({
       message:'item created',
-      item:newSticker
+      item: newSticker
     });
     } catch (error) {
       console.error(error);
@@ -48,18 +43,13 @@ exports.uploadUpdatedFileSticker = async (req, res) => {
     try {
       const player = await Sticker.findByPk(playerId);
          if (typeof player === 'undefined' || player === null)
-          throw new Error('Error: ad not found');
+          throw new Error('Error: sticker not found');
       const { img: prevFileurl } = player;
       const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/');
       const prevFilepath = prevFileurl.split(img_relative_dir)[1];
       fileController.deleteFile(path.join(imgController.img_dir, prevFilepath), prevFilepath);
       const {playerName, country, position, height, weight, appearanceRate, teamId } = req.body;
-      let filepath;
-      if (process.env.USINGIMGHOST == 'true') {
-        filepath = `${process.env.DOMAIN}${img_relative_dir}/${req.file.filename}`;
-      } else {
-        filepath = `${process.env.DOMAIN}${img_relative_dir}/${req.file.filename}`;
-      }
+      let filepath = `${process.env.DOMAIN}${img_relative_dir}/${req.file.filename}`;
       await Sticker.update({
             playerName,
             country,
@@ -85,4 +75,4 @@ exports.uploadUpdatedFileSticker = async (req, res) => {
       res.status(400).send(error.message + '\nError: img not sent');
     }
   }
-  };
+};
