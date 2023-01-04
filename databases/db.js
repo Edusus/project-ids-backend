@@ -3,9 +3,11 @@ const Sequelize = require('sequelize');
 const UserModel = require('./../models/users');
 const StickerModel = require('../models/sticker');
 const EventModel = require('./../models/events');
-const adsModel = require('../models/adsModel');
-const GamesModel = require('../models/games');
+const adsModel = require('../models/adsModel'); //Vieja implementacion de ads
+const PromotionsModel = require('../models/promotionsModel'); //Nueva implementacion de ads
+const gamesModel = require('../models/games');
 const teamsModel = require('../models/teamsModel');
+const inventoryModel = require('../models/inventory');
 const PlayersGamesModel = require('../models/playersGames');
 
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD,{
@@ -16,9 +18,11 @@ const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.
 const User = UserModel(sequelize,Sequelize);
 const Sticker = StickerModel(sequelize,Sequelize);
 const Event = EventModel(sequelize,Sequelize);
-const ad = adsModel(sequelize,Sequelize);
+const ad = adsModel(sequelize,Sequelize); //Vieja implementacion de ads
+const Promotion = PromotionsModel(sequelize, Sequelize); //Nueva implementacion de ads
 const Game = GamesModel(sequelize, Sequelize);
 const team = teamsModel(sequelize, Sequelize);
+const inventory = inventoryModel(sequelize, Sequelize);
 const PlayersGame = PlayersGamesModel(sequelize, Sequelize);
 
 /* Defining associations */
@@ -138,14 +142,31 @@ PlayersGame.belongsTo(Game, {
   }
 });
 
-sequelize.sync({ alter: false })
+//Relaciones entre usuarios, sticker para formar un inventario
+User.belongsToMany(Sticker, { 
+  through: inventory,
+});
+Sticker.belongsToMany(User, { 
+  through: inventory
+});
+User.hasMany(inventory);
+inventory.belongsTo(User);
+Sticker.hasMany(inventory);
+inventory.belongsTo(Sticker);
+Event.hasOne(inventory);
+inventory.belongsTo(Event);
+
+sequelize.sync({ force: false })
     .then(()=>{
         console.log('Syncronized tables');
+    })
+    .catch((err) => {
+      console.error(err);
     });
 
 const random = sequelize.random();
 const { Op } = Sequelize;
 
 module.exports ={
-    User, Sticker, Event, ad, Game, team, PlayersGame, random, Op
+    User, Sticker, Event, Promotion, ad, Game, team, PlayersGame, random, Op, inventory
 }

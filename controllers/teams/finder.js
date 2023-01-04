@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { team } = require('../../databases/db');
+const { team, Sticker, Event } = require('../../databases/db');
 
 /**
  * If the resource is found, send a 200 status code with the resource in the response body. If the
@@ -42,10 +42,13 @@ const find = async (req, res) => {
     httpGetResponse(
       res, {
         success: true,
-        totalTeams: count,
-        pageNumber: pageAsNumber,
-        pageSize: sizeAsNumber,
-        teams: rows 
+        paginate:{
+          total: count,
+          page: pageAsNumber,
+          pages:Math.ceil(count/sizeAsNumber),
+          perPage: sizeAsNumber
+        },
+        items: rows 
       }, 'teams');
   } catch (err) {
     console.error(err);
@@ -69,14 +72,23 @@ const findById = async (req, res) => {
  * @param res - the response object
  */
 const findAll = async (req, res) => {
-  const teams = await team.findAll();
-  httpGetResponse(res, teams, "teams");
+  const eventId = req.params.eventId;
+  const teams = await team.findAll({
+    include: [
+      {
+         model: Sticker
+      },
+      {
+        model: Event
+      }
+  ],
+  where: {
+    idEvents: eventId
+  }
+  });
+  httpGetResponse(res, teams, 'teams');
 }
 
-const finder = {
-  find,
-  findById,
-  findAll
+module.exports = {
+  findAll, find, findById
 }
-
-module.exports = finder;

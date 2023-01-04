@@ -12,7 +12,7 @@ module.exports=(sequelize,type)=>{
         },
         country:{
             type:type.STRING,
-            allowNull:true
+            allowNull: true 
         },
         position:{
             type:type.STRING,

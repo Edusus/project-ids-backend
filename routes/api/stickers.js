@@ -6,32 +6,30 @@ const controllerSticker = require('../../controllers/stickers/uploadStickers')
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
 
 //endpoint para listar cromos
-router.get('/',isAdmin, async (req,res)=>{  
-    //paginacion
-    const {page = 0, size = 10} = req.query;
-
-    let options = {
-        limit: +size,
-        offset: (+page) * (+size)
-    };
-    const {count,rows} = await Sticker.findAndCountAll({
-      options,
-      attributes: ['id','playerName', 'country', 'position', 'img', 'height', 'weight', 'appearanceRate', 'createdAt', 'updatedAt'],
-      include: {
-        model: team,
-        attributes: ['id', 'name', 'badge']
-      }
-    });
-    res.status(200).json({
-      success: true,
-      paginate:{
-          total:count,
-          page:page,
-          pages:Math.ceil(count/size),
-          perPage:size
-      },
-      items: rows
-  });
+router.get('/', async (req,res)=>{  
+  //paginacion
+  let {page = 0, size = 10 } = req.query;
+  const [pageAsNumber, sizeAsNumber] = [Number.parseInt(page), Number.parseInt(size)];
+  let options = {
+    limit: sizeAsNumber,
+    offset: pageAsNumber * sizeAsNumber,
+    attributes: ['id','playerName', 'country', 'position', 'img', 'height', 'weight', 'appearanceRate', 'createdAt', 'updatedAt'],
+    include: {
+      model: team,
+      attributes: ['id', 'name', 'badge']
+    }
+  }
+  const {count,rows} = await Sticker.findAndCountAll(options);
+  res.status(200).json({
+    success: true,
+    paginate:{
+      total: count,
+      page: pageAsNumber,
+      pages: Math.ceil(count/sizeAsNumber),
+      perPage: sizeAsNumber
+    },
+    items: rows
+});
 });
 
 //endpoint para obtener 5 cromos al azar
@@ -83,8 +81,7 @@ router.get('/obtain/:eventId', async (req, res) => {
             })
           }
     });
-
-
+      
       stickers.push(singleSticker);
 
     } while (stickers.length < 5)
@@ -99,13 +96,13 @@ router.get('/obtain/:eventId', async (req, res) => {
 });
 
 //endpoint para crear cromos
-router.post('/',isAdmin, imgController.uploadImg, controllerSticker.uploadFileSticker);
+router.post('/', isAdmin, imgController.uploadImg, controllerSticker.uploadFileSticker);
 
 //endpoint para editar cromos
-router.put('/:playerId',isAdmin, imgController.uploadImg, controllerSticker.uploadUpdatedFileSticker);
+router.put('/:playerId', isAdmin, imgController.uploadImg, controllerSticker.uploadUpdatedFileSticker);
 
 //endpoint para borrar cromos
-router.delete('/:playerId',isAdmin, async (req,res)=>{
+router.delete('/:playerId', isAdmin, async (req,res)=>{
     await Sticker.destroy({
         where:{ id: req.params.playerId }
     });

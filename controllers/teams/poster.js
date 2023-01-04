@@ -13,12 +13,7 @@ const post = async (req, res) => {
   try {
     const { name, idEvents: eventsid } = req.body;
     const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/') + '/';
-    let filepath;
-    if (process.env.USINGIMGHOST == 'true') {
-      filepath = `${process.env.IMGURL}${img_relative_dir}${req.file.filename}`;
-    } else {
-      filepath = `${process.env.OFFSIDEURL}${img_relative_dir}${req.file.filename}`;
-    }
+    let filepath = `${process.env.DOMAIN}${img_relative_dir}${req.file.filename}`;
     let idEvents = 0;
     if (typeof eventsid == 'object') {
       idEvents = eventsid[0];
@@ -26,9 +21,9 @@ const post = async (req, res) => {
       idEvents = eventsid;
     }
     const Team = await team.create({
-      "name": name,
-      "badge": filepath,
-      "idEvents": idEvents
+        "name": name,
+        "badge": filepath,
+        "idEvents": idEvents
     }, { fields: allowedFields });
     res.status(201).json(Team);
   } catch (error) {
@@ -36,14 +31,11 @@ const post = async (req, res) => {
     if (typeof req.file !== 'undefined') {
       fileController.deleteFile(req.file.path, req.file.filename);
       res.status(400).send(error.message);
-    } else {
-      res.status(400).send('Error: img not sent');
-    }
+   }
   }
 }
-
 const poster = {
   post
 }
 
-module.exports = poster;
+module.exports = poster
