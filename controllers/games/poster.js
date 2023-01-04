@@ -1,5 +1,5 @@
 const csv = require('csvtojson');
-const { Game, PlayersGame, team, Event, Sticker, createTransaction } = require('../../databases/db');
+const { Game, PlayersGame, Team, Event, Sticker, createTransaction } = require('../../databases/db');
 const { fileController } = require('../filesControllers');
 const responses = require('../../utils/responses/responses');
 
@@ -14,11 +14,11 @@ const post = async (req, res) => {
     if (teamOneId == teamTwoId) 
       return responses.errorDTOResponse(res, 409, 'No puedes hacer que un equipo compita contra sí mismo');
     
-    const teamOne = await team.findByPk(teamOneId, {
+    const teamOne = await Team.findByPk(teamOneId, {
       attributes: ['id', 'idEvents']
     });
 
-    const teamTwo = await team.findByPk(teamTwoId, {
+    const teamTwo = await Team.findByPk(teamTwoId, {
       attributes: ['id','idEvents']
     });
 
