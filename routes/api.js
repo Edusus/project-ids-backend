@@ -15,16 +15,16 @@ const auth = require('../middlewares/auth');
 const router = Router();
 
 router.use('/users', auth.verifyToken, auth.isAdmin, apiUsersRouter);
-router.use('/stickers',auth.verifyToken, apiStickerRouter);
+router.use('/stickers', auth.verifyToken, apiStickerRouter);
 router.use('/auth',apiAuthRouter);
-router.use('/events',auth.verifyToken, apiEventsRouter);
+router.use('/events', auth.verifyToken, apiEventsRouter);
 router.use('/ads', adsRouter); //Vieja implementacion de ads
 router.use('/promotions', promotionsRouter); //Nueva implementacion de ads
 router.use('/test-endpoints', testEndpoints);
 router.use('/games', gamesEndpoints);
 router.use('/teams',auth.verifyToken, teamsRouter);
 router.use('/uploads', static(uploads_dir));
-router.use('/inventory',auth.verifyToken, inventoryRouter);
+router.use('/inventory', auth.verifyToken, inventoryRouter);
 
 module.exports = router;
 

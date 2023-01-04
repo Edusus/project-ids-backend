@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { finder, poster } = require('../../controllers/gamesControllers');
+const { finder, poster, deleter } = require('../../controllers/gamesControllers');
 const { csvController } = require('../../controllers/filesControllers');
 
 /*
@@ -138,11 +138,6 @@ router.put('/:gameId', csvController.uploadCsv, async (req, res) => {
     });
 });
 
-router.delete('/:gameId', async (req, res)=>{
-    return res.status(200).json({
-        "success": true,
-        "message": "Partido eliminado con exito :)",
-    });
-});
+router.delete('/:gameId', deleter.destroy);
 
 module.exports = router;

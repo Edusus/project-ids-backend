@@ -11,11 +11,11 @@ module.exports = (sequelize, type) => {
       validate: {
         isDate: {
           args: true,
-          msg: "Error: gameDate must be a date (in the format yyyy-mm-dd)"
+          msg: "El campo gameDate esta en el formato incorrecto (formato correcto: yyyy-mm-dd)"
         },
         notEmpty: {
           args: true,
-          msg: "Error: gameDate must not be empty"
+          msg: "gameDate no debe estar vacio"
         }
       }
     }

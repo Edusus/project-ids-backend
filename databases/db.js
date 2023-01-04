@@ -101,7 +101,9 @@ Sticker.belongsToMany(Game, {
   otherKey: { 
     name: 'gameId',
     allowNull: false 
-  } 
+  },
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE' 
 });
 Game.belongsToMany(Sticker, {
   as: 'players', 
@@ -113,13 +115,17 @@ Game.belongsToMany(Sticker, {
   otherKey: { 
     name: 'playerId',
     allowNull: false 
-  } 
+  },
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE' 
 });
 Sticker.hasMany(PlayersGame, {
   foreignKey: {
     name: 'playerId',
     allowNull: false
-  }
+  },
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE'
 });
 PlayersGame.belongsTo(Sticker, {
   as: 'player',
@@ -132,7 +138,9 @@ Game.hasMany(PlayersGame, {
   foreignKey: {
     name: 'gameId',
     allowNull: false
-  }
+  },
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE'
 });
 PlayersGame.belongsTo(Game, {
   as: 'game',
@@ -156,7 +164,7 @@ inventory.belongsTo(Sticker);
 Event.hasOne(inventory);
 inventory.belongsTo(Event);
 
-sequelize.sync({ force: false })
+sequelize.sync({ alter: false })
     .then(()=>{
         console.log('Syncronized tables');
     })
@@ -165,8 +173,11 @@ sequelize.sync({ force: false })
     });
 
 const random = sequelize.random();
+const createTransaction = () => {
+  return sequelize.transaction();
+}
 const { Op } = Sequelize;
 
 module.exports ={
-    User, Sticker, Event, Promotion, ad, Game, team, PlayersGame, random, Op, inventory
+    User, Sticker, Event, Promotion, ad, Game, team, PlayersGame, random, Op, inventory, createTransaction
 }
