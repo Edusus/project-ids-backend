@@ -1,5 +1,4 @@
-const { Router } = require('express');
-const responses = require('../../utils/responses/responses');
+const router = require('express').Router();
 
 const marketRouter = Router();
 
