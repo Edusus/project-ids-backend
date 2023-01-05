@@ -136,7 +136,18 @@ Market.belongsTo(Sticker);
 User.hasMany(Market);
 Market.belongsTo(User);
 
+//Relaciones para formar las subastas
+User.belongsToMany(Market, {
+  through: Bid
+});
+Market.belongsToMany(User, {
+  through: Bid
+});
 
+User.hasMany(Bid);
+Bid.belongsTo(User);
+Market.hasMany(Bid);
+Bid.belongsTo(Market);
 
 sequelize.authenticate()
     .then(()=>{
