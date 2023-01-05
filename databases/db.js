@@ -10,6 +10,8 @@ const TeamsModel = require('../models/teamsModel');
 const InventoryModel = require('../models/inventory');
 const WarehouseModel = require('../models/warehouses');
 const playerFantasyModel = require('../models/playerFantasyModel');
+const MarketModel = require('../models/market');
+const BidsModel = require('../models/bids');
 
 
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD,{
@@ -27,6 +29,8 @@ const Team = TeamsModel(sequelize, Sequelize);
 const Inventory = InventoryModel(sequelize, Sequelize);
 const Warehouse = WarehouseModel(sequelize, Sequelize);
 const PlayerFantasy= playerFantasyModel(sequelize,Sequelize);
+const Market = MarketModel(sequelize, Sequelize);
+const Bid = BidsModel(sequelize, Sequelize);
 
 
 /* Defining associations */
@@ -111,6 +115,29 @@ Warehouse.belongsTo(Sticker);
 Event.hasMany(Warehouse);
 Warehouse.belongsTo(Event);
 
+//Relaciones para formar el mercado todo lo que tiene que ver con el mercado
+Event.belongsToMany(Sticker, {
+  through: Market
+  });
+Sticker.belongsToMany(Event, {
+  through: Market
+});
+User.belongsToMany(Sticker, {
+  through: Market
+});
+Sticker.belongsToMany(User, { 
+  through: Market
+});
+
+Event.hasMany(Market);
+Market.belongsTo(Event);
+Sticker.hasMany(Market);
+Market.belongsTo(Sticker);
+User.hasMany(Market);
+Market.belongsTo(User);
+
+
+
 sequelize.authenticate()
     .then(()=>{
         console.log('Connection has been established successfully.');
@@ -132,5 +159,5 @@ const random = sequelize.random();
 const { Op } = Sequelize;
 
 module.exports ={
-    User, Sticker, Event, Ad, Game, Team, random, Op, Inventory, Warehouse, Promotion, PlayerFantasy
+    User, Sticker, Event, Ad, Game, Team, random, Op, Inventory, Warehouse, Promotion, PlayerFantasy, Market
 }
