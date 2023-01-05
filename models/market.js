@@ -26,6 +26,10 @@ module.exports = (sequelize, type) => {
                 msg: "Error: finishDate must not be empty"
             }
         }
-       } 
+       },
+      isFinished: {
+        type: type.BOOLEAN,
+        defaultValue: false,
+      }
     })
 }
