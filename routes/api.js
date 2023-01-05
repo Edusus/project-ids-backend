@@ -10,6 +10,7 @@ const teamsRouter = require('./api/teams.js');
 const inventoryRouter = require('./api/inventory');
 const marketRouter = require('./api/market');
 const { uploads_dir } = require('../controllers/filesControllers');
+const moneyRouter =require('./api/playerFantasyModel');
 
 const auth = require('../middlewares/auth');
 const router = Router();
@@ -25,5 +26,7 @@ router.use('/teams',auth.verifyToken, teamsRouter);
 router.use('/uploads', static(uploads_dir));
 router.use('/inventory',auth.verifyToken, inventoryRouter);
 router.use('/market', auth.verifyToken, marketRouter);
+router.use('/public-events',auth.verifyToken, moneyRouter);
+
 
 module.exports = router;
