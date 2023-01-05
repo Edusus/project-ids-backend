@@ -7,7 +7,8 @@ const apiEventsRouter = require('./api/events');
 const adsRouter = require('./api/ads'); //Vieja implementacion de ads
 const promotionsRouter = require('./api/promotions'); //Nueva implementacion de ads
 const teamsRouter = require('./api/teams.js');
-const inventoryRouter = require('./api/inventory')
+const inventoryRouter = require('./api/inventory');
+const marketRouter = require('./api/market');
 const { uploads_dir } = require('../controllers/filesControllers');
 
 const auth = require('../middlewares/auth');
@@ -23,5 +24,6 @@ router.use('/test-endpoints', testEndpoints);
 router.use('/teams',auth.verifyToken, teamsRouter);
 router.use('/uploads', static(uploads_dir));
 router.use('/inventory',auth.verifyToken, inventoryRouter);
+router.use('/market', auth.verifyToken, marketRouter);
 
 module.exports = router;
