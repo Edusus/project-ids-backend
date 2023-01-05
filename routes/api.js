@@ -34,7 +34,7 @@ router.use('/uploads', static(uploads_dir));
 router.use('/inventory',auth.verifyToken, inventoryRouter);
 router.use('/public-events/:eventId/squad', auth.verifyToken, passEventId, benchesRouter);
 router.use('/public-events/:eventId/squad', auth.verifyToken, passEventId, squadsRouter);
-router.use('/market', auth.verifyToken, marketRouter);
+router.use('/public-events/:eventId/market', auth.verifyToken, marketRouter);
 router.use('/public-events',auth.verifyToken, moneyRouter);
 
 
