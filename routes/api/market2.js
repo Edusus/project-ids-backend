@@ -126,4 +126,3 @@ marketRouter.put('/bid/:bidId', async (req, res) => {
   return responses.singleDTOResponse(res, 200, 'Puja actualizada con exito', bid);
 });
 
-module.exports = marketRouter;
