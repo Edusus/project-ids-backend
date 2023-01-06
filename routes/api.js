@@ -10,6 +10,7 @@ const teamsRouter = require('./api/teams.js');
 const inventoryRouter = require('./api/inventory');
 const benchesRouter = require('./api/bench');
 const squadsRouter = require('./api/squad');
+const moneyRouter =require('./api/playerFantasyModel');
 const { uploads_dir } = require('../controllers/filesControllers');
 
 const auth = require('../middlewares/auth');
@@ -30,6 +31,7 @@ router.use('/test-endpoints', testEndpoints);
 router.use('/teams',auth.verifyToken, teamsRouter);
 router.use('/uploads', static(uploads_dir));
 router.use('/inventory',auth.verifyToken, inventoryRouter);
+router.use('/public-events',auth.verifyToken, moneyRouter);
 router.use('/public-events/:eventId/squad', auth.verifyToken, passEventId, benchesRouter);
 router.use('/public-events/:eventId/squad', auth.verifyToken, passEventId, squadsRouter);
 
