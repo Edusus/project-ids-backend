@@ -7,10 +7,12 @@ module.exports = (sequelize, type) => {
       },
       points: {
         type: type.INTEGER,
+        allowNull:false,
         defaultValue: 0,
       },
       money: {
         type: type.INTEGER,
+        allowNull:false,
         defaultValue: 0,
       }
     })
