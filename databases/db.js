@@ -118,19 +118,43 @@ Warehouse.belongsTo(Event);
 //Relaciones para formar el mercado todo lo que tiene que ver con el mercado
 Event.belongsToMany(Sticker, {
   through: Market,
-  uniqueKey: false
+  uniqueKey: false,
+  foreignKey: {
+    unique: false
+  },
+  otherKey: {
+    unique: false
+  }
   });
 Sticker.belongsToMany(Event, {
   through: Market,
-  uniqueKey: false
+  uniqueKey: false,
+  foreignKey: {
+    unique: false
+  },
+  otherKey: {
+    unique: false
+  }
 });
 User.belongsToMany(Sticker, {
   through: Market,
-  uniqueKey: false
+  uniqueKey: false,
+  foreignKey: {
+    unique: false
+  },
+  otherKey: {
+    unique: false
+  }
 });
 Sticker.belongsToMany(User, { 
   through: Market,
-  uniqueKey: false
+  uniqueKey: false,
+  foreignKey: {
+    unique: false
+  },
+  otherKey: {
+    unique: false
+  }
 });
 
 Event.hasMany(Market, {
