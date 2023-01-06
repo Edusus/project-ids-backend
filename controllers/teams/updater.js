@@ -1,4 +1,4 @@
-const { team } = require('../../databases/db');
+const { Team } = require('../../databases/db');
 const { imgController, fileController } = require('../filesControllers');
 const path = require('path');
 
@@ -12,11 +12,11 @@ const allowedFields = ['name', 'badge', 'idEvents'];
 const update = async (req, res) => {
   const teamId = req.params.teamId;
   try {
-    const Team = await team.findByPk(teamId);
-    if (typeof Team === 'undefined' || Team === null)
+    const team = await Team.findByPk(teamId);
+    if (typeof team === 'undefined' || team === null)
       throw new Error('Error: team not found');
     
-    const { badge: prevFileurl } = Team;
+    const { badge: prevFileurl } = team;
     const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/');
     const prevFilepath = prevFileurl.split(img_relative_dir)[1];
     fileController.deleteFile(path.join(imgController.img_dir, prevFilepath), prevFilepath);
@@ -33,7 +33,7 @@ const update = async (req, res) => {
     } else {
       idEvents = eventsid;
     }
-    await team.update({
+    await Team.update({
       "name": name,
       "badge": filepath,
       "idEvents": idEvents

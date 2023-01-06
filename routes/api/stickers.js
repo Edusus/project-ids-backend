@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const { Sticker, random, Op, team, inventory } = require('../../databases/db');
+const { Sticker, random, Op, Team, Inventory } = require('../../databases/db');
 const {imgController} = require('../../controllers/filesControllers');
 const controllerSticker = require('../../controllers/stickers/uploadStickers')
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
@@ -15,7 +15,7 @@ router.get('/', async (req,res)=>{
     offset: pageAsNumber * sizeAsNumber,
     attributes: ['id','playerName', 'country', 'position', 'img', 'height', 'weight', 'appearanceRate', 'createdAt', 'updatedAt'],
     include: {
-      model: team,
+      model: Team,
       attributes: ['id', 'name', 'badge']
     }
   }
@@ -46,7 +46,7 @@ router.get('/obtain/:eventId', async (req, res) => {
           order: random,
           attributes: ['id','playerName', 'country', 'position', 'img', 'height', 'weight', 'appearanceRate', 'createdAt', 'updatedAt'],
           include : {
-            model: team,
+            model: Team,
             attributes: ['name', 'badge']
           },
           where: {
@@ -57,13 +57,13 @@ router.get('/obtain/:eventId', async (req, res) => {
         });
       } while (!singleSticker)
       
-      await inventory.findOne({
+      await Inventory.findOne({
         where: {
           [Op.and]: [{stickerId: singleSticker.dataValues.id},{eventId : req.params.eventId},{userId: idUser}]
         }
      }).then( async inventorys => {
          if(!inventorys) {
-                await inventory.create({
+                await Inventory.create({
                 isInAlbum: false,
                 Quantity: 1,
                 userId: idUser,
@@ -72,7 +72,7 @@ router.get('/obtain/:eventId', async (req, res) => {
                });
          } else {
             const quant = inventorys.dataValues.Quantity;
-              await inventory.update({
+              await Inventory.update({
               Quantity : quant+1,
              },{
               where:{
@@ -81,7 +81,8 @@ router.get('/obtain/:eventId', async (req, res) => {
             })
           }
     });
-      
+
+
       stickers.push(singleSticker);
 
     } while (stickers.length < 5)
