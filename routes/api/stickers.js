@@ -96,6 +96,21 @@ router.get('/obtain/:eventId', async (req, res) => {
   }
 });
 
+//endpoint para buscar cromos por su id
+router.get('/:stickerId',isAdmin, async (req,res)=>{
+  const sticker= await Sticker.findOne({where:{id: req.params.stickerId}});
+   if(!sticker){
+      return res.json({
+        success: false,
+        error:'No existe cromo con este id'
+      });
+  }
+  return res.status(200).json({
+      success: true,
+      item:sticker
+  });
+});
+
 //endpoint para crear cromos
 router.post('/', isAdmin, imgController.uploadImg, controllerSticker.uploadFileSticker);
 
