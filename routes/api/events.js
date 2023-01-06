@@ -59,6 +59,21 @@ router.get('/inactive', async (req,res)=>{
 
 });
 
+//endpoint para obtener eventos por id
+router.get('/:eventId',isAdmin, async (req,res)=>{
+    const event= await Event.findOne({where:{id: req.params.eventId}});
+     if(!event){
+        return res.json({
+          success: false,
+          error:'No existe ningun evento con este id'
+        });
+    }
+    return res.status(200).json({
+        success: true,
+        item:event
+    });
+  });
+
 //endpoint para crear eventos
 router.post('/',isAdmin, async (req,res)=>{
     const item = await Event.create(req.body);

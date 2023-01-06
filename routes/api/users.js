@@ -3,6 +3,8 @@ const { check } = require('express-validator');
 const { validationResult } = require('express-validator');
 const { User }= require('../../databases/db');
 const bcrypt = require('bcrypt');
+const { isAdmin } = require('../../middlewares/auth');
+
 
 //endpoint para listar usuarios
 router.get('/', async (req,res)=>{
@@ -26,6 +28,21 @@ router.get('/', async (req,res)=>{
         items: rows
     });
 });
+
+//endpoint para buscar user por su id
+router.get('/:userId',isAdmin, async (req,res)=>{
+    const user1= await User.findOne({where:{id: req.params.userId}});
+     if(!user1){
+        return res.json({
+          success: false,
+          error:'No existe usuario con este id'
+        });
+    }
+    return res.status(200).json({
+        success: true,
+        item:user1
+    });
+  });
 
 //endpoint para crear usuarios
 router.post('/',[
