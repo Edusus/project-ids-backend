@@ -394,7 +394,7 @@ router.post('/public-events/:eventId/claim-sticker', async (req, res) => {
                   }).then(async warehouse => {
                      if (!warehouse) {
                        await Warehouse.create({
-                           isInSquad: false,
+                           isInLineup: false,
                            userId: req.user.id.id,
                            stickerId: stickerId,
                            eventId: eventId
