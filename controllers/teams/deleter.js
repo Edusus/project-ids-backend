@@ -1,4 +1,4 @@
-const { Team, Team } = require('../../databases/db');
+const { Team } = require('../../databases/db');
 const { imgController, fileController } = require('../filesControllers'); 
 const path = require('path');
 
