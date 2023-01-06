@@ -1,5 +1,5 @@
 const schedule = require('node-schedule');
-const { Market, Warehouse, Bid } = require('../../databases/db');
+const { Market, Warehouse, Bid, PlayerFantasy, Op } = require('../../databases/db');
 const responses = require('../../utils/responses/responses');
 
 function padTo2Digits(num) {
@@ -26,9 +26,9 @@ const poster = async (req, res) => {
     const userId = req.user.id.id;
     const eventId = req.eventId;
     const timeNow = new Date(Date.now());
-    const endTime = new Date(timeNow.getTime() + 60000);x
-    let { initialValue, directPurchase, playerId } = req.body;
-    
+    const endTime = new Date(timeNow.getTime() + 120000);
+    let { initialValue, directPurchase } = req.body;
+    const {playerId} = req.body
     const warehouse = await Warehouse.findOne({
         raw: true,
         where: {
@@ -41,6 +41,7 @@ const poster = async (req, res) => {
             }]
         }
     });
+    const quant = warehouse.quantity;
 
     if (!warehouse) {
         return responses.errorDTOResponse(res, 404, 'No posees este Sticker')
@@ -50,18 +51,31 @@ const poster = async (req, res) => {
         return responses.errorDTOResponse(res, 403, 'Este sticker ya esta en la alineacion')
     }
 
-    if (initialValue == null || directPurchase == null) {
-      return responses.errorDTOResponse(res, 400, 'Debe proporcionar un valor inicial y un valor de compra directa');
+    if (initialValue == null || directPurchase == null || playerId == null) {
+      return responses.errorDTOResponse(res, 400, 'Debe proporcionar un valor inicial, un valor de compra directa y un playerId');
     }
 
     if (warehouse.quantity == 0) {
         return responses.errorDTOResponse(res, 403, 'No posees mas stickers de este tipo')
     }
 
-        await warehouse.update({
-            quantity: warehouse.quantity - 1
+        await Warehouse.update({
+            quantity: quant - 1,
+            isInLineup: warehouse.isInLineup,
+            userId: userId,
+            eventId: eventId,
+            stickerId: playerId
+        }, {
+            where: {
+                [Op.and]: [{
+                    stickerId: playerId
+                }, {
+                    eventId: eventId
+                },{
+                    userId: userId
+                }]
+            }
         });
-
         const market = await Market.create({
             raw: true,
             initialValue: initialValue,
@@ -69,7 +83,7 @@ const poster = async (req, res) => {
             stickerId: playerId,
             userId : userId,
             eventId : eventId,
-            finishDate: formatDate(endTime),
+            finishDate: endTime,
             isFinished: false
         });
         res.status(200).json({
@@ -77,12 +91,78 @@ const poster = async (req, res) => {
             message: 'Subasta creada con exito',
             item: market
         });
-        const job = schedule.scheduleJob({ start: timeNow, end: endTime}, async function(){
+        const job = schedule.scheduleJob(endTime, async function(){
             console.log('Subasta finalizada');
             market.isFinished = true;
+
             await market.update({
                 isFinished: true
             });
+
+            const bids = await Bid.findAll({
+                raw: true,
+                where: {
+                    [Op.and]: [{
+                        marketId: market.id
+                    }]
+                }
+            });
+
+            if (bids.length == 0) {
+                console.log('No hay ofertas');
+                await Warehouse.update({
+                    quantity: quant,
+                }, {
+                    where: {
+                        [Op.and]: [{
+                            stickerId: playerId
+                        },{
+                            userId: userId
+                        }]
+                    }
+                });
+            } else {
+                const user = JSON.parse(JSON.stringify(bids));
+                const items = [];
+                for (let i = 0; i < user.length; i++) {
+                 items.push(user[i]);
+                }
+                const max = Math.max.apply(Math, items.map(function(o) { return o.value; }))
+                const winner = items.find(item => item.value === max);
+                const warehouseWinner = await Warehouse.findOne({
+                    raw: true,
+                    where: {
+                        [Op.and]: [{
+                            stickerId: playerId
+                        }, {
+                            userId: winner.userId
+                        }]
+                    }
+                });
+
+                if (warehouseWinner) {
+                    await Warehouse.update({
+                        quantity: warehouseWinner.quantity + 1,
+                    }, {
+                        where: {
+                            [Op.and]: [{
+                                stickerId: playerId
+                            }, {
+                                userId: winner.userId
+                            }]
+                        }
+                    });
+                } else {
+                    await Warehouse.create({
+                        quantity: 1,
+                        isInLineup: false,
+                        userId: winner.userId,
+                        eventId: eventId,
+                        stickerId: playerId
+                    });
+                }
+            }
+
             schedule.cancelJob(job);
         });
 }
@@ -90,13 +170,17 @@ const poster = async (req, res) => {
 const posterBid = async (req, res) => {
     const userId = req.user.id.id;
     const eventId = req.eventId;
-    const { playerId, value, marketId } = req.body;
+    let { value, marketId} = req.body;
+    let { isDirectPurchase = false } = req.body;
+    value = parseInt(value);
+    if (value == null || marketId == null) {
+        return responses.errorDTOResponse(res, 400, 'Debe proporcionar un valor y un marketId');
+    }
+
     const market = await Market.findOne({
         raw: true,
         where: {
             [Op.and]: [{
-                stickerId: playerId
-            }, {
                 eventId: eventId
             }, {
                 id: marketId
@@ -104,8 +188,42 @@ const posterBid = async (req, res) => {
         }
     });
 
+
+    const player = await PlayerFantasy.findOne({
+        raw: true,
+        where: {
+            [Op.and]: [
+            {
+                userId: userId
+            }, {
+                eventId: eventId
+            }]
+        }
+    })
+
+    const bidTrue = await Bid.findOne({
+        raw: true,
+        where: {
+            [Op.and]: [{
+                userId: userId
+            }, {
+                marketId: marketId
+            }]
+        }
+    })
+
+    if (bidTrue) {
+        return responses.errorDTOResponse(res, 403, 'Ya has ofertado en esta subasta use el metodo PUT')
+    }
+
+    if (!player) {
+        return responses.errorDTOResponse(res, 404, 'No estas participando en ningun evento')
+    }
     if (!market) {
         return responses.errorDTOResponse(res, 404, 'No existe esta subasta')
+    }
+    if (player.money < value) {
+        return responses.errorDTOResponse(res, 403, 'No tienes suficiente dinero')
     }
     if (market.isFinished) {
         return responses.errorDTOResponse(res, 403, 'Esta subasta ya ha finalizado')
@@ -113,9 +231,100 @@ const posterBid = async (req, res) => {
     if (value < market.initialValue) {
         return responses.errorDTOResponse(res, 403, 'El valor de la oferta debe ser mayor al valor inicial')
     }
+    if (market.userId == userId) {
+        return responses.errorDTOResponse(res, 403, 'No puedes ofertar en tu propia subasta')
+    }
+    
+    if (isDirectPurchase) {
+        if (value != market.directPurchase) {
+            return responses.errorDTOResponse(res, 403, 'El valor de la oferta debe ser igual al valor de compra directa')
+        } else {
+            const warehouse = await Warehouse.findOne({
+                raw: true,
+                where: {
+                    [Op.and]: [{
+                        stickerId: market.stickerId
+                    }, {
+                        eventId: eventId
+                    },{
+                        userId: userId
+                    }]
+                }
+            });
+            if (!warehouse) {
+                await Warehouse.create({
+                    quantity: 1,
+                    stickerId: market.stickerId,
+                    userId: userId,
+                    eventId: eventId
+                });
+            } else {
+                await warehouse.update({
+                    quantity: warehouse.quantity + 1
+                });
+            }
+            await PlayerFantasy.update({
+                money: player.money - value
+            }, {
+                where: {
+                    [Op.and]: [
+                    {
+                        userId: userId
+                    }, {
+                        eventId: eventId
+                    }]
+                }
+            });
+            await Market.update({
+                isFinished: true
+            }, {
+                where: {
+                    [Op.and]: [{
+                        eventId: eventId
+                    }, {
+                        id: marketId
+                    }]
+                }
+            });
 
+            return responses.singleDTOResponse(res, 200, 'Compra realizada con exito', market);
+
+        }
+    } else {
+        const bid = await Bid.create({
+            value: value,
+            userId: userId,
+            marketId: marketId,
+            isDirectPurchase: isDirectPurchase
+        });
+
+        await PlayerFantasy.update({
+            money: player.money - value
+        }, {
+            where: {
+                [Op.and]: [
+                {
+                    userId: userId
+                }, {
+                    eventId: eventId
+                }]
+            }
+        });
+        await Market.update({
+            initialValue: market.initialValue + value,
+        }, {
+            where: {
+                [Op.and]: [{
+                    eventId: eventId
+                }, {
+                    id: marketId
+                }]
+            }
+        });
+        return responses.singleDTOResponse(res, 200, 'Oferta realizada con exito', bid);
+    }
 }
 
 module.exports = {
-    poster
+    poster, posterBid
 }

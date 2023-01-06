@@ -9,7 +9,7 @@ const GamesModel = require('../models/games');
 const TeamsModel = require('../models/teamsModel');
 const InventoryModel = require('../models/inventory');
 const WarehouseModel = require('../models/warehouses');
-const playerFantasyModel = require('../models/playerFantasyModel');
+const playerFantasyModel = require('../models/playerFantasy');
 const MarketModel = require('../models/market');
 const BidsModel = require('../models/bids');
 

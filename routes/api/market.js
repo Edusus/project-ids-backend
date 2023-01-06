@@ -1,5 +1,6 @@
 const router = require('express').Router();
-const { poster } = require('../../controllers/market/poster');
+const { poster, posterBid } = require('../../controllers/market/poster');
+const { bidUpdate } = require('../../controllers/market/updater');
 const { Market } = require('../../databases/db');
 
 router.get('/actives', async(req,res)=>{
@@ -15,5 +16,9 @@ router.get('/actives', async(req,res)=>{
 });
 
 router.post('/add', poster);
+
+router.post('/bid', posterBid);
+
+router.put('/update/:bidId', bidUpdate);
 
 module.exports = router;
