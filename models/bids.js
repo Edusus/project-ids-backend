@@ -19,5 +19,9 @@ module.exports = (sequelize, type) => {
                 }
             }
         },
+        isDirectPurchase : {
+            type: type.BOOLEAN,
+            defaultValue: false,
+        },
     })
 }
