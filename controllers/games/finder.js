@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { Game, PlayersGame, team, Sticker } = require('../../databases/db');
+const { Game, PlayersGame, team, Sticker, Event } = require('../../databases/db');
 const responses = require('../../utils/responses/responses');
 
 const minimunDate = new Date(0);
@@ -20,6 +20,9 @@ const find = async (req, res) => {
         }
       },
       include: [
+        {
+          model: Event
+        },
         {
           model: team,
           as: 'teamOne',
@@ -59,6 +62,10 @@ const find = async (req, res) => {
         }
       },
       include: [
+        {
+          model: Event,
+          attributes: ['id', 'eventName', 'status']
+        },
         {
           model: PlayersGame,
           attributes: ['playerId', 'points'],
@@ -127,7 +134,7 @@ const find = async (req, res) => {
       let item = {
         id: gamesAsJSON[i].id,
         gameDate: gamesAsJSON[i].gameDate,
-        eventId: gamesAsJSON[i].eventId,
+        event: gamesAsJSON[i].event,
         teamOne: gamesAsJSON[i].teamOne,
         teamTwo: gamesAsJSON[i].teamTwo,
         players,
@@ -146,6 +153,10 @@ const findById = async (req, res) => {
   const game = await Game.findByPk(req.params.gameId, {
     attributes: ['id', 'gameDate', 'eventId'],
     include: [
+      {
+        model: Event,
+        attributes: ['id', 'eventName', 'status']
+      },
       {
         model: PlayersGame,
         attributes: ['playerId', 'points'],
@@ -181,7 +192,7 @@ const findById = async (req, res) => {
     const item = {
       id: gameAsJSON.id,
       gameDate: gameAsJSON.gameDate,
-      eventId: gameAsJSON.eventId,
+      event: gameAsJSON.event,
       teamOne: gameAsJSON.teamOne,
       teamTwo: gameAsJSON.teamTwo,
       players,
@@ -198,6 +209,10 @@ const findAll = async (req, res) => {
   const games = await Game.findAll({
     attributes: ['id', 'gameDate', 'eventId'],
     include: [
+      {
+        model: Event,
+        attributes: ['id', 'eventName', 'status']
+      },
       {
         model: PlayersGame,
         attributes: ['playerId', 'points'],
@@ -235,7 +250,7 @@ const findAll = async (req, res) => {
     let item = {
       id: gamesAsJSON[i].id,
       gameDate: gamesAsJSON[i].gameDate,
-      eventId: gamesAsJSON[i].eventId,
+      event: gamesAsJSON[i].event,
       teamOne: gamesAsJSON[i].teamOne,
       teamTwo: gamesAsJSON[i].teamTwo,
       players,
