@@ -23,9 +23,7 @@ const Promotion = PromotionsModel(sequelize, Sequelize); //Nueva implementacion 
 const game = gamesModel(sequelize, Sequelize);
 const team = teamsModel(sequelize, Sequelize);
 const inventory = inventoryModel(sequelize, Sequelize);
-//const Deposit =
 const PlayerFantasy= playerFantasyModel(sequelize,Sequelize);
-//PlayerFantasy = playerFantasyModel
 /* Defining associations */
 team.belongsTo(Event, {
   foreignKey: {
