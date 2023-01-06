@@ -1,5 +1,6 @@
 const schedule = require('node-schedule');
-const { Market } = require('../../databases/db');
+const { Market, Warehouse } = require('../../databases/db');
+const responses = require('../../utils/responses/responses');
 
 function padTo2Digits(num) {
     return num.toString().padStart(2, '0');
@@ -28,12 +29,30 @@ const poster = async (req, res) => {
     const endTime = new Date(timeNow.getTime() + 60000);
     let { initialValue, directPurchase, playerId } = req.body;
     
+    const warehouse = await Warehouse.findOne({
+        raw: true,
+        where: {
+            [Op.and]: [{
+                stickerId: playerId
+            }, {
+                eventId: eventId
+            },{ 
+                userId: userId
+            }]
+        }
+    });
+
+    if (!warehouse) {
+        return responses.errorDTOResponse(res, 404, 'No posees este Sticker')
+    }
+    const isInLineup = warehouse.isInLineup;
+    if (isInLineup) {
+        return responses.errorDTOResponse(res, 403, 'Este sticker ya esta en la alineacion')
+    }
+
     if (initialValue == null || directPurchase == null) {
-        res.status(400).json({
-            success: false,
-            message: 'Error: Debe proporcionar un valor inicial y un valor de compra directa'
-        });
-    } else {
+      return responses.errorDTOResponse(res, 400, 'Debe proporcionar un valor inicial y un valor de compra directa');
+    }
         const market = await Market.create({
             raw: true,
             initialValue: initialValue,
@@ -49,14 +68,14 @@ const poster = async (req, res) => {
             message: 'Subasta creada con exito',
             item: market
         });
-        const job = schedule.scheduleJob({ start: timeNow, end: endTime}, function(){
+        const job = schedule.scheduleJob({ start: timeNow, end: endTime}, async function(){
             console.log('Subasta finalizada');
             market.isFinished = true;
+            await market.update({
+                isFinished: true
+            });
             schedule.cancelJob(job);
         });
-    }
-
-   
 }
 
 module.exports = {
