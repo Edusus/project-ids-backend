@@ -29,6 +29,9 @@ const find = async (req, res) => {
     let options = {
       limit: sizeAsNumber,
       offset: pageAsNumber * sizeAsNumber,
+      attributes: {
+        exclude: [ 'idEvents' ]
+      },
       where: {
         name: {
           [Op.regexp]: teamname
@@ -36,6 +39,10 @@ const find = async (req, res) => {
         idEvents: {
           [Op.like]: eventid
         }
+      },
+      include: {
+        model: Event,
+        attributes: ['id', 'eventName']
       }
     }
     const { count, rows } = await team.findAndCountAll(options);
