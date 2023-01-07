@@ -1,5 +1,5 @@
 module.exports = (sequelize, type) => {
-    return sequelize.define('playerFantasyModel', {
+    return sequelize.define('playerFantasy', {
       id: {
         type: type.INTEGER,
         primaryKey: true,
@@ -7,10 +7,12 @@ module.exports = (sequelize, type) => {
       },
       points: {
         type: type.INTEGER,
+        allowNull:false,
         defaultValue: 0,
       },
       money: {
         type: type.INTEGER,
+        allowNull:false,
         defaultValue: 0,
       }
     })

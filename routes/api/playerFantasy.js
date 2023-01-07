@@ -50,38 +50,38 @@ router.get('/:eventId', async (req,res)=>{
         where: {id : req.params.eventId}
     });
     if (!event) {
-        res.status(404).json({
+        return res.status(404).json({
             success: false,
             message: "Evento no encontrado"
         })
-    }else{
-        const user = await PlayerFantasy.findOne({
-            raw:true,
-            attributes: {
-                exclude: ['createdAt', 'updatedAt', 'id','userId','eventId']
-            },
-            where: {
-                [Op.and]:[{
-                    eventId : req.params.eventId
-                },
-                {
-                    userId : req.user.id.id
-                }]
-            }
-        });
-        if (!user) {
-            res.status(404).json({
-                success: false,
-                message: "El usuario no esta participando en ese evento"
-            })
-        }else{
-            res.status(200).json({
-                success: true,
-                points: user.points,
-                money: user.money
-            })
-        }
     }
+    const user = await PlayerFantasy.findOne({
+        raw:true,
+        attributes: {
+            exclude: ['createdAt', 'updatedAt', 'id','userId','eventId']
+        },
+        where: {
+            [Op.and]:[{
+                eventId : req.params.eventId
+            },
+            {
+                userId : req.user.id.id
+            }]
+        }
+    });
+
+    if (!user) {
+        return res.status(404).json({
+            success: false,
+            message: "El usuario no esta participando en ese evento"
+        })
+    }
+    
+    return res.status(200).json({
+        success: true,
+        points: user.points,
+        money: user.money
+    });
 });
 
 router.post('/:eventId/join-game', async (req,res)=>{

@@ -396,13 +396,22 @@ router.post('/public-events/:eventId/claim-sticker', async (req, res) => {
                   }).then(async warehouse => {
                      if (!warehouse) {
                        await Warehouse.create({
-                           isInSquad: false,
+                           isInLineup: false,
                            userId: req.user.id.id,
                            stickerId: stickerId,
-                           eventId: eventId
+                           eventId: eventId,
+                           quantity : 1
                        });
+                     } else {
+                          await Warehouse.update({
+                            quantity: warehouse.dataValues.quantity + 1
+                          }, {
+                            where: {
+                                 [Op.and]: [{stickerId: stickerId},{eventId : eventId},{userId: req.user.id.id}]
+                            }
+                          });
                      }
-               });  
+               }); 
 
                 res.status(200).json({
                     success: true,

@@ -9,9 +9,9 @@ const GamesModel = require('../models/games');
 const TeamsModel = require('../models/teamsModel');
 const InventoryModel = require('../models/inventory');
 const WarehouseModel = require('../models/warehouses');
-const PlayersGamesModel = require('../models/playersGames');
-const playerFantasyModel = require('../models/playerFantasyModel');
-
+const playerFantasyModel = require('../models/playerFantasy');
+const MarketModel = require('../models/market');
+const BidsModel = require('../models/bids');
 
 
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD,{
@@ -30,6 +30,8 @@ const Inventory = InventoryModel(sequelize, Sequelize);
 const Warehouse = WarehouseModel(sequelize, Sequelize);
 const PlayersGame = PlayersGamesModel(sequelize, Sequelize);
 const PlayerFantasy= playerFantasyModel(sequelize,Sequelize);
+const Market = MarketModel(sequelize, Sequelize);
+const Bid = BidsModel(sequelize, Sequelize);
 
 /* Defining associations */
 Team.belongsTo(Event, {
@@ -189,6 +191,80 @@ Event.hasMany(PlayerFantasy);
 PlayerFantasy.belongsTo(Event);
 
 
+//Relaciones para formar el mercado todo lo que tiene que ver con el mercado
+Event.belongsToMany(Sticker, {
+  through: Market,
+  uniqueKey: false,
+  foreignKey: {
+    unique: false
+  },
+  otherKey: {
+    unique: false
+  }
+  });
+Sticker.belongsToMany(Event, {
+  through: Market,
+  uniqueKey: false,
+  foreignKey: {
+    unique: false
+  },
+  otherKey: {
+    unique: false
+  }
+});
+User.belongsToMany(Sticker, {
+  through: Market,
+  uniqueKey: false,
+  foreignKey: {
+    unique: false
+  },
+  otherKey: {
+    unique: false
+  }
+});
+Sticker.belongsToMany(User, { 
+  through: Market,
+  uniqueKey: false,
+  foreignKey: {
+    unique: false
+  },
+  otherKey: {
+    unique: false
+  }
+});
+
+Event.hasMany(Market, {
+  uniqueKey: false
+});
+Market.belongsTo(Event, {
+  uniqueKey: false
+});
+Sticker.hasMany(Market, {
+  uniqueKey: false
+});
+Market.belongsTo(Sticker, {
+  uniqueKey: false
+});
+User.hasMany(Market, {
+  uniqueKey: false
+});
+Market.belongsTo(User, {
+  uniqueKey: false
+});
+
+//Relaciones para formar las subastas
+User.belongsToMany(Market, {
+  through: Bid
+});
+Market.belongsToMany(User, {
+  through: Bid
+});
+
+User.hasMany(Bid);
+Bid.belongsTo(User);
+Market.hasMany(Bid);
+Bid.belongsTo(Market);
+
 sequelize.authenticate()
     .then(()=>{
         console.log('Connection has been established successfully.');
@@ -210,5 +286,5 @@ const random = sequelize.random();
 const { Op } = Sequelize;
 
 module.exports ={
-    User, Sticker, Event, Promotion, Ad, Game, Team, random, Op, Inventory, Warehouse, PlayersGame, Promotion, PlayerFantasy
+    User, Sticker, Event, Promotion, Ad, Game, Team, random, Op, Inventory, Warehouse, PlayersGame, Promotion, PlayerFantasy, Market, Bid
 }
