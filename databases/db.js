@@ -12,6 +12,7 @@ const WarehouseModel = require('../models/warehouses');
 const playerFantasyModel = require('../models/playerFantasy');
 const MarketModel = require('../models/market');
 const BidsModel = require('../models/bids');
+const PlayersGamesModel = require('../models/playersGames');
 
 
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD,{
