@@ -285,6 +285,6 @@ sequelize.sync({ force: false })
 const random = sequelize.random();
 const { Op } = Sequelize;
 
-module.exports ={
+module.exports = {
     User, Sticker, Event, Promotion, Ad, Game, Team, random, Op, Inventory, Warehouse, PlayersGame, Promotion, PlayerFantasy, Market, Bid
 }
