@@ -61,11 +61,19 @@ router.get('/inactive', async (req,res)=>{
 
 //endpoint para obtener eventos por id
 router.get('/:eventId',isAdmin, async (req,res)=>{
-    const event= await Event.findOne({where:{id: req.params.eventId}});
+    if (isNaN(req.params.eventId)) {
+        return res.status(400).json({
+           success: false,
+           error:'El ID debe ser un número'
+         });
+    }
+    const event= await Event.findOne({
+        where:{id: req.params.eventId}
+    });
      if(!event){
-        return res.json({
+        return res.status(404).json({
           success: false,
-          error:'No existe ningun evento con este id'
+          error:'No existe evento con este id'
         });
     }
     return res.status(200).json({

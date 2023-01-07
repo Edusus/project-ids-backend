@@ -98,9 +98,17 @@ router.get('/obtain/:eventId', async (req, res) => {
 
 //endpoint para buscar cromos por su id
 router.get('/:stickerId',isAdmin, async (req,res)=>{
-  const sticker= await Sticker.findOne({where:{id: req.params.stickerId}});
+  if (isNaN(req.params.stickerId)){
+    return res.status(400).json({
+      success: false,
+      error:'El ID debe ser un número'
+     });
+  }
+  const sticker= await Sticker.findOne({
+    where:{id: req.params.stickerId}
+  });
    if(!sticker){
-      return res.json({
+      return res.status(404).json({
         success: false,
         error:'No existe cromo con este id'
       });

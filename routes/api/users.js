@@ -31,9 +31,17 @@ router.get('/', async (req,res)=>{
 
 //endpoint para buscar user por su id
 router.get('/:userId',isAdmin, async (req,res)=>{
-    const user1= await User.findOne({where:{id: req.params.userId}});
+    if (isNaN(req.params.userId)) {
+        return res.status(400).json({
+           success: false,
+           error:'El ID debe ser un número'
+         });
+    }
+    const user1= await User.findOne({
+        where:{id: req.params.userId}
+    });
      if(!user1){
-        return res.json({
+        return res.status(404).json({
           success: false,
           error:'No existe usuario con este id'
         });
