@@ -3,8 +3,22 @@ const { poster, posterBid } = require('../../controllers/market/poster');
 const { bidUpdate } = require('../../controllers/market/updater');
 const { Market,Bid,Op } = require('../../databases/db');
 
-router.get('/actives', async(req,res)=>{
-    const marketActives= await Market.findAll({where:{ "isFinished":false}});
+router.get('/', async(req,res)=>{
+    let {page = 0, size = 10} = req.query;
+    page = parseInt(page);
+    size = parseInt(size);
+    let options = {
+        offset: page * size,
+        limit: size,
+        order: [
+            ['createdAt', 'DESC']
+        ],
+        where: {
+            isFinished: false
+        }
+    };
+
+    const marketActives= await Market.findAll(options);
     if (marketActives==''){
         res.json({error: 'No hay ninguna subasta en linea'});
     }else{
