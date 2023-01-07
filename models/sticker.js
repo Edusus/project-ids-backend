@@ -36,7 +36,13 @@ module.exports=(sequelize,type)=>{
         },
         externalUid:{
             type:type.STRING,
-            allowNull:false
+            allowNull:false,
+            validate: {
+                notEmpty: {
+                  args: true,
+                  msg: 'Empty alias not allowed'
+                }
+            }
         },
         jerseynumber:{
             type:type.INTEGER,
