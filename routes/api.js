@@ -13,7 +13,7 @@ const benchesRouter = require('./api/bench');
 const squadsRouter = require('./api/squad');
 const marketRouter = require('./api/market');
 const gamesEndpoints = require('./api/games');
-const moneyRouter =require('./api/playerFantasyModel');
+const moneyRouter =require('./api/playerFantasy');
 
 const auth = require('../middlewares/auth');
 const router = Router();
