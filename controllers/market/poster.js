@@ -105,7 +105,9 @@ const poster = async (req, res) => {
                     [Op.and]: [{
                         marketId: market.id
                     }]
-                }
+                },
+                order: [['value', 'DESC']
+                ]
             });
 
             if (bids.length == 0) {
@@ -126,7 +128,7 @@ const poster = async (req, res) => {
                 const items = [];
                 for (let i = 0; i < user.length; i++) {
                  items.push(user[i]);
-                }
+                }                    
                 const max = Math.max.apply(Math, items.map(function(o) { return o.value; }))
                 const winner = items.find(item => item.value === max);
                 const warehouseWinner = await Warehouse.findOne({
@@ -139,6 +141,33 @@ const poster = async (req, res) => {
                         }]
                     }
                 });
+
+                items.shift();
+                for (let i = 0; i < items.length; i++) {
+                    const item = items[i];
+                    let player = await PlayerFantasy.findOne({
+                        raw: true,
+                        where: {
+                            [Op.and]: [{
+                                userId: item.userId
+                            }, {
+                                eventId: eventId
+                            }]
+                        }
+                    });
+
+                    await PlayerFantasy.update({
+                        money: player.money + item.value
+                    }, {
+                        where: {
+                            [Op.and]: [{
+                                userId: item.userId
+                            }, {
+                                eventId: eventId
+                            }]
+                        }
+                    });
+                }
 
                 if (warehouseWinner) {
                     await Warehouse.update({
