@@ -12,7 +12,7 @@ module.exports=(sequelize,type)=>{
         },
         country:{
             type:type.STRING,
-            allowNull:false
+            allowNull: true 
         },
         position:{
             type:type.STRING,
@@ -32,6 +32,14 @@ module.exports=(sequelize,type)=>{
         },
         appearanceRate:{
             type:type.FLOAT,
+            allowNull:false
+        },
+        externalUid:{
+            type:type.STRING,
+            allowNull:false
+        },
+        jerseynumber:{
+            type:type.INTEGER,
             allowNull:false
         }
     })
