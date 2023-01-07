@@ -16,7 +16,7 @@ router.get('/', async (req,res)=>{
     attributes: ['id','playerName', 'country', 'position', 'img', 'height', 'weight', 'appearanceRate', 'createdAt', 'updatedAt'],
     include: {
       model: team,
-      attributes: ['id', 'name', 'badge']
+      attributes: ['id', 'name', 'badge', 'idEvents']
     }
   }
   const {count,rows} = await Sticker.findAndCountAll(options);
