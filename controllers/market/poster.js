@@ -78,8 +78,8 @@ const poster = async (req, res) => {
         });
         const market = await Market.create({
             raw: true,
-            initialValue: initialValue,
-            directPurchase : directPurchase,
+            initialPurchaseValue: initialValue,
+            immediatePurchaseValue : directPurchase,
             stickerId: playerId,
             userId : userId,
             eventId : eventId,
@@ -228,7 +228,7 @@ const posterBid = async (req, res) => {
     if (market.isFinished) {
         return responses.errorDTOResponse(res, 403, 'Esta subasta ya ha finalizado')
     }
-    if (value < market.initialValue) {
+    if (value < market.initialPurchaseValue) {
         return responses.errorDTOResponse(res, 403, 'El valor de la oferta debe ser mayor al valor inicial')
     }
     if (market.userId == userId) {
@@ -236,7 +236,7 @@ const posterBid = async (req, res) => {
     }
     
     if (isDirectPurchase) {
-        if (value != market.directPurchase) {
+        if (value != market.immediatePurchaseValue) {
             return responses.errorDTOResponse(res, 403, 'El valor de la oferta debe ser igual al valor de compra directa')
         } else {
             const warehouse = await Warehouse.findOne({
@@ -311,7 +311,7 @@ const posterBid = async (req, res) => {
             }
         });
         await Market.update({
-            initialValue: market.initialValue + value,
+            initialPurchaseValue: market.initialPurchaseValue + value,
         }, {
             where: {
                 [Op.and]: [{

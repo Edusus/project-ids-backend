@@ -67,7 +67,7 @@ const bidUpdate = async (req, res) => {
     if (market.userId == userId) {
         return responses.errorDTOResponse(res, 400, 'No puedes ofertar en tu propia subasta');
     }
-    if (market.directPurchase == value && isDirectPurchase) {
+    if (market.immediatePurchaseValue == value && isDirectPurchase) {
         const warehouse = await Warehouse.findOne({
             raw: true,
             where: {
@@ -113,8 +113,8 @@ const bidUpdate = async (req, res) => {
 
         return responses.singleDTOResponse(res, 200, 'Compra realizada con exito');
     } else {
-        if (bid.value + value > market.initialValue ) {
-            console.log(bid.value, value, market.initialValue)
+        if (bid.value + value > market.initialPurchaseValue ) {
+            console.log(bid.value, value, market.initialPurchaseValue)
             await Bid.update({
                 value: bid.value + value
             }, {
@@ -136,7 +136,7 @@ const bidUpdate = async (req, res) => {
             });
 
             await Market.update({
-                initialValue: market.initialValue + (bid.value + value)
+                initialPurchaseValue: market.initialPurchaseValue + (bid.value + value)
             }, {
                 where: {
                     id: marketId

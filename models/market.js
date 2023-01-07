@@ -5,11 +5,11 @@ module.exports = (sequelize, type) => {
         primaryKey: true,
         autoIncrement: true
       },
-      initialValue: {
+      initialPurchaseValue: {
         type: type.INTEGER,
         defaultValue: 0,
       },
-      directPurchase: {
+      immediatePurchaseValue: {
         type: type.INTEGER,
         defaultValue: 0,
       },

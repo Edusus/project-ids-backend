@@ -56,8 +56,8 @@ router.get('/:marketId', async (req,res)=>{
         message:"Subasta recuperada con éxito",
         item:{
             market,
-            bidHigher:winner,
-            bidUser:userBid
+            highestBid:winner,
+            myLastBid:userBid
         }
     });
   });
