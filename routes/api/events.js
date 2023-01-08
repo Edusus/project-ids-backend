@@ -50,7 +50,7 @@ router.get('/items', async (req,res)=>{
      if(items==''){
         responses.errorDTOResponse(res,400,'No existen eventos inactivos');
     }else{
-        responses.multipleDTOsResponse(res,200,"inactive items"+ items);
+        responses.multipleDTOsResponse(res,200,"items"+ items);
     }
 });
 
