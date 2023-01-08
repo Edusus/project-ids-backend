@@ -26,7 +26,7 @@ const poster = async (req, res) => {
     const userId = req.user.id.id;
     const eventId = req.eventId;
     const timeNow = new Date(Date.now());
-    const endTime = new Date(timeNow.getTime() + 180000);
+    const endTime = new Date(timeNow.getTime() + 600000);
     let { initialValue, directPurchase } = req.body;
     const {playerId} = req.body
     const warehouse = await Warehouse.findOne({
