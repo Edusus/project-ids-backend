@@ -28,24 +28,18 @@ router.get('/', async(req,res)=>{
     };
 
     const { count, rows } = await Market.findAndCountAll(options);
-    responses.paginatedDTOsResponse(res, 200, 'Subastas recuperadas con exito', rows, count, pageAsNumber, sizeAsNumber);
+    return responses.paginatedDTOsResponse(res, 200, 'Subastas recuperadas con exito', rows, count, pageAsNumber, sizeAsNumber);
 });
 
 //endpoint para buscar subastas por su id
-router.get('/:marketId', async (req,res)=>{
+router.get('/:marketId', async (req,res) =>{
     const market= await Market.findOne({where:{id: req.params.marketId}});
      if(!market){
-        return res.json({
-          success: false,
-          error:'No existe esta subasta'
-        });
+        return responses.errorDTOResponse(res, 404, 'Subasta no encontrada');
     }
     
     //Para saber la puja más alta de la subasta  
-    const marketBid = await Bid.findAll({
-        raw:true,
-        where:{marketId:req.params.marketId}
-    });
+    const marketBid = await Bid.findAll({ raw:true });
     const user = JSON.parse(JSON.stringify(marketBid));
     const items = [];
     for (let i = 0; i < user.length; i++) {
