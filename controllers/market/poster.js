@@ -142,7 +142,7 @@ const poster = async (req, res) => {
                     }
                 });
 
-                items.shift();
+                const valueMax = items.shift();
                 for (let i = 0; i < items.length; i++) {
                     const item = items[i];
                     let player = await PlayerFantasy.findOne({
@@ -168,6 +168,29 @@ const poster = async (req, res) => {
                         }
                     });
                 }
+
+                let auctioner = await PlayerFantasy.findOne({
+                    raw: true,
+                    where: {
+                        [Op.and]: [{
+                            userId: userId
+                        }, {
+                            eventId: eventId
+                        }]
+                    }
+                });
+
+                await PlayerFantasy.update({
+                    money: auctioner.money + valueMax.value
+                }, {
+                    where: {
+                        [Op.and]: [{
+                            userId: userId
+                        }, {
+                            eventId: eventId
+                        }]
+                    }
+                });
 
                 if (warehouseWinner) {
                     await Warehouse.update({
