@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { finder, poster, deleter } = require('../../controllers/gamesControllers');
 const { csvController } = require('../../controllers/filesControllers');
-
+const responses= require('../../utils/responses/responses');
 /*
 const games = [
     {
@@ -111,31 +111,18 @@ router.post('/', csvController.uploadCsv, poster.post);
 
 router.put('/:gameId', csvController.uploadCsv, async (req, res) => {
     if (!req.body.matchedAt) {
-        return res.status(400).json({
-            "success": false,
-            "message": "No se ha enviado fecha de celebracion del partido."
-        });
+        return responses.errorDTOResponse(res,400,"No se ha enviado fecha de celebracion del partido.");
     }
 
     if (!req.body.teamOneId || !req.body.teamTwoId) {
-        return res.status(400).json({
-            "success": false,
-            "message": "No se ha enviado ID de uno de los equipos del partido."
-        });
+        return responses.errorDTOResponse(res,400,"No se ha enviado ID de uno de los equipos del partido.");
     }
 
     if (typeof +req.body.teamTwoId !== 'number' || typeof +req.body.teamTwoId !== 'number') {
-        return res.status(400).json({
-            "success": false,
-            "message": "El tipo de dato de uno de los equipos no es un numero."
-        });
+        return responses.errorDTOResponse(res,400,"El tipo de dato de uno de los equipos no es un numero.");
     }
 
-    return res.status(200).json({
-      "success": true,
-      "message": "Partido editado con exito :)",
-      "game": gamesFormmated[0],
-    });
+    return responses.singleDTOResponse(res,200,"Partido editado con exito",gamesFormmated[0],);
 });
 
 router.delete('/:gameId', deleter.destroy);

@@ -3,7 +3,7 @@ const path = require('path');
 const { imgController, fileController } = require('../filesControllers'); 
 const { Sticker } = require('../../databases/db');
 const getImageUrl = require('../../utils/helpers/get-image-url');
-
+const responses = require('../../utils/responses/responses');
 exports.createSticker = async (body) => {
   const { playerName, country, position, height, weight, appearanceRate, teamId, externalUuid, jerseyNumber } = body;
   let img = getImageUrl(body.fileName);
@@ -21,16 +21,13 @@ exports.createSticker = async (body) => {
     jerseyNumber
   });
 
-  return newSticker;
+  return responses.singleDTOResponse(res,200,"Se creo con exito el nuevo sticker",newSticker);
 }
 
 //funcion de subir imagenes de los cromos
 exports.uploadFileSticker = async (req, res) => {
     if (!req.file?.path) {
-        return res.status(400).json({
-            success: false,
-            message: "No se ha subido archivo o no cumple el filtro",
-        })
+        return responses.errorDTOResponse(res,400,"No se ha subido archivo o no cumple el filtro");
     }
 
     try {
@@ -38,6 +35,7 @@ exports.uploadFileSticker = async (req, res) => {
         ...req.body,
         fileName: req.file.filename
       });
+      responses.single
       res.status(201).json({
         message: 'Cromo creado con exito',
         item: newSticker
@@ -46,7 +44,7 @@ exports.uploadFileSticker = async (req, res) => {
       console.error(error);
       if (typeof req.file !== 'undefined') {
         fileController.deleteFile(req.file.path, req.file.filename);
-        res.status(400).send(error.message);
+        return responses.errorDTOResponse(res,400,error.message);
      }
     }
 };
@@ -77,17 +75,14 @@ exports.uploadUpdatedFileSticker = async (req, res) => {
       }, { 
         where: { id: req.params.playerId }
       });
-      res.status(200).send({
-        success:true,
-        message:"item modified"
-      });
+      responses.successDTOResponse(res,200,"Sticker modificado con exito");
     } catch (error) {
       console.error(error);
     if (typeof req.file !== 'undefined') {
       fileController.deleteFile(req.file.path, req.file.filename);
-      res.status(400).send(error.message);
+      responses.errorDTOResponse(res,500,error.message);
     } else {
-      res.status(400).send(error.message + '\nError: img not sent');
+      responses.errorDTOResponse(res,400,error.message + '\nError: La imagen no se subio correctamente o no fue enviada');
     }
   }
 };

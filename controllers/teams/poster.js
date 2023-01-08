@@ -1,5 +1,4 @@
 const csv = require('csvtojson');
-
 const { Team } = require('../../databases/db');
 const { imgController, fileController } = require('../filesControllers');
 const responses = require('../../utils/responses/responses');
@@ -29,12 +28,12 @@ const post = async (req, res) => {
         "badge": filepath,
         "idEvents": idEvents
     }, { fields: allowedFields });
-    res.status(201).json(team);
+    responses.singleDTOResponse(res,201,"S subio con exito el equipo: ",team);
   } catch (error) {
     console.error(error);
     if (typeof req.file !== 'undefined') {
       fileController.deleteFile(req.file.path, req.file.filename);
-      res.status(400).send(error.message);
+      responses.errorDTOResponse(res,400,error.message);
    }
   }
 }

@@ -1,7 +1,7 @@
 const { Team } = require('../../databases/db');
 const { imgController, fileController } = require('../filesControllers');
 const path = require('path');
-
+const responses= require('../../utils/responses/responses');
 const allowedFields = ['name', 'badge', 'idEvents'];
 
 /**
@@ -36,17 +36,14 @@ const update = async (req, res) => {
       where: { id: teamId },
       fields: allowedFields 
     });
-    res.status(200).json({
-      success: true,
-      message: `Modified team ${teamId}`
-    });
+    responses.singleDTOResponse(res,200,"Equipo modificado con exito del id: ",teamId);
   } catch (error) {
     console.error(error);
     if (typeof req.file !== 'undefined') {
       fileController.deleteFile(req.file.path, req.file.filename);
-      res.status(400).send(error.message);
+      responses.errorDTOResponse(res,400,error.message);
     } else {
-      res.status(400).send(error.message + '\nError: img not sent');
+      responses.errorDTOResponse(res,400,error.message + '\nError: imagen no se subio correctamente o no se envio');
     }
   }
 }

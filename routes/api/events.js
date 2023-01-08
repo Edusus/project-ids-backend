@@ -5,6 +5,8 @@ const { game }= require('../../databases/db');
 const  responses =require('../../utils/responses/responses');
 const { Any } = require('typeorm');
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
+const responses= require('../../utils/responses/responses');
+
 //endpoint para listar eventos
 router.get('/', async (req,res)=>{
     //paginacion
@@ -29,46 +31,33 @@ router.get('/', async (req,res)=>{
 
 router.get('/all', async (req,res)=>{
     const items = await Event.findAll();
-    res.status(200).json({
-        items:items
-    });
+    responses.multipleDTOsResponse(res,200,"se han recibido con exito los eventos",items);
 });
 
 ////endpoint para listar eventos activos
 router.get('/active', async (req,res)=>{
     const eventsAvailable= await Event.findAll({where:{"status":true}});
      if(eventsAvailable==''){
-        res.json({error:'No existen eventos activos'});
+        responses.errorDTOResponse(res,400,'No existen eventos activos');
     }else{
-        res.status(200).json({
-            success: true,
-            "active items ": eventsAvailable 
-        });
+        responses.multipleDTOsResponse(res,200,"active items "+ eventsAvailable );
     }
-
 });
 
 ////endpoint para listar eventos inactivos
-router.get('/inactive', async (req,res)=>{
-    const eventsInactive= await Event.findAll({where:{"status":false}});
-     if(eventsInactive==''){
-        res.json({error:'No existen eventos inactivos'});
+router.get('/items', async (req,res)=>{
+    const items= await Event.findAll({where:{"status":false}});
+     if(items==''){
+        responses.errorDTOResponse(res,400,'No existen eventos inactivos');
     }else{
-        res.status(200).json({
-            success: true,
-            "inactive items": eventsInactive 
-        });
+        responses.multipleDTOsResponse(res,200,"inactive items"+ items);
     }
-
 });
 
 //endpoint para crear eventos
 router.post('/',isAdmin, async (req,res)=>{
     const item = await Event.create(req.body);
-    res.json({
-        message:'item creado',
-        item 
-    });
+    responses.singleDTOResponse(res,200,'item creado',item);
 });
 
 //endpoint para editar eventos
@@ -76,20 +65,16 @@ router.put('/:eventId',isAdmin, async (req,res)=>{
     await Event.update(req.body,{
         where:{ id: req.params.eventId}
     });
-    res.json({ 
-        success:true,
-        message:"Modificación exitosa"
-    });
+    responses.successDTOResponse(res,200,"Modificación exitosa");
 });
 
 //endpoint para borrar eventos
 router.delete('/:eventId', async (req,res)=>{
-  //  if(eventId != await team && eventid != await game.){
-        await Event.destroy({
-            where:{ id: req.params.eventId }
-        });
-        return responses.successDTOResponse(res,true,"se ha eliminado con exito");
-  //  }
+    await Event.destroy({
+        where:{ id: req.params.eventId }
+    });
+    return responses.successDTOResponse(res,true,"se ha eliminado con exito");
+
 });
 
 
