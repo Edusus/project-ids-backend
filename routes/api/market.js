@@ -60,19 +60,24 @@ router.get('/:marketId', async (req,res) =>{
             }]
         }
     });
-    
+
+    let myLastBid = 0;
+    if (!(typeof userBid === 'undefined' || userBid == null)) {
+        myLastBid = userBid.value;
+    }
+
     return res.status(200).json({
         success: true,
         message:"Subasta recuperada con éxito",
         item:{
             market,
             highestBid:winner,
-            myLastBid:userBid
+            myLastBid
         }
     });
   });
 
-router.post('/add', poster);
+router.post('/', poster);
 
 router.post('/bid', posterBid);
 
