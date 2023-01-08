@@ -14,7 +14,6 @@ const MarketModel = require('../models/market');
 const BidsModel = require('../models/bids');
 const PlayersGamesModel = require('../models/playersGames');
 
-
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD,{
     host: process.env.DBHOST,
     dialect:'mysql'
@@ -35,6 +34,7 @@ const Market = MarketModel(sequelize, Sequelize);
 const Bid = BidsModel(sequelize, Sequelize);
 
 /* Defining associations */
+// Asociacion Event -> Teams
 Team.belongsTo(Event, {
   foreignKey: {
     name: "idEvents"
@@ -47,6 +47,7 @@ Event.hasMany(Team, {
   }
 });
 
+// Asociacion Team -> Games
 Team.hasMany(Game, {
   as: 'teamOne',
   foreignKey: {
@@ -72,6 +73,7 @@ Game.belongsTo(Team, {
   }
 });
 
+// Asociacion Event -> Games
 Game.belongsTo(Event, {
   foreignKey: {
     name: 'eventId',
@@ -85,13 +87,13 @@ Event.hasMany(Game, {
   }
 });
 
+// Asociacion Team -> Stickers
 Team.hasMany(Sticker, { 
   foreignKey: {
     name: "teamId",
     allowNull: false
    } 
 });
-
 Sticker.belongsTo(Team,{
   targetkey: 'id',
   foreignKey: {
@@ -99,27 +101,7 @@ Sticker.belongsTo(Team,{
   }
 });
 
-Game.belongsTo(Event, {
-  foreignKey: {
-    name: 'eventId',
-    allowNull: false
-  }
-});
-Event.hasMany(Game, {
-  foreignKey: {
-    name: 'eventId',
-    allowNull: false
-  }
-});
-
-//Relaciones entre usuarios y eventos para formar un fantasy
-User.belongsToMany(Event,{
-  through: PlayerFantasy
-});
-Event.belongsToMany(User,{
-  through: PlayerFantasy
-});
-User.hasMany(PlayerFantasy);
+//Asociacion Stickers <-> Games a traves de PlayersGames
 Sticker.belongsToMany(Game, {
   through: PlayersGame, 
   foreignKey: { 
@@ -190,56 +172,6 @@ Sticker.hasMany(Inventory);
 Inventory.belongsTo(Sticker);
 Inventory.belongsTo(Event);
 
-Sticker.belongsToMany(Game, {
-  through: PlayersGame, 
-  foreignKey: { 
-    name: 'playerId',
-    allowNull: false 
-  }, 
-  otherKey: { 
-    name: 'gameId',
-    allowNull: false 
-  } 
-});
-Game.belongsToMany(Sticker, {
-  as: 'players', 
-  through: PlayersGame,
-  foreignKey: {
-    name: 'gameId',
-    allowNull: false
-  }, 
-  otherKey: { 
-    name: 'playerId',
-    allowNull: false 
-  } 
-});
-Sticker.hasMany(PlayersGame, {
-  foreignKey: {
-    name: 'playerId',
-    allowNull: false
-  }
-});
-PlayersGame.belongsTo(Sticker, {
-  as: 'players',
-  foreignKey: {
-    name: 'playerId',
-    allowNull: false
-  }
-});
-Game.hasMany(PlayersGame, {
-  foreignKey: {
-    name: 'gameId',
-    allowNull: false
-  }
-});
-PlayersGame.belongsTo(Game, {
-  as: 'games',
-  foreignKey: {
-    name: 'gameId',
-    allowNull: false
-  }
-});
-
 //Relaciones entre usuarios y stickers para el almacen
 User.belongsToMany(Sticker, { 
   through: Warehouse,
@@ -252,6 +184,7 @@ Warehouse.belongsTo(User);
 Sticker.hasMany(Warehouse);
 Warehouse.belongsTo(Sticker);
 
+// Asociacion Event -> Warehouses
 Event.hasMany(Warehouse);
 Warehouse.belongsTo(Event);
 
@@ -266,7 +199,6 @@ User.hasMany(PlayerFantasy);
 PlayerFantasy.belongsTo(User);
 Event.hasMany(PlayerFantasy);
 PlayerFantasy.belongsTo(Event);
-
 
 //Relaciones para formar el mercado todo lo que tiene que ver con el mercado
 Event.belongsToMany(Sticker, {
@@ -336,7 +268,6 @@ User.belongsToMany(Market, {
 Market.belongsToMany(User, {
   through: Bid
 });
-
 User.hasMany(Bid);
 Bid.belongsTo(User);
 Market.hasMany(Bid);

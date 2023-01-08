@@ -1,7 +1,7 @@
 const router = require('express').Router();
 
 const { Sticker, random, Op, Team, Inventory, Event } = require('../../databases/db');
-const {imgController, csvController } = require('../../controllers/filesControllers');
+const { imgController, csvController } = require('../../controllers/filesControllers');
 const controllerSticker = require('../../controllers/stickers/uploadStickers');
 const { poster } = require('../../controllers/stickersControllers');
 const { verifyToken, isAdmin } = require('../../middlewares/auth');

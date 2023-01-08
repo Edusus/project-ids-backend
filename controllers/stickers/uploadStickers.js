@@ -1,9 +1,7 @@
-const { Sticker }= require('../../databases/db');
-const { imgController, fileController } = require('../filesControllers'); 
 const path = require('path');
 
+const { Sticker }= require('../../databases/db');
 const { imgController, fileController } = require('../filesControllers'); 
-const { Sticker } = require('../../databases/db');
 const getImageUrl = require('../../utils/helpers/get-image-url');
 
 exports.createSticker = async (body) => {
