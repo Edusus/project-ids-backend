@@ -122,13 +122,9 @@ router.delete('/:stickerId', isAdmin, async (req,res)=>{
     try{
       await Sticker.destroy({
         where:{ id: req.params.stickerId }
-    });
-    return res.status(200).json({ 
-      success:true, 
-      message:"item deleted"
-    });
+      });
+      return responses.successDTOResponse(res,200,"Cromo eliminado con éxito!");
     } catch (error) {
-      console.error(error);
       return responses.errorDTOResponse(res, 400, error.message);
     }
 });
