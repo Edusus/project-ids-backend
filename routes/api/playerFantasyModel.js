@@ -1,5 +1,5 @@
 const router= require('express').Router();
-
+const responses= require('../../')
 const { Event, PlayerFantasy, Op }= require('../../databases/db');
 
 ////endpoint para listar eventos en los que pueda participar el usuario(en los que no esté participando)
