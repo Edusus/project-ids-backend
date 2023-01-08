@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { poster, posterBid } = require('../../controllers/market/poster');
 const { bidUpdate } = require('../../controllers/market/updater');
-const { Market,Bid,Op } = require('../../databases/db');
+const { Market,Bid,Op, Sticker, Team } = require('../../databases/db');
 const responses = require('../../utils/responses/responses');
 
 router.get('/', async(req,res)=>{
@@ -10,6 +10,12 @@ router.get('/', async(req,res)=>{
     let options = {
         limit: sizeAsNumber,
         offset: pageAsNumber * sizeAsNumber,
+        include: {
+            model: Sticker,
+            include: {
+                model: Team
+            }
+        },
         order: [
             ['createdAt', 'DESC']
         ],
