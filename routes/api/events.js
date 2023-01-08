@@ -70,11 +70,22 @@ router.put('/:eventId',isAdmin, async (req,res)=>{
 
 //endpoint para borrar eventos
 router.delete('/:eventId', async (req,res)=>{
-    await Event.destroy({
-        where:{ id: req.params.eventId }
+    const team = await team.findOne({
+        raw:true,
+        where: {eventId : req.params.eventId}
     });
-    return responses.successDTOResponse(res,true,"se ha eliminado con exito"); //se elimina bien el evento
-
+    const game = await game.findOne({
+        raw:true,
+        where: {eventId : req.params.eventid}
+    });    
+    if (team || game) {
+        return responses.errorDTOResponse(res, 400, "No se puede eliminar el evento porque tiene equipos o partidos asociados");
+    }else{
+        await Event.destroy({
+            where:{ id: req.params.eventId }
+        });
+        return responses.successDTOResponse(res,true,"se ha eliminado con exito");
+    }
 });
 
 
