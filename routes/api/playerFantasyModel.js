@@ -1,6 +1,7 @@
 const router= require('express').Router();
 
 const { Event, PlayerFantasy, Op }= require('../../databases/db');
+const responses = require('../../utils/responses/responses');
 
 ////endpoint para listar eventos en los que pueda participar el usuario(en los que no esté participando)
 router.get('/', async (req,res)=>{
@@ -12,36 +13,29 @@ router.get('/', async (req,res)=>{
         raw:true,
         where:{"status":true}
     });
-     if(eventsPublics==''){
-        res.json({
-            succes:false,
-            message:'No existen eventos activos'
-        });
-    }else{
-        const eventUser = eventsPublics.map(async function(element) {
-            const moneyEvent = await PlayerFantasy.findOne({
-                raw: true,
-                where: {
-                    [Op.and]: [{
-                        eventId: element.id
-                    },
-                    {
-                        userId: req.user.id.id
-                    }]
-                }
-            });
-            if (!moneyEvent) {
-                element.imAlreadyPlayingIn = false;
-            } else {
-                element.imAlreadyPlayingIn = true;
+
+    const eventUser = eventsPublics.map(async function(element) {
+        const moneyEvent = await PlayerFantasy.findOne({
+            raw: true,
+            where: {
+                [Op.and]: [{
+                    eventId: element.id
+                },
+                {
+                    userId: req.user.id.id
+                }]
             }
-            return element;
         });
+        if (!moneyEvent) {
+            element.imAlreadyPlayingIn = false;
+        } else {
+            element.imAlreadyPlayingIn = true;
+        }
+        return element;
+    });
 
-        const eventUsers = await Promise.all(eventUser);
-        res.status(200).json(eventUsers);
-    }
-
+    const eventUsers = await Promise.all(eventUser);
+    return responses.multipleDTOsResponse(res, 200, 'Competiciones recuperadas con exito', eventUsers);
 });
 
 //Endpoint para regresar el dinero y puntaje del jugador
