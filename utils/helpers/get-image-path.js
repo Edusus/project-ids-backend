@@ -1,7 +1,7 @@
 const { imgController } = require('../../controllers/filesControllers');
 const path = require('path');
 
-const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/');
+const img_relative_dir = '/' + imgController.img_relative_dir.replace('\\', '/');
 
 /**
  * It takes an image URL and returns the filepath of the image

@@ -1,5 +1,6 @@
 const { Team } = require('../../databases/db');
 const { imgController, fileController } = require('../filesControllers');
+const getImageUrl = require('../../utils/helpers/get-image-url');
 const path = require('path');
 
 const allowedFields = ['name', 'badge', 'idEvents'];
@@ -17,7 +18,7 @@ const update = async (req, res) => {
       throw new Error('Error: team not found');
     
     const { badge: prevFileurl } = team;
-    const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/');
+    const img_relative_dir = '/' + imgController.img_relative_dir.replace('\\', '/');
     const prevFilepath = prevFileurl.split(img_relative_dir)[1];
     fileController.deleteFile(path.join(imgController.img_dir, prevFilepath), prevFilepath);
     const { name, idEvents: eventsid } = req.body;

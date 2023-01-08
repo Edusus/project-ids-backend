@@ -12,7 +12,7 @@ exports.uploadFileAd = async (req, res) => {
 
   try {
       const { announcer, adType, redirecTo } = req.body;
-      const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/') + '/';
+      const img_relative_dir = '/' + imgController.img_relative_dir.replace('\\', '/') + '/';
       const filepath = `${process.env.DOMAIN}${img_relative_dir}${req.file.filename}`;
       const newAd = await Ad.create({
         announcer,
@@ -40,7 +40,7 @@ exports.uploadUpdatedFileAd = async (req, res) => {
           throw new Error('Error: ad not found');
 
       const { img: prevFileurl } = ads;
-      const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/');
+      const img_relative_dir = '/' + imgController.img_relative_dir.replace('\\', '/');
       const prevFilepath = prevFileurl.split(img_relative_dir)[1];
       fileController.deleteFile(path.join(imgController.img_dir, prevFilepath), prevFilepath);
       let filepath = `${process.env.DOMAIN}${img_relative_dir}/${req.file.filename}`;

@@ -12,7 +12,7 @@ const destroy = async (req, res) => {
   const team = await Team.findByPk(teamId);
   if (team) {
     const { badge: fileurl } = team;
-    const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/');
+    const img_relative_dir = '/' + imgController.img_relative_dir.replace('\\', '/');
     const filepath = fileurl.split(img_relative_dir)[1];
     await Team.destroy({
       where: { id: teamId }
