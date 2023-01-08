@@ -123,15 +123,14 @@ router.delete('/:stickerId', isAdmin, async (req,res)=>{
       await Sticker.destroy({
         where:{ id: req.params.stickerId }
     });
-    } catch (error) {
-      console.error(error);
-      return responses.errorDTOResponse(res, 400, error.message);
-    }
-    
     return res.status(200).json({ 
       success:true, 
       message:"item deleted"
     });
+    } catch (error) {
+      console.error(error);
+      return responses.errorDTOResponse(res, 400, error.message);
+    }
 });
 
 
