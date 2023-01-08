@@ -20,14 +20,14 @@ router.get('/', async(req,res)=>{
             ['createdAt', 'DESC']
         ],
         where: {
-            isFinished: false,
+            [Op.eq]: {isFinished: false},
             [Op.ne]: { userId: req.user.id.id },
         }
     };
 
     const { count, rows } = await Market.findAndCountAll(options);
 
-     responses.paginatedDTOsResponse(res, 200, 'Almacen recuperado con exito', items, count, pageAsNumber, sizeAsNumber);
+     responses.paginatedDTOsResponse(res, 200, 'Almacen recuperado con exito', rows, count, pageAsNumber, sizeAsNumber);
 });
 
 //endpoint para buscar subastas por su id
