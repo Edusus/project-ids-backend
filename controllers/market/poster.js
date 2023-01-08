@@ -169,6 +169,29 @@ const poster = async (req, res) => {
                     });
                 }
 
+                let auctioner = await PlayerFantasy.findOne({
+                    raw: true,
+                    where: {
+                        [Op.and]: [{
+                            userId: userId
+                        }, {
+                            eventId: eventId
+                        }]
+                    }
+                });
+
+                await PlayerFantasy.update({
+                    money: auctioner.money + valueMax.value
+                }, {
+                    where: {
+                        [Op.and]: [{
+                            userId: userId
+                        }, {
+                            eventId: eventId
+                        }]
+                    }
+                });
+                
                 if (warehouseWinner) {
                     await Warehouse.update({
                         quantity: warehouseWinner.quantity + 1,
