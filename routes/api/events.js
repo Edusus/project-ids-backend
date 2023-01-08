@@ -72,7 +72,7 @@ router.get('/:eventId',isAdmin, async (req,res)=>{
      if(!event){
         return responses.errorDTOResponse(res, 404, "No existe evento con este id");
     }
-    return responses.singleDTOResponse(res,200,"Recuperación exitosa",event);
+    return responses.singleDTOResponse(res,200,"Evento recuperado con éxito",event);
   });
 
 //endpoint para crear eventos

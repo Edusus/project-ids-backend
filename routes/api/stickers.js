@@ -108,7 +108,7 @@ router.get('/:stickerId',isAdmin, async (req,res)=>{
    if(!sticker){
     return responses.errorDTOResponse(res, 404, "No existe cromo con este id");
   }
-  return responses.singleDTOResponse(res,200,"Recuperación exitosa",sticker);
+  return responses.singleDTOResponse(res,200,"Sticker recuperado con éxito",sticker);
 });
 
 //endpoint para crear cromos

@@ -35,13 +35,13 @@ router.get('/:userId',isAdmin, async (req,res)=>{
     if (isNaN(req.params.userId)) {
         return responses.errorDTOResponse(res, 400, "El ID debe ser un número");
     }
-    const user1= await User.findOne({
+    const user= await User.findOne({
         where:{id: req.params.userId}
     });
-     if(!user1){
+     if(!user){
         return responses.errorDTOResponse(res, 404, "No existe usuario con este id");
     }
-    return responses.singleDTOResponse(res,200,"Recuperación exitosa",user1);
+    return responses.singleDTOResponse(res,200,"Usuario recuperado con éxito",user);
   });
 
 //endpoint para crear usuarios
