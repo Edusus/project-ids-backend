@@ -100,9 +100,13 @@ router.get('/:marketId', async (req,res) =>{
         }
     });
 
-    let myLastBid = 0;
+    let myLastBid = {
+        id: null,
+        value: 0
+    };
     if (!(typeof userBid === 'undefined' || userBid == null)) {
-        myLastBid = userBid.value;
+        myLastBid.id = userBid.id;
+        myLastBid.value = userBid.value;
     }
 
     return res.status(200).json({
