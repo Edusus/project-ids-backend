@@ -2,31 +2,26 @@ const router = require('express').Router();
 const { poster, posterBid } = require('../../controllers/market/poster');
 const { bidUpdate } = require('../../controllers/market/updater');
 const { Market,Bid,Op } = require('../../databases/db');
+const responses = require('../../utils/responses/responses');
 
 router.get('/', async(req,res)=>{
     let {page = 0, size = 10} = req.query;
-    page = parseInt(page);
-    size = parseInt(size);
+    const [ pageAsNumber, sizeAsNumber ] = [ Number.parseInt(page), Number.parseInt(size) ];
     let options = {
-        offset: page * size,
-        limit: size,
+        limit: sizeAsNumber,
+        offset: pageAsNumber * sizeAsNumber,
         order: [
             ['createdAt', 'DESC']
         ],
         where: {
-            isFinished: false
+            isFinished: false,
+            [Op.ne]: { userId: req.user.id.id },
         }
     };
 
-    const marketActives= await Market.findAll(options);
-    if (marketActives==''){
-        res.json({error: 'No hay ninguna subasta en linea'});
-    }else{
-        res.status(200).json({
-            success: true,
-            items : marketActives
-        });
-    }
+    const { count, rows } = await Market.findAndCountAll(options);
+
+     responses.paginatedDTOsResponse(res, 200, 'Almacen recuperado con exito', items, count, pageAsNumber, sizeAsNumber);
 });
 
 //endpoint para buscar subastas por su id
