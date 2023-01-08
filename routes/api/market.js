@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { parse, stringify } = require('uuid');
 const { poster, posterBid } = require('../../controllers/market/poster');
 const { bidUpdate } = require('../../controllers/market/updater');
 const { Market,Bid,Op, Sticker, Team, User, Event } = require('../../databases/db');
@@ -34,6 +35,7 @@ router.get('/', async(req,res)=>{
 //endpoint para buscar subastas por su id
 router.get('/:marketId', async (req,res) =>{
     const market= await Market.findOne({
+        raws: true,
         include: [
             {
                 model: Sticker,
@@ -108,15 +110,14 @@ router.get('/:marketId', async (req,res) =>{
         myLastBid.id = userBid.id;
         myLastBid.value = userBid.value;
     }
-
+    
+    const item = JSON.parse(JSON.stringify(market));
+    item.highestBid = highestBid;
+    item.myLastBid = myLastBid;
     return res.status(200).json({
         success: true,
         message:"Subasta recuperada con éxito",
-        item:{
-            market,
-            highestBid,
-            myLastBid
-        }
+        item
     });
   });
 
