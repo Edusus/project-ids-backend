@@ -10,6 +10,7 @@ const TeamsModel = require('../models/teamsModel');
 const InventoryModel = require('../models/inventory');
 const WarehouseModel = require('../models/warehouses');
 const PlayersGamesModel = require('../models/playersGames');
+const PlayerFantasyModel = require('../models/playerFantasyModel');
 
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD,{
     host: process.env.DBHOST,
@@ -25,7 +26,7 @@ const Game = GamesModel(sequelize, Sequelize);
 const Team = TeamsModel(sequelize, Sequelize);
 const Inventory = InventoryModel(sequelize, Sequelize);
 const Warehouse = WarehouseModel(sequelize, Sequelize);
-const PlayerFantasy= playerFantasyModel(sequelize,Sequelize);
+const PlayerFantasy= PlayerFantasyModel(sequelize,Sequelize);
 const PlayersGame = PlayersGamesModel(sequelize, Sequelize);
 
 /* Defining associations */

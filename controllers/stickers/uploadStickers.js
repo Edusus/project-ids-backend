@@ -1,6 +1,28 @@
-const { imgController, fileController } = require('../filesControllers'); 
-const { Sticker }= require('../../databases/db');
 const path = require('path');
+
+const { imgController, fileController } = require('../filesControllers'); 
+const { Sticker } = require('../../databases/db');
+const getImageUrl = require('../../utils/helpers/get-image-url');
+
+exports.createSticker = async (body) => {
+  const { playerName, country, position, height, weight, appearanceRate, teamId, externalUuid, jerseyNumber } = body;
+  let img = getImageUrl(body.fileName);
+
+  const newSticker = await Sticker.create({
+    playerName,
+    country,
+    position,
+    img,
+    height,
+    weight,
+    appearanceRate,
+    teamId,
+    externalUuid,
+    jerseyNumber
+  });
+
+  return newSticker;
+}
 
 //funcion de subir imagenes de los cromos
 exports.uploadFileSticker = async (req, res) => {
@@ -12,25 +34,14 @@ exports.uploadFileSticker = async (req, res) => {
     }
 
     try {
-        const {playerName, country, position, height, weight, appearanceRate, teamId, externalUuid, jerseyNumber } = req.body;
-        const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/') + '/';
-        let filepath = `${process.env.DOMAIN}${img_relative_dir}${req.file.filename}`;;
-        const newSticker = await Sticker.create({
-          playerName,
-          country,
-          position,
-          img: filepath,
-          height,
-          weight,
-          appearanceRate,
-          teamId,
-          externalUuid,
-          jerseyNumber
-    });
-    res.status(201).json({
-      message: 'Cromo creado con exito',
-      item: newSticker
-    });
+      const newSticker = await createSticker({
+        ...req.body,
+        fileName: req.file.filename
+      });
+      res.status(201).json({
+        message: 'Cromo creado con exito',
+        item: newSticker
+      });
     } catch (error) {
       console.error(error);
       if (typeof req.file !== 'undefined') {

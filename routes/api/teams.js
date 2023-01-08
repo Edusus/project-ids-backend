@@ -1,8 +1,7 @@
 const { Router } = require('express');
 const { finder, poster, updater, deleter } = require('../../controllers/teamsControllers');
-const { imgController } = require('../../controllers/filesControllers');
+const { imgController, csvController } = require('../../controllers/filesControllers');
 const { isAdmin } = require('../../middlewares/auth');
-
 
 const teamsRouter = Router();
 
@@ -47,6 +46,8 @@ teamsRouter.get('/:teamId', finder.findById);
 
 teamsRouter.post('/', isAdmin, imgController.uploadImg, poster.post);
 
+
+teamsRouter.post('/system/massive-import', isAdmin, csvController.uploadCsv, poster.postMassive);
 
 
 /**
