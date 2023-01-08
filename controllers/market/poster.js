@@ -161,7 +161,7 @@ const poster = async (req, res) => {
                     }, {
                         where: {
                             [Op.and]: [{
-                                userId: req.user.id.id
+                                userId: item.id
                             }, {
                                 eventId: eventId
                             }]
