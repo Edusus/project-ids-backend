@@ -69,7 +69,7 @@ router.put('/:eventId',isAdmin, async (req,res)=>{
 });
 
 //endpoint para borrar eventos
-router.delete('/:eventId', async (req,res)=>{
+router.delete('/:eventId',isAdmin, async (req,res)=>{
     const team = await team.findOne({
         raw:true,
         where: {eventId : req.params.eventId}
