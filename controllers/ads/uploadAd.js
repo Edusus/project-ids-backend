@@ -3,7 +3,7 @@ const { imgController, fileController } = require('../filesControllers');
 const path = require('path');
 
 exports.uploadFileAd = async (req, res) => {
-  if (!req.file?.path) {
+  if (!req.file || !req.file.path) {
     return res.status(400).json({
         success: false,
         message: "No se ha subido archivo o no cumple el filtro",
