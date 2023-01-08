@@ -1,6 +1,8 @@
 const router= require('express').Router();
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
 const { Event }= require('../../databases/db');
+const responses = require('../../utils/responses/responses');
+
 
 //endpoint para listar eventos
 router.get('/', async (req,res)=>{
@@ -62,24 +64,15 @@ router.get('/inactive', async (req,res)=>{
 //endpoint para obtener eventos por id
 router.get('/:eventId',isAdmin, async (req,res)=>{
     if (isNaN(req.params.eventId)) {
-        return res.status(400).json({
-           success: false,
-           error:'El ID debe ser un número'
-         });
+        return responses.errorDTOResponse(res, 400, "El ID debe ser un número");
     }
     const event= await Event.findOne({
         where:{id: req.params.eventId}
     });
      if(!event){
-        return res.status(404).json({
-          success: false,
-          error:'No existe evento con este id'
-        });
+        return responses.errorDTOResponse(res, 404, "No existe evento con este id");
     }
-    return res.status(200).json({
-        success: true,
-        item:event
-    });
+    return responses.singleDTOResponse(res,200,"Recuperación exitosa",event);
   });
 
 //endpoint para crear eventos

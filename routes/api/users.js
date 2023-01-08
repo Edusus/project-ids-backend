@@ -4,6 +4,7 @@ const { validationResult } = require('express-validator');
 const { User }= require('../../databases/db');
 const bcrypt = require('bcrypt');
 const { isAdmin } = require('../../middlewares/auth');
+const responses = require('../../utils/responses/responses');
 
 
 //endpoint para listar usuarios
@@ -32,24 +33,15 @@ router.get('/', async (req,res)=>{
 //endpoint para buscar user por su id
 router.get('/:userId',isAdmin, async (req,res)=>{
     if (isNaN(req.params.userId)) {
-        return res.status(400).json({
-           success: false,
-           error:'El ID debe ser un número'
-         });
+        return responses.errorDTOResponse(res, 400, "El ID debe ser un número");
     }
     const user1= await User.findOne({
         where:{id: req.params.userId}
     });
      if(!user1){
-        return res.status(404).json({
-          success: false,
-          error:'No existe usuario con este id'
-        });
+        return responses.errorDTOResponse(res, 404, "No existe usuario con este id");
     }
-    return res.status(200).json({
-        success: true,
-        item:user1
-    });
+    return responses.singleDTOResponse(res,200,"Recuperación exitosa",user1);
   });
 
 //endpoint para crear usuarios
