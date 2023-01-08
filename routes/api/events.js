@@ -1,11 +1,10 @@
 const router= require('express').Router();
-const {team} = require('../../databases/db');
-const { Event }= require('../../controllers/teams/finder');
-const { game }= require('../../databases/db');
+const { Team, Game, Event } = require('../../databases/db');
 const  responses =require('../../utils/responses/responses');
 const { Any } = require('typeorm');
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
-//endpoint para listar eventos
+
+// Endpoint para listar eventos
 router.get('/', async (req,res)=>{
     //paginacion
     const {page = 0, size = 10} = req.query;
@@ -14,7 +13,7 @@ router.get('/', async (req,res)=>{
         limit: +size,
         offset: (+page) * (+size)
     };
-    const {count,rows} = await Event.findAndCountAll(options);
+    const { count, rows } = await Event.findAndCountAll(options);
     res.status(200).json({
         success: true,
         paginate:{
