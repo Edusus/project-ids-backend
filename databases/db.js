@@ -47,25 +47,25 @@ Event.hasMany(Team, {
   }
 });
 
-Game.belongsTo(team, {
+Game.belongsTo(Team, {
   as: 'teamOne',
   foreignKey: {
     allowNull: false
   }
 });
-Game.belongsTo(team, {
+Game.belongsTo(Team, {
   as: 'teamTwo',
   foreignKey: {
     allowNull: false
   }
 });
-team.hasMany(Game, {
+Team.hasMany(Game, {
   foreignKey: {
     name: 'teamOneId',
     allowNull: false
   }
 });
-team.hasMany(Game, {
+Team.hasMany(Game, {
   foreignKey: {
     name: 'teamTwoId',
     allowNull: false
