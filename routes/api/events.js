@@ -36,29 +36,13 @@ router.get('/all', async (req,res)=>{
 ////endpoint para listar eventos activos
 router.get('/active', async (req,res)=>{
     const eventsAvailable= await Event.findAll({where:{"status":true}});
-     if(eventsAvailable==''){
-        res.json({error:'No existen eventos activos'});
-    }else{
-        res.status(200).json({
-            success: true,
-            "active items ": eventsAvailable 
-        });
-    }
-
+    return res.status(200).json({ success: true, items: eventsAvailable });
 });
 
 ////endpoint para listar eventos inactivos
 router.get('/inactive', async (req,res)=>{
     const eventsInactive= await Event.findAll({where:{"status":false}});
-     if(eventsInactive==''){
-        res.json({error:'No existen eventos inactivos'});
-    }else{
-        res.status(200).json({
-            success: true,
-            "inactive items": eventsInactive 
-        });
-    }
-
+    return res.status(200).json({ success: true, items: eventsInactive });
 });
 
 //endpoint para crear eventos
