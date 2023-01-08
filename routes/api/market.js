@@ -20,14 +20,15 @@ router.get('/', async(req,res)=>{
             ['createdAt', 'DESC']
         ],
         where: {
-            [Op.eq]: {isFinished: false},
-            [Op.ne]: { userId: req.user.id.id },
+            isFinished: false,
+            userId: {
+                [Op.not]: Number.parseInt(req.user.id.id)
+            }
         }
     };
 
     const { count, rows } = await Market.findAndCountAll(options);
-
-     responses.paginatedDTOsResponse(res, 200, 'Subastas recuperado con exito', rows, count, pageAsNumber, sizeAsNumber);
+    responses.paginatedDTOsResponse(res, 200, 'Subastas recuperadas con exito', rows, count, pageAsNumber, sizeAsNumber);
 });
 
 //endpoint para buscar subastas por su id
