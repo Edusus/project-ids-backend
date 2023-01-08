@@ -1,16 +1,17 @@
 const router = require('express').Router();
 
 const {
-    inventory,
+    Inventory,
     Sticker,
-    team,
+    Team,
     Op,
-    Event
+    Event,
+    Warehouse
 } = require('../../databases/db');
 
 router.get('/public-events/:eventId', async (req, res) => {
     try {
-        let existe = await inventory.findOne({
+        let existe = await Inventory.findOne({
             where: {
                 eventId: req.params.eventId
             }
@@ -55,7 +56,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                                 include: {
                                     model: Sticker,
                                     include: {
-                                        model: team
+                                        model: Team
                                     }
                                 },
                                 where: {
@@ -69,7 +70,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                                 }
                             };
     
-                            let obtein = await inventory.findOne({
+                            let obtein = await Inventory.findOne({
                                 where: {
                                     [Op.and]: [{
                                         stickerId: player.dataValues.id
@@ -86,10 +87,10 @@ router.get('/public-events/:eventId', async (req, res) => {
                             } else {
                                 const {
                                     count
-                                } = await inventory.findAndCountAll({where:{userId: req.user.id.id}});
+                                } = await Inventory.findAndCountAll({where:{userId: req.user.id.id}});
                                 const {
                                     rows
-                                } = await inventory.findAndCountAll(options);
+                                } = await Inventory.findAndCountAll(options);
                                 const cantPages = Math.ceil(count/sizeAsNumber);
                                 res.status(200).json({
                                     success: true,
@@ -118,7 +119,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                                     teamId: teams.dataValues.id
                                 },
                                 include: {
-                                    model: team
+                                    model: Team
                                 }
                             },
                             where: {
@@ -148,10 +149,10 @@ router.get('/public-events/:eventId', async (req, res) => {
                         } else {
                             const {
                                 count
-                            } = await inventory.findAndCountAll({where:{userId: req.user.id.id}});
+                            } = await Inventory.findAndCountAll({where:{userId: req.user.id.id}});
                             const {
                                 rows
-                            } = await inventory.findAndCountAll(options);
+                            } = await Inventory.findAndCountAll(options);
                             const cantPages = Math.ceil(count/sizeAsNumber);
                             res.status(200).json({
                                 success: true,
@@ -185,15 +186,15 @@ router.get('/public-events/:eventId', async (req, res) => {
                                 include: {
                                     model: Sticker,
                                     include: {
-                                        model: team
+                                        model: Team
                                     }
                                 },
                                      where: {
                                        [Op.and]: [{userId: req.user.id.id},{stickerId: player.dataValues.id}, {eventId: eventId}]
                                      }
                                  }
-                            const {count} = await inventory.findAndCountAll({where:{userId: req.user.id.id}});
-                            const {rows} = await inventory.findAndCountAll(options);
+                            const {count} = await Inventory.findAndCountAll({where:{userId: req.user.id.id}});
+                            const {rows} = await Inventory.findAndCountAll(options);
                             const cantPages = Math.ceil(count/sizeAsNumber);
                             res.status(200).json({
                                 success: true,
@@ -213,7 +214,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                         include: {
                             model: Sticker,
                             include: {
-                                model: team
+                                model: Team
                             }
                         },
                         where: {
@@ -226,10 +227,10 @@ router.get('/public-events/:eventId', async (req, res) => {
                     };
                     const {
                         count
-                    } = await inventory.findAndCountAll({where:{userId: req.user.id.id}});
+                    } = await Inventory.findAndCountAll({where:{userId: req.user.id.id}});
                     const {
                         rows
-                    } = await inventory.findAndCountAll(options);
+                    } = await Inventory.findAndCountAll(options);
                     const cantPages = Math.ceil(count/sizeAsNumber);
                     res.status(200).json({
                         success: true,
@@ -270,7 +271,7 @@ router.get('/public-events/:eventId/', async (req,res) => {
                 include: {
                     model: Sticker,
                     include: {
-                        model: team
+                        model: Team
                     },
                 },
                 where: {
@@ -283,8 +284,8 @@ router.get('/public-events/:eventId/', async (req,res) => {
                     }]
                 }
             };
-            const {count} = await inventory.findAndCountAll({where:{userId: req.user.id.id}});
-            const {rows} = await inventory.findAndCountAll(options);
+            const {count} = await Inventory.findAndCountAll({where:{userId: req.user.id.id}});
+            const {rows} = await Inventory.findAndCountAll(options);
             res.status(200).json({
                 success: true,
                 total : count,
@@ -316,7 +317,7 @@ router.get('/public-events/:eventId/carousel', async (req,res) => {
                 include: {
                     model: Sticker,
                     include: {
-                        model: team
+                        model: Team
                     },
                 },
                 where: {
@@ -329,8 +330,8 @@ router.get('/public-events/:eventId/carousel', async (req,res) => {
                     }]
                 }
             };
-            const {count} = await inventory.findAndCountAll({where:{userId: req.user.id.id}});
-            const {rows} = await inventory.findAndCountAll(options);
+            const {count} = await Inventory.findAndCountAll({where:{userId: req.user.id.id}});
+            const {rows} = await Inventory.findAndCountAll(options);
             res.status(200).json({
                 success: true,
                 total : count,
@@ -349,8 +350,8 @@ router.post('/public-events/:eventId/claim-sticker', async (req, res) => {
         const {
             stickerId
         } = req.body;
-        const eventId = req.params.eventId;
-        const inventorys = await inventory.findOne({
+        const eventId = req.params.eventId; 
+        const inventorys = await Inventory.findOne({
             where: {
                 [Op.and]: [{
                     stickerId: stickerId
@@ -371,7 +372,7 @@ router.post('/public-events/:eventId/claim-sticker', async (req, res) => {
             const notSticker = inventorys.dataValues.isInAlbum
             if (contAct > 0 && notSticker == false) {
                 const cont = contAct - 1;
-                await inventory.update({
+                await Inventory.update({
                     isInAlbum: true,
                     Quantity: cont
                 }, {
@@ -385,6 +386,22 @@ router.post('/public-events/:eventId/claim-sticker', async (req, res) => {
                         }]
                     }
                 });
+
+                await Warehouse.findOne({
+                    where: {
+                       [Op.and]: [{stickerId: stickerId},{eventId : eventId},{userId: req.user.id.id}]
+                    }
+                  }).then(async warehouse => {
+                     if (!warehouse) {
+                       await Warehouse.create({
+                           isInLineup: false,
+                           userId: req.user.id.id,
+                           stickerId: stickerId,
+                           eventId: eventId
+                       });
+                     }
+               });  
+
                 res.status(200).json({
                     success: true,
                     message: 'Sticker pegado con exito'
@@ -429,7 +446,7 @@ router.get('/public-events/:eventId/album', async (req, res) => {
             } = await Sticker.findAndCountAll();
             const {
                 count
-            } = await inventory.findAndCountAll({
+            } = await Inventory.findAndCountAll({
                 where: {
                     [Op.and]: [{
                         eventId: eventId
@@ -476,14 +493,14 @@ router.get('/public-events/:eventId/album/:teamId', async (req, res) => {
                 message: 'Evento no encontrado'
             });
         } else {
-            const teams = await team.findOne({
+            const teams = await Team.findOne({
                 include: {
                     model: Sticker,
                     attributes: {
                         exclude: ['createdAt', 'updatedAt', 'appearanceRate']
                     },
                     include: {
-                        model: team,
+                        model: Team,
                         attributes: {
                             exclude: ['createdAt', 'updatedAt', 'name', 'id','idEvents']
                         }
@@ -505,7 +522,7 @@ router.get('/public-events/:eventId/album/:teamId', async (req, res) => {
             } else {
                  const stickers = teams.dataValues.stickers
                  const stickersAlbum = stickers.map(async function(element) {
-                     const inventorys = await inventory.findOne({
+                     const inventorys = await Inventory.findOne({
                             where: {
                                 [Op.and]: [{
                                     stickerId: element.dataValues.id

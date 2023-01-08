@@ -1,4 +1,4 @@
-const { team } = require('../../databases/db');
+const { Team } = require('../../databases/db');
 const { imgController, fileController } = require('../filesControllers'); 
 const path = require('path');
 
@@ -9,12 +9,12 @@ const path = require('path');
  */
 const destroy = async (req, res) => {
   const teamId = req.params.teamId;
-  const Team = await team.findByPk(teamId);
-  if (Team) {
-    const { badge: fileurl } = Team;
+  const team = await Team.findByPk(teamId);
+  if (team) {
+    const { badge: fileurl } = team;
     const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/');
     const filepath = fileurl.split(img_relative_dir)[1];
-    await team.destroy({
+    await Team.destroy({
       where: { id: teamId }
     });
     res.status(200).send("Deleted team " + teamId);

@@ -4,6 +4,7 @@ const { Event }= require('../../controllers/teams/finder');
 const { game }= require('../../databases/db');
 const  responses =require('../../utils/responses/responses');
 const { Any } = require('typeorm');
+const { verifyToken, isAdmin } = require('../../middlewares/auth');
 //endpoint para listar eventos
 router.get('/', async (req,res)=>{
     //paginacion
@@ -62,7 +63,7 @@ router.get('/inactive', async (req,res)=>{
 });
 
 //endpoint para crear eventos
-router.post('/', async (req,res)=>{
+router.post('/',isAdmin, async (req,res)=>{
     const item = await Event.create(req.body);
     res.json({
         message:'item creado',
@@ -71,7 +72,7 @@ router.post('/', async (req,res)=>{
 });
 
 //endpoint para editar eventos
-router.put('/:eventId', async (req,res)=>{
+router.put('/:eventId',isAdmin, async (req,res)=>{
     await Event.update(req.body,{
         where:{ id: req.params.eventId}
     });

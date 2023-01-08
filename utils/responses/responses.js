@@ -1,3 +1,5 @@
+const numberOfPages = require('../helpers/get-number-of-pages');
+
 /**
  * This function returns a JSON response with a success message and a single item.
  * @param res - the response object
@@ -27,13 +29,14 @@ const singleDTOResponse = (res, status, message, item) => {
  * total count, a page number, and a perPage count.
  */
 const paginatedDTOsResponse = (res, status, message, items, total, page, perPage) => {
+  const pages = numberOfPages(total, perPage);
   return res.status(status).json({
     success: true,
     message,
     paginate: {
       total,
       page,
-      pages: Math.ceil(total/perPage),
+      pages,
       perPage
     },
     items

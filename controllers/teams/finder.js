@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { team, Sticker, Event } = require('../../databases/db');
+const { Team, Sticker, Event } = require('../../databases/db');
 
 /**
  * If the resource is found, send a 200 status code with the resource in the response body. If the
@@ -38,17 +38,17 @@ const find = async (req, res) => {
         }
       }
     }
-    const { count, rows } = await team.findAndCountAll(options);
+    const { count, rows } = await Team.findAndCountAll(options);
     httpGetResponse(
       res, {
         success: true,
         paginate:{
-          totalTeams: count,
-          pageNumber: pageAsNumber,
-          pages:Math.trunc(count/sizeAsNumber),
-          pageSize: sizeAsNumber
+          total: count,
+          page: pageAsNumber,
+          pages:Math.ceil(count/sizeAsNumber),
+          perPage: sizeAsNumber
         },
-        teams: rows 
+        items: rows 
       }, 'teams');
   } catch (err) {
     console.error(err);
@@ -62,8 +62,8 @@ const find = async (req, res) => {
  * @param res - response object
  */
 const findById = async (req, res) => {
-  const Team = await team.findByPk(req.params.teamId);
-  httpGetResponse(res, Team, "team");
+  const team = await Team.findByPk(req.params.teamId);
+  httpGetResponse(res, team, "team");
 }
 
 /**
@@ -73,7 +73,7 @@ const findById = async (req, res) => {
  */
 const findAll = async (req, res) => {
   const eventId = req.params.eventId;
-  const teams = await team.findAll({
+  const teams = await Team.findAll({
     include: [
       {
          model: Sticker
