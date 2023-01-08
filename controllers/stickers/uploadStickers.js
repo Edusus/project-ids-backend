@@ -12,7 +12,7 @@ exports.uploadFileSticker = async (req, res) => {
     }
 
     try {
-        const {playerName, country, position, height, weight, appearanceRate, teamId, externalUid, jerseynumber } = req.body;
+        const {playerName, country, position, height, weight, appearanceRate, teamId, externalUuid, jerseynumber } = req.body;
         const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/') + '/';
         let filepath;
           if (process.env.USINGIMGHOST == 'true') {
@@ -29,7 +29,7 @@ exports.uploadFileSticker = async (req, res) => {
           weight,
           appearanceRate,
           teamId,
-          externalUid,
+          externalUuid,
           jerseynumber
     });
     res.status(201).json({
@@ -55,7 +55,7 @@ exports.uploadUpdatedFileSticker = async (req, res) => {
       const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/');
       const prevFilepath = prevFileurl.split(img_relative_dir)[1];
       fileController.deleteFile(path.join(imgController.img_dir, prevFilepath), prevFilepath);
-      const {playerName, country, position, height, weight, appearanceRate, teamId, externalUid, jerseynumber } = req.body;
+      const {playerName, country, position, height, weight, appearanceRate, teamId, externalUuid, jerseynumber } = req.body;
       let filepath;
       if (process.env.USINGIMGHOST == 'true') {
         filepath = `${process.env.DOMAIN}${img_relative_dir}/${req.file.filename}`;
@@ -71,7 +71,7 @@ exports.uploadUpdatedFileSticker = async (req, res) => {
             weight,
             appearanceRate,
             teamId,
-            externalUid,
+            externalUuid,
             jerseynumber
       }, { 
         where: { id: req.params.playerId }

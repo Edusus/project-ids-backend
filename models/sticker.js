@@ -34,13 +34,13 @@ module.exports=(sequelize,type)=>{
             type:type.FLOAT,
             allowNull:false
         },
-        externalUid:{
+        externalUuid:{
             type:type.STRING,
             allowNull:false,
             validate: {
                 notEmpty: {
                   args: true,
-                  msg: 'Empty alias not allowed'
+                  msg: 'externalUuid vacio no esta permitido'
                 }
             }
         },

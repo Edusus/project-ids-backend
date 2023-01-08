@@ -8,7 +8,7 @@ const allowedFields = ['name', 'badge', 'idEvents'];
  * @param req - the request object
  * @param res - the response object
  */
-//a
+
 const post = async (req, res) => {
   try {
     const { name, idEvents: eventsid } = req.body;

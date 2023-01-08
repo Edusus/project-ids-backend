@@ -82,7 +82,7 @@ router.put('/:eventId', async (req,res)=>{
 
 //endpoint para borrar eventos
 router.delete('/:eventId', async (req,res)=>{
-    if(eventId != await team && eventid != await game.){
+  //  if(eventId != await team && eventid != await game.){
         await Event.destroy({
             where:{ id: req.params.eventId }
         });
@@ -91,7 +91,7 @@ router.delete('/:eventId', async (req,res)=>{
             success:true,
             message:"Eliminación exitosa"
         });
-    }
+  //  }
 });
 
 
