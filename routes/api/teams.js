@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { finder, poster, updater, deleter } = require('../../controllers/teamsControllers');
 const { imgController } = require('../../controllers/filesControllers');
-const { verifyToken, isAdmin } = require('../../middlewares/auth');
+const { isAdmin } = require('../../middlewares/auth');
 
 
 const teamsRouter = Router();
@@ -22,7 +22,7 @@ teamsRouter.get('/', finder.find);
 
 
 /**
- * Route to get all teams
+ * Route to get all teams of a specific event
  */
 
 teamsRouter.get('/all/:eventId', finder.findAll);
