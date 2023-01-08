@@ -73,7 +73,7 @@ router.delete('/:eventId', async (req,res)=>{
     await Event.destroy({
         where:{ id: req.params.eventId }
     });
-    return responses.successDTOResponse(res,true,"se ha eliminado con exito");
+    return responses.successDTOResponse(res,true,"se ha eliminado con exito"); //se elimina bien el evento
 
 });
 
