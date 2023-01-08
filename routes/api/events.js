@@ -1,7 +1,10 @@
 const router= require('express').Router();
+const {team} = require('../../databases/db');
+const { Event }= require('../../controllers/teams/finder');
+const { game }= require('../../databases/db');
+const  responses =require('../../utils/responses/responses');
+const { Any } = require('typeorm');
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
-const { Event }= require('../../databases/db');
-
 //endpoint para listar eventos
 router.get('/', async (req,res)=>{
     //paginacion
@@ -80,14 +83,13 @@ router.put('/:eventId',isAdmin, async (req,res)=>{
 });
 
 //endpoint para borrar eventos
-router.delete('/:eventId',isAdmin, async (req,res)=>{
-    await Event.destroy({
-        where:{ id: req.params.eventId}
-    });
-    res.json({ 
-        success:true,
-        message:"Eliminación exitosa"
-    });
+router.delete('/:eventId', async (req,res)=>{
+  //  if(eventId != await team && eventid != await game.){
+        await Event.destroy({
+            where:{ id: req.params.eventId }
+        });
+        return responses.successDTOResponse(res,true,"se ha eliminado con exito");
+  //  }
 });
 
 

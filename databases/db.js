@@ -9,7 +9,7 @@ const GamesModel = require('../models/games');
 const TeamsModel = require('../models/teamsModel');
 const InventoryModel = require('../models/inventory');
 const WarehouseModel = require('../models/warehouses');
-const playerFantasyModel = require('../models/playerFantasy');
+const PlayerFantasyModel = require('../models/playerFantasy');
 const MarketModel = require('../models/market');
 const BidsModel = require('../models/bids');
 const PlayersGamesModel = require('../models/playersGames');
@@ -30,7 +30,7 @@ const Team = TeamsModel(sequelize, Sequelize);
 const Inventory = InventoryModel(sequelize, Sequelize);
 const Warehouse = WarehouseModel(sequelize, Sequelize);
 const PlayersGame = PlayersGamesModel(sequelize, Sequelize);
-const PlayerFantasy= playerFantasyModel(sequelize,Sequelize);
+const PlayerFantasy= PlayerFantasyModel(sequelize,Sequelize);
 const Market = MarketModel(sequelize, Sequelize);
 const Bid = BidsModel(sequelize, Sequelize);
 
@@ -47,6 +47,18 @@ Event.hasMany(Team, {
   }
 });
 
+Team.hasMany(Game, {
+  as: 'teamOne',
+  foreignKey: {
+    allowNull: false
+  }
+});
+Team.hasMany(Game, {
+  as: 'teamTwo',
+  foreignKey: {
+    allowNull: false
+  }
+});
 Game.belongsTo(Team, {
   as: 'teamOne',
   foreignKey: {
@@ -59,15 +71,16 @@ Game.belongsTo(Team, {
     allowNull: false
   }
 });
-Team.hasMany(Game, {
+
+Game.belongsTo(Event, {
   foreignKey: {
-    name: 'teamOneId',
+    name: 'eventId',
     allowNull: false
   }
 });
-Team.hasMany(Game, {
+Event.hasMany(Game, {
   foreignKey: {
-    name: 'teamTwoId',
+    name: 'eventId',
     allowNull: false
   }
 });
@@ -99,6 +112,71 @@ Event.hasMany(Game, {
   }
 });
 
+//Relaciones entre usuarios y eventos para formar un fantasy
+User.belongsToMany(Event,{
+  through: PlayerFantasy
+});
+Event.belongsToMany(User,{
+  through: PlayerFantasy
+});
+User.hasMany(PlayerFantasy);
+Sticker.belongsToMany(Game, {
+  through: PlayersGame, 
+  foreignKey: { 
+    name: 'playerId',
+    allowNull: false 
+  }, 
+  otherKey: { 
+    name: 'gameId',
+    allowNull: false 
+  },
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE' 
+});
+Game.belongsToMany(Sticker, {
+  as: 'players', 
+  through: PlayersGame,
+  foreignKey: {
+    name: 'gameId',
+    allowNull: false
+  }, 
+  otherKey: { 
+    name: 'playerId',
+    allowNull: false 
+  },
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE' 
+});
+Sticker.hasMany(PlayersGame, {
+  foreignKey: {
+    name: 'playerId',
+    allowNull: false
+  },
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE'
+});
+PlayersGame.belongsTo(Sticker, {
+  as: 'player',
+  foreignKey: {
+    name: 'playerId',
+    allowNull: false
+  }
+});
+Game.hasMany(PlayersGame, {
+  foreignKey: {
+    name: 'gameId',
+    allowNull: false
+  },
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE'
+});
+PlayersGame.belongsTo(Game, {
+  as: 'game',
+  foreignKey: {
+    name: 'gameId',
+    allowNull: false
+  }
+});
 
 //Relaciones entre usuarios, sticker para formar un inventario
 User.belongsToMany(Sticker, { 
@@ -108,10 +186,8 @@ Sticker.belongsToMany(User, {
   through: Inventory
 });
 User.hasMany(Inventory);
-Inventory.belongsTo(User);
 Sticker.hasMany(Inventory);
 Inventory.belongsTo(Sticker);
-Event.hasOne(Inventory);
 Inventory.belongsTo(Event);
 
 Sticker.belongsToMany(Game, {
@@ -275,7 +351,8 @@ sequelize.authenticate()
         console.error('Unable to connect to the database:', err);
     }
     );
-sequelize.sync({ force: false })
+
+sequelize.sync({ alter: false })
     .then(()=>{
         console.log('Syncronized tables');
     })
@@ -284,8 +361,11 @@ sequelize.sync({ force: false })
     });
 
 const random = sequelize.random();
+const createTransaction = () => {
+  return sequelize.transaction();
+}
 const { Op } = Sequelize;
 
-module.exports = {
-    User, Sticker, Event, Promotion, Ad, Game, Team, random, Op, Inventory, Warehouse, PlayersGame, Promotion, PlayerFantasy, Market, Bid
+module.exports ={
+    User, Sticker, Event, Ad, Game, Team, PlayersGame, random, Op, Inventory, Warehouse, Promotion, PlayerFantasy, createTransaction, Market, Bid
 }

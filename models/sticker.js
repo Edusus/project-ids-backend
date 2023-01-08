@@ -33,6 +33,20 @@ module.exports=(sequelize,type)=>{
         appearanceRate:{
             type:type.FLOAT,
             allowNull:false
+        },
+        externalUuid:{
+            type:type.STRING,
+            allowNull:false,
+            validate: {
+                notEmpty: {
+                  args: true,
+                  msg: 'externalUuid vacio no esta permitido'
+                }
+            }
+        },
+        jerseyNumber:{
+            type:type.INTEGER,
+            allowNull:false
         }
     })
 }

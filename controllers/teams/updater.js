@@ -21,12 +21,9 @@ const update = async (req, res) => {
     const prevFilepath = prevFileurl.split(img_relative_dir)[1];
     fileController.deleteFile(path.join(imgController.img_dir, prevFilepath), prevFilepath);
     const { name, idEvents: eventsid } = req.body;
-    let filepath;
-    if (process.env.USINGIMGHOST == 'true') {
-      filepath = `${process.env.DOMAIN}${img_relative_dir}/${req.file.filename}`;
-    } else {
-      filepath = `${process.env.DOMAIN}${img_relative_dir}/${req.file.filename}`;
-    }
+
+    const filepath = `${process.env.DOMAIN}${img_relative_dir}/${req.file.filename}`;
+
     let idEvents = 0;
     if (typeof eventsid == 'object') {
       idEvents = eventsid[0];

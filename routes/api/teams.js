@@ -1,7 +1,8 @@
 const { Router } = require('express');
 const { finder, poster, updater, deleter } = require('../../controllers/teamsControllers');
-const { imgController } = require('../../controllers/filesControllers');
-const { verifyToken, isAdmin } = require('../../middlewares/auth');
+const { imgController, csvController } = require('../../controllers/filesControllers');
+const { isAdmin } = require('../../middlewares/auth');
+
 
 const teamsRouter = Router();
 
@@ -21,7 +22,7 @@ teamsRouter.get('/', finder.find);
 
 
 /**
- * Route to get all teams
+ * Route to get all teams of a specific event
  */
 
 teamsRouter.get('/all/:eventId', finder.findAll);
@@ -46,6 +47,14 @@ teamsRouter.get('/:teamId', finder.findById);
 
 teamsRouter.post('/', isAdmin, imgController.uploadImg, poster.post);
 
+
+
+/**
+ * Route to post a csv of teams
+ * * Expected multiform/data: { "myFile": [file.csv] }
+ */
+
+teamsRouter.post('/system/massive-import', isAdmin, csvController.uploadCsv, poster.postMassive);
 
 
 /**

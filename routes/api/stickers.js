@@ -1,8 +1,9 @@
 const router = require('express').Router();
 
-const { Sticker, random, Op, Team, Inventory } = require('../../databases/db');
-const {imgController} = require('../../controllers/filesControllers');
-const controllerSticker = require('../../controllers/stickers/uploadStickers')
+const { Sticker, random, Op, Team, Inventory, Event } = require('../../databases/db');
+const {imgController, csvController } = require('../../controllers/filesControllers');
+const controllerSticker = require('../../controllers/stickers/uploadStickers');
+const { poster } = require('../../controllers/stickersControllers');
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
 
 //endpoint para listar cromos
@@ -16,7 +17,11 @@ router.get('/', async (req,res)=>{
     attributes: ['id','playerName', 'country', 'position', 'img', 'height', 'weight', 'appearanceRate', 'createdAt', 'updatedAt'],
     include: {
       model: Team,
-      attributes: ['id', 'name', 'badge']
+      attributes: ['id', 'name', 'badge'],
+      include: {
+        model: Event,
+        attributes: ['id', 'eventName']
+      }
     }
   }
   const {count,rows} = await Sticker.findAndCountAll(options);
@@ -98,6 +103,8 @@ router.get('/obtain/:eventId', async (req, res) => {
 
 //endpoint para crear cromos
 router.post('/', isAdmin, imgController.uploadImg, controllerSticker.uploadFileSticker);
+
+router.post('/system/massive-import', isAdmin, csvController.uploadCsv, poster.postMassive);
 
 //endpoint para editar cromos
 router.put('/:playerId', isAdmin, imgController.uploadImg, controllerSticker.uploadUpdatedFileSticker);

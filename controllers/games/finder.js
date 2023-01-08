@@ -1,51 +1,37 @@
 const { Op } = require('sequelize');
-const { game, PlayersGame, team, Sticker } = require('../../databases/db');
+const { Game, PlayersGame, team, Sticker, Event } = require('../../databases/db');
+const responses = require('../../utils/responses/responses');
 
-/**
- * If the resource is found, send a 200 status code with the resource in the response body. If the
- * resource is not found, send a 404 status code with a message in the response body.
- * @param res - the response object
- * @param resource - the resource that was found
- * @param resourceName - The name of the resource you're trying to get.
- */
- const httpGetResponse = (res, resource, resourceName) => {
-  if (resource.item || resource.items) {
-    res.status(200).json(resource);
-  } else {
-    res.status(404).json({
-      "success": false,
-      "message": resourceName + ' not found'
-    });
-  }
-}
+const minimunDate = new Date(0);
 
 const find = async (req, res) => {
   try {
-    let { page = 0, size = 10, teamOne = '.*', teamTwo = '.*', eventid = '%' } = req.query;
+    const currentDate = new Date();
+    let { page = 0, size = 10, teamone: teamOne = '.*', teamtwo: teamTwo = '.*', eventid = '%', fromgamedate = minimunDate, togamedate = currentDate, playername = '.*' } = req.query;
     const [ pageAsNumber, sizeAsNumber ] = [ Number.parseInt(page), Number.parseInt(size) ];
-    let options = {
-      limit: sizeAsNumber,
-      offset: pageAsNumber * sizeAsNumber,
-      attributes: ['id', 'matchedAt', 'eventId'],
+    [fromgamedate, togamedate] = [new Date(Date.parse(fromgamedate)).setUTCHours(0,0,0,0), new Date(Date.parse(togamedate)).setUTCHours(23,59,59,999)];
+    let countOptions = { 
       where: {
         eventId: { 
           [Op.like]: eventid 
+        },
+        gameDate: {
+          [Op.between]: [fromgamedate, togamedate]
         }
       },
       include: [
         {
-          model: PlayersGame,
-          attributes: ['playerId', 'points']
+          model: Event
         },
         {
           model: team,
           as: 'teamOne',
           where: {
             name: {
-              [Op.or]: {
-                [Op.regexp]: teamOne,
-                [Op.regexp]: teamTwo
-              }
+              [Op.or]: [{
+                [Op.regexp]: teamOne },
+                { [Op.regexp]: teamTwo
+              }]
             }
           }
         },
@@ -54,93 +40,225 @@ const find = async (req, res) => {
           as: 'teamTwo',
           where: {
             name: {
-              [Op.or]: {
-                [Op.regexp]: teamOne,
-                [Op.regexp]: teamTwo
-              }
+              [Op.or]: [{
+                [Op.regexp]: teamOne },
+                { [Op.regexp]: teamTwo
+              }]
             }
           }
         }
       ]
     }
-    const games = await game.findAll(options);
-    for (let i = 0; i < games.length; i++) {
-      let Game = games[i];
-      console.log(JSON.parse(JSON.stringify(Game)));
-      console.log(await Game.getTeamOne());
-      console.log(await Game.getTeamTwo());
-    }
-    httpGetResponse(
-      res, {
-        success: true,
-        message: 'Partidos recuperados con exito',
-        paginate: {
-          //total: games.count,
-          page: pageAsNumber,
-          //pages: Math.trunc(games.count/sizeAsNumber),
-          perPage: sizeAsNumber
+    let searchOptions = {
+      limit: sizeAsNumber,
+      offset: pageAsNumber * sizeAsNumber,
+      attributes: ['id', 'gameDate', 'eventId'],
+      where: {
+        eventId: { 
+          [Op.like]: eventid 
         },
-        items: games
-      }, 'games');
+        gameDate: {
+          [Op.between]: [fromgamedate, togamedate]
+        }
+      },
+      include: [
+        {
+          model: Event,
+          attributes: ['id', 'eventName', 'status']
+        },
+        {
+          model: PlayersGame,
+          attributes: ['playerId', 'points'],
+          include: {
+            model: Sticker,
+            as: 'player',
+            attributes: ['playerName', 'teamId'],
+            where: {
+              playerName: {
+                [Op.regexp]: playername
+              }
+            }
+          }
+        },
+        {
+          model: team,
+          as: 'teamOne',
+          attributes: ['id', 'name', 'badge'],
+          where: {
+            name: {
+              [Op.or]: [
+                {
+                  [Op.regexp]: teamOne 
+                },
+                { 
+                  [Op.regexp]: teamTwo
+                }
+              ]
+            }
+          }
+        },
+        {
+          model: team,
+          as: 'teamTwo',
+          attributes: ['id', 'name', 'badge'],
+          where: {
+            name: {
+              [Op.or]: [ 
+                {
+                  [Op.regexp]: teamOne 
+                },
+                { 
+                  [Op.regexp]: teamTwo
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+    const count = await Game.count(countOptions);
+    const games = await Game.findAll(searchOptions);
+
+    const gamesAsJSON = JSON.parse(JSON.stringify(games));
+    const items = [];
+    for (let i = 0; i < gamesAsJSON.length; i++) {
+      let players = gamesAsJSON[i].playersGames.map(playersGame => {
+        return {
+          playerId: playersGame.playerId,
+          teamId: playersGame.player.teamId,
+          fullName: playersGame.player.playerName,
+          identifier: playersGame.playerId,
+          points: playersGame.points
+        }
+      });
+      let item = {
+        id: gamesAsJSON[i].id,
+        gameDate: gamesAsJSON[i].gameDate,
+        event: gamesAsJSON[i].event,
+        teamOne: gamesAsJSON[i].teamOne,
+        teamTwo: gamesAsJSON[i].teamTwo,
+        players,
+      }
+      items.push(item);
+    }
+
+    responses.paginatedDTOsResponse(res, 200, 'Partidos recuperados con exito', items, count, pageAsNumber, sizeAsNumber);
   } catch(err) {
     console.error(err);
-    res.status(400).send(err.message);
+    responses.errorDTOResponse(res, 400, err.message);
   }
 }
 
 const findById = async (req, res) => {
-  const Game = await game.findByPk(req.params.gameId, {
+  const game = await Game.findByPk(req.params.gameId, {
+    attributes: ['id', 'gameDate', 'eventId'],
     include: [
       {
-        model: PlayersGame
+        model: Event,
+        attributes: ['id', 'eventName', 'status']
+      },
+      {
+        model: PlayersGame,
+        attributes: ['playerId', 'points'],
+        include: {
+          model: Sticker,
+          as: 'player',
+          attributes: ['playerName', 'teamId']
+        }
       },
       {
         model: team,
-        as: 'teamOne'
+        as: 'teamOne',
+        attributes: ['id', 'name', 'badge']
       },
       {
         model: team,
-        as: 'teamTwo'
-      },
-      {
-        model: Sticker,
-        as: 'players'
+        as: 'teamTwo',
+        attributes: ['id', 'name', 'badge']
       }
     ]
   });
-  console.log(JSON.parse(JSON.stringify((await Game.getTeamTwo({attributes: ['name', 'badge', 'idEvents']})))));
-  httpGetResponse(res, {
-    success: true,
-    message: 'Partido recuperado con exito',
-    item: Game
-  }, "game");
+  if (game) {
+    const gameAsJSON = JSON.parse(JSON.stringify(game));
+    let players = gameAsJSON.playersGames.map(playersGame => {
+      return {
+        playerId: playersGame.playerId,
+        teamId: playersGame.player.teamId,
+        fullName: playersGame.player.playerName,
+        identifier: playersGame.playerId,
+        points: playersGame.points
+      }
+    });
+    const item = {
+      id: gameAsJSON.id,
+      gameDate: gameAsJSON.gameDate,
+      event: gameAsJSON.event,
+      teamOne: gameAsJSON.teamOne,
+      teamTwo: gameAsJSON.teamTwo,
+      players,
+    }
+
+    responses.singleDTOResponse(res, 200, 'Partido recuperado con exito', item);
+    return;
+  }
+
+  responses.errorDTOResponse(res, 404, 'No se encontro el partido pedido');
 }
 
 const findAll = async (req, res) => {
-  const games = await game.findAll({
+  const games = await Game.findAll({
+    attributes: ['id', 'gameDate', 'eventId'],
     include: [
       {
-        model: PlayersGame
+        model: Event,
+        attributes: ['id', 'eventName', 'status']
+      },
+      {
+        model: PlayersGame,
+        attributes: ['playerId', 'points'],
+        include: {
+          model: Sticker,
+          as: 'player',
+          attributes: ['playerName', 'teamId']
+        }
       },
       {
         model: team,
-        as: 'teamOne'
+        as: 'teamOne',
+        attributes: ['id', 'name', 'badge']
       },
       {
         model: team,
-        as: 'teamTwo'
-      },
-      {
-        model: Sticker,
-        as: 'players'
+        as: 'teamTwo',
+        attributes: ['id', 'name', 'badge']
       }
     ]
   });
-  httpGetResponse(res, {
-    success: true,
-    message: 'Partidos recuperados con exito',
-    items: games
-  }, "games");
+
+  const gamesAsJSON = JSON.parse(JSON.stringify(games));
+  const items = [];
+  for (let i = 0; i < gamesAsJSON.length; i++) {
+    let players = gamesAsJSON[i].playersGames.map(playersGame => {
+      return {
+        playerId: playersGame.playerId,
+        teamId: playersGame.player.teamId,
+        fullName: playersGame.player.playerName,
+        identifier: playersGame.playerId,
+        points: playersGame.points
+      }
+    });
+    let item = {
+      id: gamesAsJSON[i].id,
+      gameDate: gamesAsJSON[i].gameDate,
+      event: gamesAsJSON[i].event,
+      teamOne: gamesAsJSON[i].teamOne,
+      teamTwo: gamesAsJSON[i].teamTwo,
+      players,
+    }
+    items.push(item);
+  }
+
+  responses.multipleDTOsResponse(res, 200, 'Partidos recuperados con exito', items);
 }
 
 const finder = {
