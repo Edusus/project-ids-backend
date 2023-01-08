@@ -1,6 +1,6 @@
 const csv = require('csvtojson');
 const { Team } = require('../../databases/db');
-const { imgController, fileController } = require('../filesControllers');
+const { fileController } = require('../filesControllers');
 const responses = require('../../utils/responses/responses');
 const getImageUrl = require('../../utils/helpers/get-image-url');
 
@@ -15,8 +15,7 @@ const allowedFields = ['name', 'badge', 'idEvents'];
 const post = async (req, res) => {
   try {
     const { name, idEvents: eventsid } = req.body;
-    const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/') + '/';
-    const filepath = `${process.env.DOMAIN}${img_relative_dir}${req.file.filename}`;
+    const filepath = getImageUrl(req.file.filename);
 
     let idEvents = 0;
     if (typeof eventsid == 'object') {
@@ -51,8 +50,6 @@ const postMassive = async (req, res) => {
 
   const teamsFromCsv = await csvParser.fromFile(req.file.path);
 
-  console.log(teamsFromCsv)
-  console.log(getImageUrl(teamsFromCsv[0].codeEquipo + '.png'));
   try {
     await Promise.all(teamsFromCsv.map(async (team) => {
       return await Team.create({

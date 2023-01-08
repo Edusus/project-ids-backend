@@ -6,7 +6,7 @@ const { imgController } = require('../../controllers/filesControllers');
  * @returns The image url.
  */
 function getImageUrl(imageName) {
-  const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/') + '/'; 
+  const img_relative_dir = '/' + imgController.img_relative_dir.replace('\\', '/') + '/';
   return `${process.env.DOMAIN}${img_relative_dir}${imageName}`;
 }
 
