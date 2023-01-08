@@ -1,7 +1,8 @@
 const router = require('express').Router();
+const { parse, stringify } = require('uuid');
 const { poster, posterBid } = require('../../controllers/market/poster');
 const { bidUpdate } = require('../../controllers/market/updater');
-const { Market,Bid,Op, Sticker, Team } = require('../../databases/db');
+const { Market,Bid,Op, Sticker, Team, User, Event } = require('../../databases/db');
 const responses = require('../../utils/responses/responses');
 
 router.get('/', async(req,res)=>{
@@ -21,30 +22,50 @@ router.get('/', async(req,res)=>{
         ],
         where: {
             isFinished: false,
-            [Op.ne]: { userId: req.user.id.id },
+            userId: {
+                [Op.not]: Number.parseInt(req.user.id.id)
+            }
         }
     };
 
     const { count, rows } = await Market.findAndCountAll(options);
-
-     responses.paginatedDTOsResponse(res, 200, 'Almacen recuperado con exito', items, count, pageAsNumber, sizeAsNumber);
+    return responses.paginatedDTOsResponse(res, 200, 'Subastas recuperadas con exito', rows, count, pageAsNumber, sizeAsNumber);
 });
 
 //endpoint para buscar subastas por su id
-router.get('/:marketId', async (req,res)=>{
-    const market= await Market.findOne({where:{id: req.params.marketId}});
+router.get('/:marketId', async (req,res) =>{
+    const market= await Market.findOne({
+        raws: true,
+        include: [
+            {
+                model: Sticker,
+                attributes: ['id', 'playerName', 'img'],
+            },
+            { 
+                model: User,
+                attributes: ['id', 'name']
+            },
+            {
+                model: Event,
+                attributes: ['id', 'eventName']
+            }
+        ],
+        where:{id: req.params.marketId}
+    });
      if(!market){
-        return res.json({
-          success: false,
-          error:'No existe esta subasta'
-        });
+        return responses.errorDTOResponse(res, 404, 'Subasta no encontrada');
     }
     
     //Para saber la puja más alta de la subasta  
-    const marketBid = await Bid.findAll({
-        raw:true,
-        where:{marketId:req.params.marketId}
+    const marketBid = await Bid.findAll({ 
+        raw:true, 
+        where: { marketId: req.params.marketId },
+        include: {
+            model: User,
+            attributes: ['id', 'name']
+        } 
     });
+
     const user = JSON.parse(JSON.stringify(marketBid));
     const items = [];
     for (let i = 0; i < user.length; i++) {
@@ -52,6 +73,21 @@ router.get('/:marketId', async (req,res)=>{
     }
     const max = Math.max.apply(Math, items.map(function(o) { return o.value; }))
     const winner = items.find(item => item.value === max);
+
+    let highestBid = {
+        id: null,
+	    value: 0,
+	    buyer: {
+	      id: null,
+	      name: ""
+	    }
+    };
+    if (!(typeof winner === 'undefined' || winner == null)) {
+        highestBid.id = winner.id;
+        highestBid.value = winner.value;
+        highestBid.buyer.id = winner.user.id;
+        highestBid.buyer.name = winner.user.name;
+    }
 
     //Para saber la última puja del usuario
     const userBid = await Bid.findOne({
@@ -65,18 +101,26 @@ router.get('/:marketId', async (req,res)=>{
             }]
         }
     });
+
+    let myLastBid = {
+        id: null,
+        value: 0
+    };
+    if (!(typeof userBid === 'undefined' || userBid == null)) {
+        myLastBid.id = userBid.id;
+        myLastBid.value = userBid.value;
+    }
     
+    const item = JSON.parse(JSON.stringify(market));
+    item.highestBid = highestBid;
+    item.myLastBid = myLastBid;
     return res.status(200).json({
         success: true,
         message:"Subasta recuperada con éxito",
-        item:{
-            market,
-            highestBid:winner,
-            myLastBid:userBid
-        }
+        item
     });
   });
-
+  
 router.post('/add', poster);
 
 router.post('/bid', posterBid);
