@@ -24,7 +24,11 @@ const csvUploader = multer({
       cb(null, true);
       return;
     }
-    cb(new Error('Solo se aceptan archivos de tipo ' + mimetypes.join(', ')));
+    cb(null, false);
+  },
+  limits: {
+    fieldSize: 15000000,
+    fileSize: 10000000
   }
 });
 

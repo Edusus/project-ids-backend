@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const responses = require('../../utils/responses/responses');
 
-const { Sticker, random, Op, Team, Inventory, Warehouse} = require('../../databases/db');
+const { Sticker, random, Op, Team, Inventory, Warehouse, Event} = require('../../databases/db');
 const {imgController} = require('../../controllers/filesControllers');
 const controllerSticker = require('../../controllers/stickers/uploadStickers')
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
@@ -17,7 +17,11 @@ router.get('/', async (req,res)=>{
     attributes: ['id','playerName', 'country', 'position', 'img', 'height', 'weight', 'appearanceRate', 'createdAt', 'updatedAt'],
     include: {
       model: Team,
-      attributes: ['id', 'name', 'badge']
+      attributes: ['id', 'name', 'badge'],
+      include: {
+        model: Event,
+        attributes: ['id', 'eventName']
+      }
     }
   }
   const {count,rows} = await Sticker.findAndCountAll(options);
