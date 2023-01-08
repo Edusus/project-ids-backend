@@ -1,6 +1,7 @@
 const router= require('express').Router();
-
-const { Event }= require('../../databases/db');
+const {team} = require('../../databases/db');
+const { Event }= require('../../controllers/teams/finder');
+const { game }= require('../../databases/db');
 
 //endpoint para listar eventos
 router.get('/', async (req,res)=>{
@@ -81,13 +82,16 @@ router.put('/:eventId', async (req,res)=>{
 
 //endpoint para borrar eventos
 router.delete('/:eventId', async (req,res)=>{
-    await Event.destroy({
-        where:{ id: req.params.eventId}
-    });
-    res.json({ 
-        success:true,
-        message:"Eliminación exitosa"
-    });
+    if(eventId != await team && eventid != await game.){
+        await Event.destroy({
+            where:{ id: req.params.eventId }
+        });
+    
+        res.json({ 
+            success:true,
+            message:"Eliminación exitosa"
+        });
+    }
 });
 
 
