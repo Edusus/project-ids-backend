@@ -1,5 +1,5 @@
 const router= require('express').Router();
-const responses= require('../../')
+const responses= require('../../utils/responses/responses');
 const { Event, PlayerFantasy, Op }= require('../../databases/db');
 
 ////endpoint para listar eventos en los que pueda participar el usuario(en los que no esté participando)
@@ -13,10 +13,7 @@ router.get('/', async (req,res)=>{
         where:{"status":true}
     });
      if(eventsPublics==''){
-        res.json({
-            succes:false,
-            message:'No existen eventos activos'
-        });
+        responses.errorDTOResponse(res,400,'No existen eventos activos');
     }else{
         const eventUser = eventsPublics.map(async function(element) {
             const moneyEvent = await PlayerFantasy.findOne({
@@ -39,7 +36,7 @@ router.get('/', async (req,res)=>{
         });
 
         const eventUsers = await Promise.all(eventUser);
-        res.status(200).json(eventUsers);
+        responses.multipleDTOsResponse(res,200,"los eventos recibidos: ",eventUsers);
     }
 
 });
@@ -50,10 +47,7 @@ router.get('/:eventId', async (req,res)=>{
         where: {id : req.params.eventId}
     });
     if (!event) {
-        return res.status(404).json({
-            success: false,
-            message: "Evento no encontrado"
-        })
+        return responses.errorDTOResponse(res,404,"Evento no encontrado");
     }
     const user = await PlayerFantasy.findOne({
         raw:true,
