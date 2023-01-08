@@ -44,7 +44,7 @@ module.exports=(sequelize,type)=>{
                 }
             }
         },
-        jerseynumber:{
+        jerseyNumber:{
             type:type.INTEGER,
             allowNull:false
         }
