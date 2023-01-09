@@ -16,20 +16,20 @@ const givePlayerToUser = async (market, user) => {
     const team = await sticker.getTeam();
     const { id: eventId } = await team.getEvent({ raw: true });
     const { id: userId } = user.dataValues;
-    const { id: playerId } = sticker.dataValues;
+    const { id: stickerId } = sticker.dataValues;
 
-    const playerInWarehouse = await getPlayerInWarehouseOfUser(playerId, userId);
+    const playerInWarehouse = await getPlayerInWarehouseOfUser(stickerId, userId);
     if (playerInWarehouse) {
-    const { quantity } = playerInWarehouse.dataValues;
-    return await playerInWarehouse.update({ quantity: quantity + 1 });
+        const { quantity } = playerInWarehouse.dataValues;
+        return await playerInWarehouse.update({ quantity: quantity + 1 });
     }
 
     await Warehouse.create({
-    quantity: 1,
-    isInLineup: false,
-    userId,
-    eventId,
-    playerId
+        quantity: 1,
+        isInLineup: false,
+        userId,
+        eventId,
+        stickerId
     });
 }
 
