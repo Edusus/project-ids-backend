@@ -181,25 +181,31 @@ const posterBid = async (req, res) => {
     if (market.userId == userId) {
         return responses.errorDTOResponse(res, 403, 'No puedes ofertar en tu propia subasta')
     }
-    
-    console.log('IS DIRECT PURCHARSE???', isDirectPurchase);
+
+    const bid = await Bid.create({
+        value,
+        userId,
+        marketId,
+        isDirectPurchase
+    });
+
+    await PlayerFantasy.update({
+        money: player.money - value
+    }, {
+        where: {
+            [Op.and]: [
+            {
+                userId
+            }, {
+                eventId
+            }]
+        }
+    });
+
     if (isDirectPurchase) {
         if (value != market.immediatePurchaseValue) {
             return responses.errorDTOResponse(res, 403, 'El valor de la oferta debe ser igual al valor de compra directa')
         } else {
-            await PlayerFantasy.update({
-                money: player.money - value
-            }, {
-                where: {
-                    [Op.and]: [
-                    {
-                        userId: userId
-                    }, {
-                        eventId: eventId
-                    }]
-                }
-            });
-
             const job = JobManager.getJobByMarketId(market.id);
             await finishAuction(market.id);
             schedule.cancelJob(job);
@@ -207,25 +213,6 @@ const posterBid = async (req, res) => {
             return responses.singleDTOResponse(res, 200, 'Compra realizada con exito', market);
         }
     } else {
-        const bid = await Bid.create({
-            value: value,
-            userId: userId,
-            marketId: marketId,
-            isDirectPurchase: isDirectPurchase
-        });
-
-        await PlayerFantasy.update({
-            money: player.money - value
-        }, {
-            where: {
-                [Op.and]: [
-                {
-                    userId: userId
-                }, {
-                    eventId: eventId
-                }]
-            }
-        });
         await Market.update({
             initialPurchaseValue: market.initialPurchaseValue + value,
         }, {
