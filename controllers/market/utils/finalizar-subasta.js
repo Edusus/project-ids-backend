@@ -52,13 +52,12 @@ const returnMoneyToBidLossers = async (market, bidsItems) => {
     for (let i = 0; i < bidsItems.length; i++) {
     const { value: bidValue, userId: bidUserId } = bidsItems[i].dataValues;
     const playerFantasy = await PlayerFantasy.findOne({
-        raw: true,
         where: {
             [Op.and]: [{ userId: bidUserId }, { eventId }]
         }
     });
 
-    await playerFantasy.update({ money: playerFantasy.dataValues.money + bidValue })
+    await playerFantasy.update({ money: playerFantasy.money + bidValue })
     }
 }
 
