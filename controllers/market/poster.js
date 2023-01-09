@@ -65,7 +65,7 @@ const poster = async (req, res) => {
     }
 
     if (initialValue == null || directPurchase == null || playerId == null) {
-      return responses.errorDTOResponse(res, 400, 'Debe proporcionar un valor inicial, un valor de compra directa y un playerId');
+        return responses.errorDTOResponse(res, 400, 'Debe proporcionar un valor inicial, un valor de compra directa y un playerId');
     }
 
     if (warehouse.quantity <= 0) {
@@ -103,7 +103,6 @@ const poster = async (req, res) => {
 
     const job = schedule.scheduleJob(endTime, async () => {
         await finishAuction(market.dataValues.id);
-        schedule.cancelJob(job);
     });
 
     JobManager.addJob(market.dataValues.id, job);
