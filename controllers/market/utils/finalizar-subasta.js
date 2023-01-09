@@ -18,7 +18,7 @@ const givePlayerToUser = async (market, user) => {
     const { id: userId } = user.dataValues;
     const { id: playerId } = sticker.dataValues;
 
-    const playerInWarehouse = await getPlayerInWarehouseOfUser(stickerId, userId);
+    const playerInWarehouse = await getPlayerInWarehouseOfUser(playerId, userId);
     if (playerInWarehouse) {
     const { quantity } = playerInWarehouse.dataValues;
     return await playerInWarehouse.update({ quantity: quantity + 1 });
@@ -87,7 +87,7 @@ const giveMoneyToAuctioner = async (market, bidWinner) => {
 const finishAuction = async (marketId) => {
     const market = await Market.findByPk(marketId);
     await market.update({ isFinished: true });
-    const { stickerId, userId } = JSON.parse(JSON.stringify(market));
+    //const { stickerId, userId } = JSON.parse(JSON.stringify(market));
 
     const bids = await Bid.findAll({
         where: {
