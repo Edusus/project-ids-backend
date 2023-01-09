@@ -32,7 +32,8 @@ const find = async (req, res) => {
           playerName: {
             [Op.regexp]: playerName
           },
-          position
+          position,
+          quantity: { [Op.ne]: 0 }
         },
         include: {
           model: Team,
