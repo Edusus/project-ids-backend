@@ -13,7 +13,8 @@ const getPlayerInWarehouseOfUser = async (stickerId, userId) => {
 
 const givePlayerToUser = async (market, user) => {
     const sticker = await market.getSticker();
-    const { id: eventId } = await sticker.getTeam().getEvent({ raw: true });
+    const team = await sticker.getTeam();
+    const { id: eventId } = await team.getEvent({ raw: true });
     const { id: userId } = user.dataValues;
     const { id: playerId } = sticker.dataValues;
 
@@ -44,7 +45,9 @@ const giveRewardPlayerToBidWinner = async (market, bidWinner) => {
 }
 
 const returnMoneyToBidLossers = async (market, bidsItems) => {
-    const { id: eventId } = await market.getSticker().getTeam().getEvent({ raw: true });
+    const sticker = await market.getSticker();
+    const team = await sticker.getTeam();
+    const { id: eventId } = await team.getEvent({ raw: true });
     // Le devuelve el dinero a los perdedores UwU
     for (let i = 0; i < bidsItems.length; i++) {
     const { value: bidValue, userId: bidUserId } = bidsItems[i].dataValues;
@@ -60,7 +63,9 @@ const returnMoneyToBidLossers = async (market, bidsItems) => {
 }
 
 const giveMoneyToAuctioner = async (market, bidWinner) => {
-    const { id: eventId } = await market.getSticker().getTeam().getEvent({ raw: true });
+    const sticker = await market.getSticker();
+    const team = await sticker.getTeam();
+    const { id: eventId } = await team.getEvent({ raw: true });
     // Le da el dinero al creador de la subasta
     const auctioner = await PlayerFantasy.findOne({
         where: {
