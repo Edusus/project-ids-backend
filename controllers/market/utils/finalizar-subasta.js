@@ -91,7 +91,7 @@ const finishAuction = async (marketId) => {
 
     const bids = await Bid.findAll({
         where: {
-            [Op.and]: [{ marketId: market.id }]
+            [Op.and]: [{ marketId: market.dataValues.id }]
         },
         order: [['value', 'DESC']]
     });
