@@ -13,7 +13,7 @@ router.get('/public-events/:eventId', async (req, res) => {
     try {
         let existe = await Event.findOne({
             where: {
-                eventId: req.params.eventId
+                id: req.params.eventId
             }
         });
         if (!existe) {
