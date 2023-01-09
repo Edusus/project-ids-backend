@@ -110,7 +110,7 @@ const poster = async (req, res) => {
     
         return responses.singleDTOResponse(res, 200, 'Subasta creada con exito', market);
     } catch (e) {
-        return responses.errorDTOResponse(res, 200, e.message);
+        return responses.errorDTOResponse(res, 500, e.message);
     }
 }
 
