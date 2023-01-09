@@ -200,8 +200,8 @@ const posterBid = async (req, res) => {
                 }
             });
 
-            const job = JobManager.getJobByMarketId(market.dataValues.id);
-            await finishAuction(market.dataValues.id);
+            const job = JobManager.getJobByMarketId(market.id);
+            await finishAuction(market.id);
             schedule.cancelJob(job);
 
             return responses.singleDTOResponse(res, 200, 'Compra realizada con exito', market);
