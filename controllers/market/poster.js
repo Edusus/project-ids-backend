@@ -1,5 +1,6 @@
 const schedule = require('node-schedule');
 const { Market, Warehouse, Bid, PlayerFantasy, Op, User } = require('../../databases/db');
+const market = require('../../models/market');
 const responses = require('../../utils/responses/responses');
 const { finishAuction } = require('./utils/finalizar-subasta');
 
@@ -31,7 +32,7 @@ class JobManager {
   }
 
   static addJob(marketId, job) {
-    this.jobList[marketId] = job;
+    this.jobList = { ...this.jobList, [marketId]: job };
   }
 }
 
