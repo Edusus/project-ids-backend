@@ -120,7 +120,7 @@ router.get('/:marketId', async (req,res) =>{
         item
     });
   });
-
+  
 router.post('/add', poster);
 
 router.post('/bid', posterBid);
