@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { finder, poster, updater, deleter } = require('../../controllers/promotionsControllers');
 const { imgController } = require('../../controllers/filesControllers');
-const { Promotion, random } = require('../../databases/db');
+
 
 const promotionsRouter = Router();
 
@@ -16,23 +16,6 @@ const promotionsRouter = Router();
  * default value is ['static', 'popup'] (any promotion)
  */
 
-promotionsRouter.get('/public-ad', async (req, res) => {
-  if (await Promotion.findOne()) {
-    const cont = 1;
-    const singleAd = await Promotion.findOne({ order: random});
-    let valorActual = singleAd.dataValues.requestedQuantities;
-    let valorNuevo = valorActual + cont;
-    singleAd.update({ requestedQuantities: valorNuevo });
-    return res.status(200).json({ success: true, data: singleAd });
-  } else {
-    console.error(error);
-    return res.status(404).json({
-      success: false,
-      message: "No hay anuncios que mostrar"
-    });
-  }
-});
-
 promotionsRouter.get('/', finder.find);
 
 
@@ -46,6 +29,22 @@ promotionsRouter.get('/all', finder.findAll);
 
 
 /**
+ * Route to get one random promotion to watch, and increments requested quantities by 1
+ */
+
+promotionsRouter.get('/watch', finder.findOneToWatch);
+
+
+
+/**
+ * Route to redirect to the url of the promotion passed by id, and increments clicked quantities by 1
+ */
+
+promotionsRouter.get('/watch-detailed/:promotionId', finder.findAndRedirectById);
+
+
+
+/**
  * Route to get a promotion by a specific id, passed as a request param
  * * Request params:
  * @param promotionId: the id of the promotion to get from the db
@@ -54,23 +53,6 @@ promotionsRouter.get('/all', finder.findAll);
 promotionsRouter.get('/:promotionId', finder.findById);
 
 
-
-promotionsRouter.post('/public-ad/click/:promotionId', async (req, res) => {
-    if (await Promotion.findOne()) {
-       const promotion = await Promotion.findByPk(req.params.promotionId);
-       const cont = 1;
-       let valorActual = promotion.dataValues.clickedQuantities;
-       let valorNuevo = valorActual + cont;
-       await promotion.update({ clickedQuantities: valorNuevo });
-       res.status(200).json({ success: true });
-    } else {
-      console.error(error);
-      return res.status(404).json({
-        success: false,
-        message: "No hay anuncios que mostrar"
-      });
-    }
-});
 
 /**
  * Route to post a new promotion

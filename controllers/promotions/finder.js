@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { Promotion } = require('../../databases/db');
+const { Promotion, random } = require('../../databases/db');
 const responses = require('../../utils/responses/responses');
 
 /**
@@ -56,10 +56,36 @@ const find = async (req, res) => {
   }
 }
 
+const findOneToWatch = async (req, res) => {
+  const promotion = await Promotion.findOne({ order: random });
+
+  if(typeof promotion === 'undefined' || promotion == null)
+    return responses.errorDTOResponse(res, 500, "No hay promociones que mostrar actualmente");
+
+  await promotion.increment('requestedQuantities');
+  await promotion.reload();
+
+  return responses.singleDTOResponse(res, 200, 'Promocion recuperada con exito', promotion);
+}
+
+const findAndRedirectById = async (req, res) => {
+  const promotion = await Promotion.findByPk(req.params.promotionId);
+
+  if(typeof promotion === 'undefined' || promotion == null)
+    return responses.errorDTOResponse(res, 404, "Promocion no encontrada");
+
+  await promotion.increment('clickedQuantities');
+  await promotion.reload();
+
+  return res.redirect(302, promotion.redirecTo);
+}
+
 const finder = {
   find,
   findById,
   findAll,
+  findOneToWatch,
+  findAndRedirectById
 }
 
 module.exports = finder;
