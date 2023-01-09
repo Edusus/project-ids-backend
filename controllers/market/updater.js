@@ -1,5 +1,6 @@
 const { Market, Warehouse, Bid, PlayerFantasy, Op } = require('../../databases/db');
 const responses = require('../../utils/responses/responses');
+const { finishAuction } = require('./utils/finalizar-subasta');
 
 const bidUpdate = async (req, res) => {
     const userId = req.user.id.id;
@@ -64,84 +65,53 @@ const bidUpdate = async (req, res) => {
     if (bid.value > value) {
         return responses.errorDTOResponse(res, 400, 'El valor de la oferta debe ser mayor al valor inicial');
     }
+    if (value >= market.immediatePurchaseValue-1) {
+        return responses.errorDTOResponse(res, 403, 'El valor de la oferta puede ser como maximo ' + (market.immediatePurchaseValue-1) + ' si deseas superarlo, obta por una compra directa.')
+    }
     if (market.userId == userId) {
         return responses.errorDTOResponse(res, 400, 'No puedes ofertar en tu propia subasta');
     }
-    if (market.immediatePurchaseValue == value && isDirectPurchase) {
-        const warehouse = await Warehouse.findOne({
-            raw: true,
-            where: {
-                [Op.and]: [{
-                    stickerId: market.stickerId
-                }, {
-                    eventId: eventId
-                }, {
-                    userId: userId
-                }]
-            }
-        });
-        if (!warehouse) {
-            await Warehouse.create({
-                quantity: 1,
-                stickerId: market.stickerId,
-                userId: userId,
-                eventId: eventId
-            });
-        } else {
-            await warehouse.update({
-                quantity: warehouse.quantity + 1
-            });
-        }
-        await PlayerFantasy.update({
-            money: player.money - value
-        }, {
-            where: {
-                [Op.and]: [{
-                    userId: userId
-                }, {
-                    eventId: eventId
-                }]
-            }
-        });
-        await Market.update({
-            isFinished: true
-        }, {
-            where: {
-                id: marketId
-            }
-        });
 
-        return responses.singleDTOResponse(res, 200, 'Compra realizada con exito');
+    if (isDirectPurchase) {
+        if (value != market.immediatePurchaseValue) {
+            return responses.errorDTOResponse(res, 403, 'El valor de la oferta debe ser igual al valor de compra directa')
+        } else {
+            await PlayerFantasy.update({
+                money: player.money - value
+            }, {
+                where: {
+                    [Op.and]: [{ userId }, { eventId }]
+                }
+            });
+
+            await Bid.update({
+                value: market.immediatePurchaseValue
+            }, {
+                where: { id: bidId }
+            });
+
+            await finishAuction(market.id);
+            return responses.singleDTOResponse(res, 200, 'Compra realizada con exito');
+        }
     } else {
         if (bid.value + value > market.initialPurchaseValue ) {
-            console.log(bid.value, value, market.initialPurchaseValue)
             await Bid.update({
                 value: bid.value + value
             }, {
-                where: {
-                    id: bidId
-                }
+                where: { id: bidId }
             });
 
             await PlayerFantasy.update({
                 money: player.money - value
             }, {
                 where: {
-                    [Op.and]: [{
-                        userId: userId
-                    }, {
-                        eventId: eventId
-                    }]
+                    [Op.and]: [{ userId }, { eventId }]
                 }
             });
 
             await Market.update({
                 initialPurchaseValue: market.initialPurchaseValue + (bid.value + value)
-            }, {
-                where: {
-                    id: marketId
-                }
-            });
+            }, { where: { id: marketId } });
 
             return responses.singleDTOResponse(res, 200, 'Oferta realizada con exito');
         } else {

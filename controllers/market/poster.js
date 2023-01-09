@@ -24,18 +24,6 @@ function formatDate(date) {
   );
 }
 
-class JobManager {
-  jobList = {};
-
-  static getJobByMarketId(marketId) {
-    return this.jobList[marketId];
-  }
-
-  static addJob(marketId, job) {
-    this.jobList = { ...this.jobList, [marketId]: job };
-  }
-}
-
 const poster = async (req, res) => {
     const userId = req.user.id.id;
     const eventId = req.eventId;
@@ -102,13 +90,13 @@ const poster = async (req, res) => {
             finishDate: endTime,
             isFinished: false
         });
-    
-        const job = schedule.scheduleJob(endTime, async () => {
-            await finishAuction(market.dataValues.id);
+
+        schedule.scheduleJob(endTime, async () => {
+            if (!market.dataValues.isFinished) {
+                await finishAuction(market.dataValues.id);
+            }
         });
-    
-        JobManager.addJob(market.dataValues.id, job);
-    
+
         return responses.singleDTOResponse(res, 200, 'Subasta creada con exito', market);
     } catch (e) {
         return responses.errorDTOResponse(res, 500, e.message);
@@ -178,6 +166,9 @@ const posterBid = async (req, res) => {
     if (value < market.initialPurchaseValue) {
         return responses.errorDTOResponse(res, 403, 'El valor de la oferta debe ser mayor al valor inicial')
     }
+    if (value >= market.immediatePurchaseValue-1) {
+        return responses.errorDTOResponse(res, 403, 'El valor de la oferta puede ser como maximo ' + (market.immediatePurchaseValue-1) + ' si deseas superarlo, obta por una compra directa.')
+    }
     if (market.userId == userId) {
         return responses.errorDTOResponse(res, 403, 'No puedes ofertar en tu propia subasta')
     }
@@ -206,11 +197,12 @@ const posterBid = async (req, res) => {
         if (value != market.immediatePurchaseValue) {
             return responses.errorDTOResponse(res, 403, 'El valor de la oferta debe ser igual al valor de compra directa')
         } else {
-            const job = JobManager.getJobByMarketId(market.id);
-            await finishAuction(market.id);
-            schedule.cancelJob(job);
+            if (!market.isFinished) {
+                await finishAuction(market.id);
+                return responses.singleDTOResponse(res, 200, 'Compra realizada con exito', market);
+            }
 
-            return responses.singleDTOResponse(res, 200, 'Compra realizada con exito', market);
+            return responses.errorDTOResponse(res, 500, 'La subasta ya finalizo');
         }
     } else {
         await Market.update({
