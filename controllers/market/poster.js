@@ -119,7 +119,7 @@ const posterBid = async (req, res) => {
     const userId = req.user.id.id;
     const eventId = req.eventId;
     let { value, marketId} = req.body;
-    let { isDirectPurchase = false } = req.body;
+    let isDirectPurchase = !!req.body?.isDirectPurchase;
     value = parseInt(value);
     if (value == null || marketId == null) {
         return responses.errorDTOResponse(res, 400, 'Debe proporcionar un valor y un marketId');
@@ -135,7 +135,6 @@ const posterBid = async (req, res) => {
             }]
         }
     });
-
 
     const player = await PlayerFantasy.findOne({
         raw: true,
@@ -183,6 +182,7 @@ const posterBid = async (req, res) => {
         return responses.errorDTOResponse(res, 403, 'No puedes ofertar en tu propia subasta')
     }
     
+    console.log('IS DIRECT PURCHARSE???', isDirectPurchase);
     if (isDirectPurchase) {
         if (value != market.immediatePurchaseValue) {
             return responses.errorDTOResponse(res, 403, 'El valor de la oferta debe ser igual al valor de compra directa')
