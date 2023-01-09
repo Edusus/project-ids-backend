@@ -27,11 +27,11 @@ class JobManager {
   jobList = {};
 
   static getJobByMarketId(marketId) {
-    return jobList[marketId];
+    return this.jobList[marketId];
   }
 
   static addJob(marketId, job) {
-    jobList[marketId] = job;
+    this.jobList[marketId] = job;
   }
 }
 
@@ -105,7 +105,7 @@ const poster = async (req, res) => {
         await finishAuction(market.dataValues.id);
     });
 
-    //JobManager.addJob(market.dataValues.id, job);
+    JobManager.addJob(market.dataValues.id, job);
 
     return responses.singleDTOResponse(res, 200, 'Subasta creada con exito', market);
 }
