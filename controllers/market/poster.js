@@ -90,24 +90,28 @@ const poster = async (req, res) => {
         }
     });
 
-    const market = await Market.create({
-        raw: true,
-        initialPurchaseValue: initialValue,
-        immediatePurchaseValue : directPurchase,
-        stickerId: playerId,
-        userId : userId,
-        eventId : eventId,
-        finishDate: endTime,
-        isFinished: false
-    });
-
-    const job = schedule.scheduleJob(endTime, async () => {
-        await finishAuction(market.dataValues.id);
-    });
-
-    JobManager.addJob(market.dataValues.id, job);
-
-    return responses.singleDTOResponse(res, 200, 'Subasta creada con exito', market);
+    try {
+        const market = await Market.create({
+            raw: true,
+            initialPurchaseValue: initialValue,
+            immediatePurchaseValue : directPurchase,
+            stickerId: playerId,
+            userId : userId,
+            eventId : eventId,
+            finishDate: endTime,
+            isFinished: false
+        });
+    
+        const job = schedule.scheduleJob(endTime, async () => {
+            await finishAuction(market.dataValues.id);
+        });
+    
+        JobManager.addJob(market.dataValues.id, job);
+    
+        return responses.singleDTOResponse(res, 200, 'Subasta creada con exito', market);
+    } catch (e) {
+        return responses.errorDTOResponse(res, 200, e.message);
+    }
 }
 
 const posterBid = async (req, res) => {
