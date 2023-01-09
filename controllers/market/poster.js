@@ -101,11 +101,11 @@ const poster = async (req, res) => {
         isFinished: false
     });
 
-    /*const job = schedule.scheduleJob(endTime, async () => {
+    const job = schedule.scheduleJob(endTime, async () => {
         await finishAuction(market.dataValues.id);
     });
 
-    JobManager.addJob(market.dataValues.id, job);*/
+    //JobManager.addJob(market.dataValues.id, job);
 
     return responses.singleDTOResponse(res, 200, 'Subasta creada con exito', market);
 }
