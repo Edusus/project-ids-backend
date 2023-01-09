@@ -23,7 +23,8 @@ const find = async (req, res) => {
       offset: pageAsNumber * sizeAsNumber,
       where: {
         userId,
-        eventId
+        eventId,
+        quantity: { [Op.ne]: 0 }
       },
       include: {
         model: Sticker,
@@ -32,8 +33,7 @@ const find = async (req, res) => {
           playerName: {
             [Op.regexp]: playerName
           },
-          position,
-          quantity: { [Op.ne]: 0 }
+          position
         },
         include: {
           model: Team,
