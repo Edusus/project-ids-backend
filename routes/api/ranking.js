@@ -1,6 +1,6 @@
 const router= require('express').Router();
 const  responses =require('../../utils/responses/responses');
-const { User, PlayerFantasy, Event } = require('../../databases/db');
+const { User, PlayerFantasy, Event, Op} = require('../../databases/db');
 
 router.get('/:userId', async (req,res)=>{
     const event = await Event.findOne({
@@ -38,7 +38,12 @@ router.get('/:userId', async (req,res)=>{
         const userInRanking = await PlayerFantasy.findOne({
             raw: true,
             where: {
-                userId: req.user.id.id
+                [Op.and]: [{
+                    eventId: element.id
+                },
+                {
+                    userId: req.user.id.id
+                }]
             }
         });
         if (!userInRanking) {
