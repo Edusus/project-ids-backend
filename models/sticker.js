@@ -35,12 +35,21 @@ module.exports=(sequelize,type)=>{
             allowNull:false
         },
         externalUuid:{
-            type:type.STRING,
-            allowNull:false,
+            type: type.UUID,
+            allowNull: false,
+            unique: true,
             validate: {
                 notEmpty: {
                   args: true,
-                  msg: 'externalUuid vacio no esta permitido'
+                  msg: 'Un externalUUID vacio no esta permitido'
+                },
+                notNull: {
+                  args: true,
+                  msg: "Un externalUUID nulo no esta permitido"
+                },
+                isUUID: {
+                  args: 4,
+                  msg: "Un externalUUID que no sea un UUID no está permitido"
                 }
             }
         },
