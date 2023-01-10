@@ -64,7 +64,7 @@ router.get('/:eventId', isAdmin, async (req, res) => {
         return responses.errorDTOResponse(res, 400, "El ID debe ser un número");
     }
 
-    const event= await Event.findOne({
+    const event = await Event.findOne({
         where:{id: req.params.eventId}
     });
 
@@ -110,12 +110,15 @@ router.delete('/:eventId', async (req, res)=>{
 
     if (team || game) {
         return responses.errorDTOResponse(res, 400, "No se puede eliminar el evento porque tiene equipos o partidos asociados");
-    }else{
-        await Event.destroy({
-            where:{ id: req.params.eventId }
-        });
-        return responses.successDTOResponse(res, 200, "Se ha eliminado con exito");
     }
+
+    try {
+        await Event.destroy({ where:{ id: req.params.eventId } });
+    } catch (e) {
+        return responses.errorDTOResponse(res, 500, e.message);
+    }
+
+    return responses.successDTOResponse(res, 200, "Se ha eliminado con exito");
 });
 
 module.exports = router;
