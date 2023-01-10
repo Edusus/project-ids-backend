@@ -12,11 +12,11 @@ const destroy = async (req, res) => {
         id: gameId
       }
     });
-    responses.successDTOResponse(res, 200, 'Partido eliminado con exito');
-
+ 
+    return responses.successDTOResponse(res, 200, 'Partido eliminado con exito');
   } catch(error) {
     console.log(error);
-    responses.errorDTOResponse(res, 400, error.message);
+    return responses.errorDTOResponse(res, 400, error.message);
   }
 }
 
