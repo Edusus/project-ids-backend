@@ -28,7 +28,6 @@ const post = async (req, res) => {
     }, { fields: allowedFields });
     return responses.singleDTOResponse(res, 201, 'Promocion creada con exito', promotion);
   } catch (error) {
-    console.error(error);
     if (typeof req.file !== 'undefined') {
       fileController.deleteFile(req.file.path, req.file.filename);
       return responses.errorDTOResponse(res, 400, error.message);

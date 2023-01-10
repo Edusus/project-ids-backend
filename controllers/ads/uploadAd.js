@@ -1,7 +1,7 @@
 const { Ad } = require('../../databases/db');
 const { imgController, fileController } = require('../filesControllers');
 const path = require('path');
-const responses= require('../../utils/responses/responses');
+const responses = require('../../utils/responses/responses');
 const { json } = require('body-parser');
 const getImageUrl = require('../../utils/helpers/get-image-url');
 
@@ -21,12 +21,12 @@ exports.uploadFileAd = async (req, res) => {
       });
       return responses.singleDTOResponse(res,200,"se ha creado con exito el nuevo anuncio",json(newAd));
   } catch (error) {
-      if (typeof req.file !== 'undefined') {
-        fileController.deleteFile(req.file.path, req.file.filename);
-        return responses.errorDTOResponse(res,400,error.message);
-      } else {
-        return responses.errorDTOResponse(res,400,'Error: la imagen no fue subida o no se subio correctamente');
-      }
+    if (typeof req.file !== 'undefined') {
+      fileController.deleteFile(req.file.path, req.file.filename);
+      return responses.errorDTOResponse(res,400,error.message);
+    } else {
+      return responses.errorDTOResponse(res,400,'Error: la imagen no fue subida o no se subio correctamente');
+    }
   }
 };
 

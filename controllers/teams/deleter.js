@@ -31,7 +31,7 @@ const destroy = async (req, res) => {
 
   const filepath = getImageUrl(badge);
   try {
-    await team.destroy({ where: { id: teamId } });
+    await team.destroy();
     fileController.deleteFile(path.join(imgController.img_dir, filepath), filepath);
   } catch (e) {
     return responses.errorDTOResponse(res, 500, e.message);

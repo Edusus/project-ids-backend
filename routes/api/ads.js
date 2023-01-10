@@ -3,7 +3,7 @@ const { Ad, random, Op } = require('../../databases/db');
 const {imgController} = require('../../controllers/filesControllers');
 const controllerAd = require('../../controllers/ads/uploadAd')
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
-const responses= require('../../utils/responses/responses');
+const responses = require('../../utils/responses/responses');
 
 const httpGetResponse = (res, resource, resourceName) => {
   if (resource) {

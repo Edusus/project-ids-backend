@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const authConfig = require('../config/auth');
+const responses = require('../utils/responses/responses');
 
 exports.verifyToken = (req, res, next) => {
 
@@ -7,7 +8,7 @@ exports.verifyToken = (req, res, next) => {
 
     // Comprobar que existe el token
     if(!req.headers.authorization) {
-        res.status(401).json({success: false, message: "Acceso no autorizado" });
+        return responses.errorDTOResponse(res,401,"Acceso no autorizado");
     } else {
 
         // Comrpobar la validez de este token
@@ -15,14 +16,12 @@ exports.verifyToken = (req, res, next) => {
 
         // Comprobar la validez de este token
         jwt.verify(token, authConfig.secret, (err, decoded) => {
-
             if(err) {
-                res.status(500).json({success: false, message: "Ha ocurrido un problema al decodificar el token", err });
-            } else {
-                req.user = decoded;
-                next();
+                return responses.errorDTOResponse(res,500,"Ha ocurrido un problema al decodificar el token");
             }
 
+            req.user = decoded;
+            return next();
         })
     }
 

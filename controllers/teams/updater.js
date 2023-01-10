@@ -2,7 +2,7 @@ const { Team } = require('../../databases/db');
 const { imgController, fileController } = require('../filesControllers');
 const getImageUrl = require('../../utils/helpers/get-image-url');
 const path = require('path');
-const responses= require('../../utils/responses/responses');
+const responses = require('../../utils/responses/responses');
 const allowedFields = ['name', 'badge', 'idEvents'];
 
 /**
@@ -14,9 +14,9 @@ const update = async (req, res) => {
   const teamId = req.params.teamId;
   try {
     const team = await Team.findByPk(teamId);
-    if (typeof team === 'undefined' || team === null)
-      throw new Error('Error: team not found');
-    
+    if (!team)
+      throw new Error('Equipo no encontrado');
+
     const { badge: prevFileurl } = team;
     const img_relative_dir = '/' + imgController.img_relative_dir.replace('\\', '/');
     const prevFilepath = prevFileurl.split(img_relative_dir)[1];
@@ -39,20 +39,17 @@ const update = async (req, res) => {
       where: { id: teamId },
       fields: allowedFields 
     });
-    responses.singleDTOResponse(res,200,"Equipo modificado con exito del id: ",teamId);
+    return responses.singleDTOResponse(res,200,"Equipo actualizado con exito.");
   } catch (error) {
-    console.error(error);
-    if (typeof req.file !== 'undefined') {
-      fileController.deleteFile(req.file.path, req.file.filename);
-      responses.errorDTOResponse(res,400,error.message);
-    } else {
-      responses.errorDTOResponse(res,400,error.message + '\nError: imagen no se subio correctamente o no se envio');
+    if (!req?.file) {
+      return responses.errorDTOResponse(res,400,error.message + '\nError: La imagen no se subio correctamente o no fue enviada');
     }
+
+    fileController.deleteFile(req.file.path, req.file.filename);
+    return responses.errorDTOResponse(res,400,error.message);
   }
 }
 
-const updater = {
-  update
-}
+const updater = { update }
 
 module.exports = updater;

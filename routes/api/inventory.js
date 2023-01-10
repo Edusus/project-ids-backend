@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const responses= require('../../utils/responses/responses');
+const responses = require('../../utils/responses/responses');
 const {
     Inventory,
     Sticker,

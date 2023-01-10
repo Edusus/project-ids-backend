@@ -21,21 +21,22 @@ router.put('/new-password', (req, res) => {
         jwt.verify(token, authConfig.secret, (err, decoded) => {
 
             if(err) {
-                responses.errorDTOResponse(res,500,"Ha ocurrido un problema al decodificar el token", err );
-            } else {
-                req.user = decoded;
-                let {id} = req.user.id
-                let {password} = req.body;
-                let newPassword = bcrypt.hashSync(password, Number.parseInt(authConfig.rounds));
-                User.update({
-                    password: newPassword
-                }, {
-                    where: {
-                        id: id
-                    }    
-                })
-              responses.successDTOResponse(res,200,'Se ha modificado');
-            }    
+                return responses.errorDTOResponse(res,500,"Ha ocurrido un problema al decodificar el token", err );
+            }
+
+            req.user = decoded;
+            let {id} = req.user.id
+            let {password} = req.body;
+            let newPassword = bcrypt.hashSync(password, Number.parseInt(authConfig.rounds));
+            User.update({
+                password: newPassword
+            }, {
+                where: {
+                    id: id
+                }    
+            })
+
+            return responses.successDTOResponse(res,200,'Se ha modificado');  
 
         })
     }

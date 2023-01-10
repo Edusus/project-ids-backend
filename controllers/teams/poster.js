@@ -28,13 +28,14 @@ const post = async (req, res) => {
         "badge": filepath,
         "idEvents": idEvents
     }, { fields: allowedFields });
-    responses.singleDTOResponse(res,201,"S subio con exito el equipo: ",team);
+    return responses.singleDTOResponse(res, 201, "Equipo creado con exito", team);
   } catch (error) {
-    console.error(error);
-    if (typeof req.file !== 'undefined') {
-      fileController.deleteFile(req.file.path, req.file.filename);
-      responses.errorDTOResponse(res,400,error.message);
-   }
+    if (!req?.file) {
+      return responses.errorDTOResponse(res,400,'La imagen enviada no se pudo procesar adecuadamente o no se envió una imagen');
+    }
+
+    fileController.deleteFile(req.file.path, req.file.filename);
+    return responses.errorDTOResponse(res,400,error.message);
   }
 }
 

@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { finder, poster, deleter } = require('../../controllers/gamesControllers');
 const { csvController } = require('../../controllers/filesControllers');
-const responses= require('../../utils/responses/responses');
+const responses = require('../../utils/responses/responses');
 /*
 const games = [
     {

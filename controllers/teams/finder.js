@@ -1,6 +1,6 @@
 const { Op } = require('sequelize');
 const { Team, Sticker, Event } = require('../../databases/db');
-const responses= require('../../utils/responses/responses');
+const responses = require('../../utils/responses/responses');
 /**
  * If the resource is found, send a 200 status code with the resource in the response body. If the
  * resource is not found, send a 404 status code with a message in the response body.
