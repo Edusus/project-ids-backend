@@ -1,5 +1,5 @@
 const router = require('express').Router();
-
+const responses= require('../../utils/responses/responses');
 const {
     Inventory,
     Sticker,
@@ -16,12 +16,9 @@ router.get('/public-events/:eventId', async (req, res) => {
                 id: req.params.eventId
             }
         });
-        if (!existe) {
-            res.status(404).json({
-                success: false,
-                message: 'Evento no encontrado'
-            });
 
+        if (!existe) {
+            return responses.errorDTOResponse(res,404,'Evento no encontrado');
         } else {
             const {eventId} = req.params;
             let {page = 0, size = 10, teamName = '.*', playerName = '.*' } = req.query;
@@ -35,10 +32,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                     }
                 })
                 if (!teams) {
-                    res.status(404).json({
-                        success: false,
-                        message: 'equipo no encontrado'
-                    });
+                    responses.errorDTOResponse(res,404,'equipo no encontrado');
                 } else {
                     if ((playerName != '.*') && (teams)) {
                         const player = await Sticker.findOne({
@@ -81,10 +75,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                                 }
                             });
                             if (!obtein) {
-                                res.status(404).json({
-                                    success: false,
-                                    message: 'No posees a este jugador'
-                                });
+                                responses.errorDTOResponse(res,404,'No posees a este jugador');
                             } else {
                                 const {
                                     count
@@ -105,10 +96,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                                 });
                             }
                         } else {
-                            res.status(404).json({
-                                success: false,
-                                message: "El jugador que busca no existe"
-                            });
+                            responses.errorDTOResponse(res,404,"El jugador que busca no existe");
                         }
                     } else {
                         let options = {
@@ -143,10 +131,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                             }
                         });
                         if (!obtein) {
-                            res.status(404).json({
-                                success: false,
-                                message: 'No posees stickers de este equipo'
-                            });
+                            responses.errorDTOResponse(res,404,'No posees stickers de este equipo');
                         } else {
                             const {
                                 count
@@ -176,10 +161,7 @@ router.get('/public-events/:eventId', async (req, res) => {
                         }
                     })
                         if (!player) {
-                            res.status(404).json({
-                                success: false,
-                                message: 'jugador no encontrado'
-                            });
+                            responses.errorDTOResponse(res,404,'jugador no encontrado');
                         } else {
                             let options = {
                                 limit: sizeAsNumber,
@@ -247,12 +229,9 @@ router.get('/public-events/:eventId', async (req, res) => {
             }
         }
     } catch (err) {
-        console.error(err);
-        res.status(400).send(err.message);
-
+        return responses.errorDTOResponse(res,400,err.message);
     }
 });
-
 
 router.get('/public-events/:eventId/carousel', async (req,res) => {
     try {
@@ -264,10 +243,7 @@ router.get('/public-events/:eventId/carousel', async (req,res) => {
             }
         });
         if (!event) {
-            res.status(404).json({
-                success: false,
-                message: 'Evento no encontrado'
-            });
+            responses.errorDTOResponse(res,404,'Evento no encontrado');
         } else {
             let options = {
                 include: {
@@ -296,7 +272,7 @@ router.get('/public-events/:eventId/carousel', async (req,res) => {
         }
     } catch (err) {
         console.error(err);
-        res.status(400).send(err.message);
+        responses.errorDTOResponse(res,400,err.message);
     }
 });
 
@@ -320,10 +296,7 @@ router.post('/public-events/:eventId/claim-sticker', async (req, res) => {
             }
         });
         if (!inventorys) {
-            res.status(404).json({
-                success: false,
-                message: 'No posees este sticker en el inventario'
-            });
+            responses.errorDTOResponse(res,404,'No posees este sticker en el inventario');
         } else {
             const contAct = inventorys.dataValues.Quantity
             const notSticker = inventorys.dataValues.isInAlbum
@@ -368,28 +341,19 @@ router.post('/public-events/:eventId/claim-sticker', async (req, res) => {
                      }
                }); 
 
-                res.status(200).json({
-                    success: true,
-                    message: 'Sticker pegado con exito'
-                });
+                responses.successDTOResponse(res,200,'Sticker pegado con exito');
             } else {
                 if (notSticker == true) {
-                    res.status(409).json({
-                        success: false,
-                        message: 'Ya tienes ese sticker pegado en el inventario'
-                    });
+                    responses.errorDTOResponse(res,409,'Ya tienes ese sticker pegado en el inventario');
                 } else {
-                    res.status(404).json({
-                        success: false,
-                        message: 'No posees ese sticker en el inventario'
-                    });
+                    responses.errorDTOResponse(res,404,'No posees ese sticker en el inventario');
                 }
             }
         }
 
     } catch (err) {
         console.log(err);
-        res.status(400).send(err);
+        responses.errorDTOResponse(res,400,err.message);
     }
 });
 
@@ -402,10 +366,7 @@ router.get('/public-events/:eventId/album', async (req, res) => {
             }
         });
         if (!event) {
-            res.status(404).json({
-                success: false,
-                message: 'Evento no encontrado'
-            });
+            responses.errorDTOResponse(res,404,'Evento no encontrado');
         } else {
             const {
                 count: count2
@@ -438,7 +399,7 @@ router.get('/public-events/:eventId/album', async (req, res) => {
 
     } catch (error) {
         console.log(error);
-        res.status(400).send(error);
+        responses.errorDTOResponse(res,400,error);
     }
 });
 
@@ -454,10 +415,7 @@ router.get('/public-events/:eventId/album/:teamId', async (req, res) => {
             }
         });
         if (!event) {
-            res.status(404).json({
-                success: false,
-                message: 'Evento no encontrado'
-            });
+            responses.errorDTOResponse(res,404,'Evento no encontrado');
         } else {
             const teams = await Team.findOne({
                 include: {
@@ -481,10 +439,7 @@ router.get('/public-events/:eventId/album/:teamId', async (req, res) => {
                 }
             });
             if (!teams) {
-                res.status(404).json({
-                    success: false,
-                    message: 'Equipo no encontrado'
-                });
+                responses.errorDTOResponse(res,404,'Equipo no encontrado');
             } else {
                  const stickers = teams.dataValues.stickers
                  const stickersAlbum = stickers.map(async function(element) {
@@ -528,7 +483,7 @@ router.get('/public-events/:eventId/album/:teamId', async (req, res) => {
 
     } catch (error) {
         console.log(error);
-        res.status(400).send(error);
+        responses.errorDTOResponse(res,400,error); //esto manda un error
     }
 
 });

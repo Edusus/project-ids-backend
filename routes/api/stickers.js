@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const responses = require('../../utils/responses/responses');
-
 const { Sticker, random, Op, Team, Inventory, Warehouse, Event } = require('../../databases/db');
 const { imgController, csvController } = require('../../controllers/filesControllers');
 const controllerSticker = require('../../controllers/stickers/uploadStickers');
@@ -92,13 +91,10 @@ router.get('/obtain/:eventId', async (req, res) => {
       stickers.push(singleSticker);
 
     } while (stickers.length < 5)
-    res.status(200).json({
-      success: true,
-      stickers : stickers
-    }) 
+    return responses.multipleDTOsResponse(res,200,"Se han obtenido con exito los cromos", stickers); 
   } else {
     console.error('NO STICKERS IN DB');
-    res.status(500).send('Servicio en mantenimiento...');
+    return responses.errorDTOResponse(res,500,'Servicio en mantenimiento...');
   }
 });
 
@@ -149,6 +145,5 @@ router.delete('/:stickerId', isAdmin, async (req,res)=>{
       return responses.errorDTOResponse(res, 400, error.message);
     }
 });
-
 
 module.exports = router;
