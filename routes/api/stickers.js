@@ -1,6 +1,7 @@
 const router = require('express').Router();
+const responses = require('../../utils/responses/responses');
 
-const { Sticker, random, Op, Team, Inventory, Event } = require('../../databases/db');
+const { Sticker, random, Op, Team, Inventory, Warehouse, Event } = require('../../databases/db');
 const { imgController, csvController } = require('../../controllers/filesControllers');
 const controllerSticker = require('../../controllers/stickers/uploadStickers');
 const { poster } = require('../../controllers/stickersControllers');
@@ -101,6 +102,20 @@ router.get('/obtain/:eventId', async (req, res) => {
   }
 });
 
+//endpoint para buscar cromos por su id
+router.get('/:stickerId',isAdmin, async (req,res)=>{
+  if (isNaN(req.params.stickerId)){
+    return responses.errorDTOResponse(res, 400, "El ID debe ser un número");
+  }
+  const sticker= await Sticker.findOne({
+    where:{id: req.params.stickerId}
+  });
+   if(!sticker){
+    return responses.errorDTOResponse(res, 404, "No existe cromo con este id");
+  }
+  return responses.singleDTOResponse(res,200,"Sticker recuperado con éxito",sticker);
+});
+
 //endpoint para crear cromos
 router.post('/', isAdmin, imgController.uploadImg, controllerSticker.uploadFileSticker);
 
@@ -110,14 +125,29 @@ router.post('/system/massive-import', isAdmin, csvController.uploadCsv, poster.p
 router.put('/:playerId', isAdmin, imgController.uploadImg, controllerSticker.uploadUpdatedFileSticker);
 
 //endpoint para borrar cromos
-router.delete('/:playerId', isAdmin, async (req,res)=>{
-    await Sticker.destroy({
-        where:{ id: req.params.playerId }
+router.delete('/:stickerId', isAdmin, async (req,res)=>{
+    const inInventory = await Inventory.findOne({
+      raw:true,
+      where: {stickerId : req.params.stickerId}
     });
-    res.json({ 
-      success:true, 
-      message:"item deleted"
+    if (inInventory) {
+      return responses.errorDTOResponse(res, 400, "No se puede eliminar el cromo porque está en uso");
+    }
+    const inWarehouse = await Warehouse.findOne({
+      raw:true,
+      where: {stickerId : req.params.stickerId}
     });
+    if (inWarehouse) {
+      return responses.errorDTOResponse(res, 400, "No se puede eliminar el cromo porque está en uso");
+    }
+    try{
+      await Sticker.destroy({
+        where:{ id: req.params.stickerId }
+      });
+      return responses.successDTOResponse(res,200,"Cromo eliminado con éxito!");
+    } catch (error) {
+      return responses.errorDTOResponse(res, 400, error.message);
+    }
 });
 
 

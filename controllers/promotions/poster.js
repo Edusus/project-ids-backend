@@ -4,7 +4,6 @@ const { fileController } = require('../filesControllers');
 const getImageUrl = require('../../utils/helpers/get-image-url');
 
 const allowedFields = ['alias', 'promotionType', 'redirecTo', 'img', 'description'];
-const mimetypes = ['image/jpeg', 'image/png'];
 
 /**
  * It creates a promotion in the database and returns a response with the created promotion.

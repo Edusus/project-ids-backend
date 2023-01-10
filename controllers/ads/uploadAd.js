@@ -1,6 +1,7 @@
 const { Ad } = require('../../databases/db');
 const { imgController, fileController } = require('../filesControllers');
 const path = require('path');
+const getImageUrl = require('../../utils/helpers/get-image-url');
 
 exports.uploadFileAd = async (req, res) => {
   if (!req.file || !req.file.path) {
@@ -12,13 +13,12 @@ exports.uploadFileAd = async (req, res) => {
 
   try {
       const { announcer, adType, redirecTo } = req.body;
-      const img_relative_dir = '/' + imgController.img_relative_dir.replace('\\', '/') + '/';
-      const filepath = `${process.env.DOMAIN}${img_relative_dir}${req.file.filename}`;
+      const filePath = getImageUrl(req.file.filename);
       const newAd = await Ad.create({
         announcer,
         adType,
         redirecTo,
-        img: filepath,
+        img: filePath,
       });
       res.status(201).json(newAd);
   } catch (error) {
@@ -37,20 +37,21 @@ exports.uploadUpdatedFileAd = async (req, res) => {
   try {
       const ads = await Ad.findByPk(adId);
         if (typeof ads === 'undefined' || ads === null)
-          throw new Error('Error: ad not found');
+          throw new Error('No se ha encontrado el anuncio');
 
       const { img: prevFileurl } = ads;
       const img_relative_dir = '/' + imgController.img_relative_dir.replace('\\', '/');
       const prevFilepath = prevFileurl.split(img_relative_dir)[1];
       fileController.deleteFile(path.join(imgController.img_dir, prevFilepath), prevFilepath);
-      let filepath = `${process.env.DOMAIN}${img_relative_dir}/${req.file.filename}`;
+
+      const filePath = getImageUrl(req.file.filename);
       const { announcer, adType, redirecTo } = req.body;
 
       await Ad.update({
         announcer,
         adType,
         redirecTo,
-        img: filepath,
+        img: filePath,
       }, { 
         where: { id: req.params.adId }
       });

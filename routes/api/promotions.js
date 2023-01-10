@@ -3,6 +3,7 @@ const { finder, poster, updater, deleter } = require('../../controllers/promotio
 const { imgController } = require('../../controllers/filesControllers');
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
 
+
 const promotionsRouter = Router();
 
 /**
@@ -25,6 +26,22 @@ promotionsRouter.get('/', finder.find);
  */
 
 promotionsRouter.get('/all', finder.findAll);
+
+
+
+/**
+ * Route to get one random promotion to watch, and increments requested quantities by 1
+ */
+
+promotionsRouter.get('/watch', finder.findOneToWatch);
+
+
+
+/**
+ * Route to redirect to the url of the promotion passed by id, and increments clicked quantities by 1
+ */
+
+promotionsRouter.get('/watch-detailed/:promotionId', finder.findAndRedirectById);
 
 
 
