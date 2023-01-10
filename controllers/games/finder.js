@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { Game, PlayersGame, team, Sticker, Event } = require('../../databases/db');
+const { Game, PlayersGame, Team, Sticker, Event } = require('../../databases/db');
 const responses = require('../../utils/responses/responses');
 
 const minimunDate = new Date(0);
@@ -24,7 +24,7 @@ const find = async (req, res) => {
           model: Event
         },
         {
-          model: team,
+          model: Team,
           as: 'teamOne',
           where: {
             name: {
@@ -36,7 +36,7 @@ const find = async (req, res) => {
           }
         },
         {
-          model: team,
+          model: Team,
           as: 'teamTwo',
           where: {
             name: {
@@ -81,7 +81,7 @@ const find = async (req, res) => {
           }
         },
         {
-          model: team,
+          model: Team,
           as: 'teamOne',
           attributes: ['id', 'name', 'badge'],
           where: {
@@ -98,7 +98,7 @@ const find = async (req, res) => {
           }
         },
         {
-          model: team,
+          model: Team,
           as: 'teamTwo',
           attributes: ['id', 'name', 'badge'],
           where: {
@@ -167,12 +167,12 @@ const findById = async (req, res) => {
         }
       },
       {
-        model: team,
+        model: Team,
         as: 'teamOne',
         attributes: ['id', 'name', 'badge']
       },
       {
-        model: team,
+        model: Team,
         as: 'teamTwo',
         attributes: ['id', 'name', 'badge']
       }
@@ -223,12 +223,12 @@ const findAll = async (req, res) => {
         }
       },
       {
-        model: team,
+        model: Team,
         as: 'teamOne',
         attributes: ['id', 'name', 'badge']
       },
       {
-        model: team,
+        model: Team,
         as: 'teamTwo',
         attributes: ['id', 'name', 'badge']
       }
