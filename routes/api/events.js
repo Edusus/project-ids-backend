@@ -16,13 +16,14 @@ router.get('/', async (req,res)=>{
 
     const { count, rows } = await Event.findAndCountAll(options);
 
-    return responses.singleDTOResponse(res,200,"Eventos recuperados con éxito",{
+    return res.status(200).json({
         success: true,
+        message: "Eventos recuperados con éxito",
         paginate:{
-            total:count,
-            page:page,
-            pages:Math.ceil(count/size),
-            perPage:size
+          total: count,
+          page,
+          pages: Math.ceil(count/size),
+          perPage: size
         },
         items: rows
     });

@@ -97,8 +97,6 @@ module.exports = {
                   expiresIn: '10m'
                 });
 
-
- 
                 const linkVerification = `${process.env.DOMAIN}/new-password/${token}`
                 let mensaje = 'Ingrese al link '+ linkVerification;
                   

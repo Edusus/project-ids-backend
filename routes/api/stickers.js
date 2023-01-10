@@ -24,9 +24,12 @@ router.get('/', async (req,res)=>{
       }
     }
   }
-  const {count,rows} = await Sticker.findAndCountAll(options);
+
+  const { count, rows } = await Sticker.findAndCountAll(options);
+
   res.status(200).json({
     success: true,
+    message: "Cromos recuperados con exito",
     paginate:{
       total: count,
       page: pageAsNumber,
@@ -34,7 +37,7 @@ router.get('/', async (req,res)=>{
       perPage: sizeAsNumber
     },
     items: rows
-});
+  });
 });
 
 //endpoint para obtener 5 cromos al azar

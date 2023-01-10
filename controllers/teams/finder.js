@@ -10,7 +10,7 @@ const responses= require('../../utils/responses/responses');
  */
 const httpGetResponse = (res, resource, resourceName) => {
   if (resource) {
-    responses.singleDTOResponse(res,200,"se encontro con exito el equipo",resource);
+    responses.singleDTOResponse(res,200,"se encontro con exito el equipo", resource);
   } else {
     responses.errorDTOResponse(res,404,resourceName + ' not found');
   }
@@ -46,19 +46,21 @@ const find = async (req, res) => {
       }
     }
     const { count, rows } = await Team.findAndCountAll(options);
-    httpGetResponse(
-      res, {
-        success: true,
-        paginate:{
-          total: count,
-          page: pageAsNumber,
-          pages:Math.ceil(count/sizeAsNumber),
-          perPage: sizeAsNumber
-        },
-        items: rows 
-      }, 'teams');
+
+    return res.status(200).json({
+      success: true,
+      message: "Equipos recuperados con exito",
+      paginate: {
+        total: count,
+        page: pageAsNumber,
+        pages: Math.ceil(count/sizeAsNumber),
+        perPage: sizeAsNumber
+      },
+      items: rows
+    });
+
+    //return responses.multipleDTOsResponse(res, 200, 'Equipos recuperados con exito', eventUsers);
   } catch (err) {
-    console.error(err);
     responses.errorDTOResponse(res,400,err.message);
   }
 }
