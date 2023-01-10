@@ -17,32 +17,20 @@ module.exports = {
         User.findOne({
             where: { email }
         }).then(user => {
-
-            if (!user){
-                responses.errorDTOResponse(res,404,"Usuario con este correo no encontrado");
+          if (!user){
+              responses.errorDTOResponse(res, 404, "El correo electrónico no esta registrado.");
+          } else {
+            if (bcrypt.compareSync(password, user.password)) {
+              const token = jwt.sign({id: user}, authconfig.secret, {
+                expiresIn: authconfig.expire
+              });
+              const item = { user, token }
+              return responses.singleDTOReponse(res, 200, 'Usuario logueado con exito', item);
             } else {
-
-              if (bcrypt.compareSync(password, user.password)) {
-
-                let token = jwt.sign({id: user}, authconfig.secret, {
-                  expiresIn: authconfig.expire
-                });
-              
-                let item = {
-                  user,
-                  token
-                }
-              
-                responses.singleDTOReponse(res, 200, 'Usuario logueado con exito', item);
-              
-
-              } else {
-                  //Acceso no autorizado 
-                  responses.errorDTOResponse(res,400,"Contraseña incorrecta");
-              }
-
+                //Acceso no autorizado 
+                responses.errorDTOResponse(res,400,"La contraseña es incorrecta");
             }
-
+          }
         }).catch(err => {
             responses.errorDTOResponse(res, 500, err.message);
         });
