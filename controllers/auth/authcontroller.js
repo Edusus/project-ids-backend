@@ -126,10 +126,7 @@ module.exports = {
              }
 
         }).catch(err => {
-            console.log(err);
-
-
-            responses.errorDTOResponse(res,500,error.message);
+            responses.errorDTOResponse(res,500,err.message);
         });
       }     
     },
