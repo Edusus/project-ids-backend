@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const responses = require('../../utils/responses/responses');
 
 const { Sticker, random, Op, Team, Inventory, Event } = require('../../databases/db');
 const { imgController, csvController } = require('../../controllers/filesControllers');
@@ -99,6 +100,20 @@ router.get('/obtain/:eventId', async (req, res) => {
     console.error('NO STICKERS IN DB');
     res.status(500).send('Servicio en mantenimiento...');
   }
+});
+
+//endpoint para buscar cromos por su id
+router.get('/:stickerId',isAdmin, async (req,res)=>{
+  if (isNaN(req.params.stickerId)){
+    return responses.errorDTOResponse(res, 400, "El ID debe ser un número");
+  }
+  const sticker= await Sticker.findOne({
+    where:{id: req.params.stickerId}
+  });
+   if(!sticker){
+    return responses.errorDTOResponse(res, 404, "No existe cromo con este id");
+  }
+  return responses.singleDTOResponse(res,200,"Sticker recuperado con éxito",sticker);
 });
 
 //endpoint para crear cromos
