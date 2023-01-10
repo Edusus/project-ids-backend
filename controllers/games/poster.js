@@ -1,5 +1,5 @@
 const csv = require('csvtojson');
-const { Game, PlayersGame, team, Event, Sticker, createTransaction } = require('../../databases/db');
+const { Game, PlayersGame, Team, Event, Sticker, createTransaction } = require('../../databases/db');
 const { fileController } = require('../filesControllers');
 const responses = require('../../utils/responses/responses');
 
@@ -14,21 +14,21 @@ const post = async (req, res) => {
     if (teamOneId == teamTwoId) 
       return responses.errorDTOResponse(res, 409, 'No puedes hacer que un equipo compita contra sí mismo');
     
-    const teamOne = await team.findByPk(teamOneId, {
+    const teamOne = await Team.findByPk(teamOneId, {
       attributes: ['id', 'idEvents']
     });
 
-    const teamTwo = await team.findByPk(teamTwoId, {
+    const teamTwo = await Team.findByPk(teamTwoId, {
       attributes: ['id','idEvents']
     });
 
     if (!teamOne || !teamTwo) 
       return responses.errorDTOResponse(res, 404, 'No se ha encontrado a uno de los equipos');
 
-    if (teamOne.dataValues.idEvents != teamTwo.dataValues.idEvents)
+    if (teamOne.idEvents != teamTwo.idEvents)
       return responses.errorDTOResponse(res, 400, 'Equipos de distintos eventos no pueden participar en un mismo partido');
 
-    if (teamOne.dataValues.idEvents != eventId || teamTwo.dataValues.idEvents != eventId)
+    if (teamOne.idEvents != eventId || teamTwo.idEvents != eventId)
       return responses.errorDTOResponse(res, 400, 'Los equipos no pueden participar en partidos de un evento al que no pertenecen');
 
     const csvParser = csv({
@@ -56,9 +56,9 @@ const post = async (req, res) => {
 
     let foundAllPlayers = true;
     for (foundPlayer of foundPlayers) {
-      if (!(foundPlayer.dataValues.teamId == teamOneId || foundPlayer.dataValues.teamId == teamTwoId)) {
+      if (!(foundPlayer.teamId == teamOneId || foundPlayer.teamId == teamTwoId)) {
         foundAllPlayers = false;
-        responses.errorDTOResponse(res, 400, `El jugador ${foundPlayer.dataValues.id} no forma parte de ninguno de los equipos que compiten`);
+        responses.errorDTOResponse(res, 400, `El jugador ${foundPlayer.id} no forma parte de ninguno de los equipos que compiten`);
         break;
       }
     }
@@ -102,17 +102,17 @@ const post = async (req, res) => {
       players,
     }
 
-    responses.singleDTOResponse(res, 201, 'Partido creado con exito', item);
+    return responses.singleDTOResponse(res, 201, 'Partido creado con exito', item);
   } catch (error) {
     if (transaction)
       await transaction.rollback();
 
     console.error(error);
-    if (typeof req.file !== 'undefined') {
-      fileController.deleteFile(req.file.path, req.file.filename);
-      return responses.errorDTOResponse(res, 400, error.message);
-    }
-    return responses.errorDTOResponse(res, 500, 'Error al subir / decodificar el csv');
+    if (typeof req.file === 'undefined')
+      return responses.errorDTOResponse(res, 500, 'Error al subir / decodificar el csv');
+      
+    fileController.deleteFile(req.file.path, req.file.filename);
+    return responses.errorDTOResponse(res, 400, error.message);
   }
 }
 
