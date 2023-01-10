@@ -13,7 +13,7 @@ const inventoryRouter = require('./api/inventory');
 const benchesRouter = require('./api/bench');
 const squadsRouter = require('./api/squad');
 const marketRouter = require('./api/market');
-const moneyRouter =require('./api/playerFantasyModel');
+const moneyRouter =require('./api/playerFantasy');
 const { uploads_dir } = require('../controllers/filesControllers');
 
 const auth = require('../middlewares/auth');
