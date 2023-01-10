@@ -46,6 +46,9 @@ const bidUpdate = async (req, res) => {
         }
     })
 
+    const newValue = bid.value + value;
+
+
     if (!bid) {
         return responses.errorDTOResponse(res, 400, 'No existe esta oferta');
     }
@@ -62,7 +65,7 @@ const bidUpdate = async (req, res) => {
     if (market.isFinished) {
         return responses.errorDTOResponse(res, 400, 'La subasta ya ha finalizado');
     }
-    if (bid.value > value) {
+    if (bid.value > newValue) {
         return responses.errorDTOResponse(res, 400, 'El valor de la oferta debe ser mayor al valor inicial');
     }
     if (value >= market.immediatePurchaseValue-1) {
@@ -94,9 +97,9 @@ const bidUpdate = async (req, res) => {
             return responses.singleDTOResponse(res, 200, 'Compra realizada con exito');
         }
     } else {
-        if (bid.value + value > market.initialPurchaseValue ) {
+        if (newValue > market.initialPurchaseValue ) {
             await Bid.update({
-                value: bid.value + value
+                value: newValue
             }, {
                 where: { id: bidId }
             });
@@ -110,7 +113,7 @@ const bidUpdate = async (req, res) => {
             });
 
             await Market.update({
-                initialPurchaseValue: market.initialPurchaseValue + (bid.value + value)
+                initialPurchaseValue: newValue
             }, { where: { id: marketId } });
 
             return responses.singleDTOResponse(res, 200, 'Oferta realizada con exito');
