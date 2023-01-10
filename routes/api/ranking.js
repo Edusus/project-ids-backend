@@ -1,10 +1,17 @@
 const router= require('express').Router();
 const  responses =require('../../utils/responses/responses');
-const { User, PlayerFantasy } = require('../../databases/db');
+const { User, PlayerFantasy, Event } = require('../../databases/db');
 
-router.get('/', async (req,res)=>{
+router.get('/:userId', async (req,res)=>{
+    const event = await Event.findOne({
+        raw:true,
+        where: {id : req.params.eventId}
+    });
+    if (!event) {
+        return responses.errorDTOResponse(res,404,"Evento no encontrado");
+    }
+
     const { page = 0, size = 10 } = req.query;
-
     let options = {
         limit: +size,
         offset: (+page) * (+size),
@@ -25,7 +32,23 @@ router.get('/', async (req,res)=>{
     };
 
     const { count, rows } = await PlayerFantasy.findAndCountAll(options);
-    return responses.paginatedDTOsResponse(res, 200, 'Ranking global', rows, count, page, size);
+    let counter=0;
+    const user = rows.map(async function(element) {
+        counter+1;
+        const userInRanking = await PlayerFantasy.findOne({
+            raw: true,
+            where: {
+                userId: req.user.id.id
+            }
+        });
+        if (!userInRanking) {
+            return responses.errorDTOResponse(res,400,'Usted no está participando') ;
+        }
+        return counter;
+    });
+    const users = await Promise.all(user);
+
+    return responses.paginatedDTOsResponse(res, 200, 'Ranking global', users, count, page, size);
 });
 
 module.exports = router;
