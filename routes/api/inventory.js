@@ -482,8 +482,7 @@ router.get('/public-events/:eventId/album/:teamId', async (req, res) => {
         }
 
     } catch (error) {
-        console.log(error);
-        responses.errorDTOResponse(res,400,error); //esto manda un error
+        responses.errorDTOResponse(res,400,error.message); //esto manda un error
     }
 
 });
