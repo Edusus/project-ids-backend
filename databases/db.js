@@ -62,15 +62,11 @@ Team.hasMany(Game, {
 });
 Game.belongsTo(Team, {
   as: 'teamOne',
-  foreignKey: {
-    allowNull: false
-  }
+  foreignKey: { allowNull: false }
 });
 Game.belongsTo(Team, {
   as: 'teamTwo',
-  foreignKey: {
-    allowNull: false
-  }
+  foreignKey: { allowNull: false }
 });
 
 // Asociacion Event -> Games
@@ -282,7 +278,6 @@ sequelize.authenticate()
         console.error('Unable to connect to the database:', err);
     }
     );
-
 sequelize.sync({ alter: false })
     .then(()=>{
         console.log('Syncronized tables');
@@ -295,8 +290,9 @@ const random = sequelize.random();
 const createTransaction = () => {
   return sequelize.transaction();
 }
+
 const { Op } = Sequelize;
 
-module.exports ={
-    User, Sticker, Event, Ad, Game, Team, PlayersGame, random, Op, Inventory, Warehouse, Promotion, PlayerFantasy, createTransaction, Market, Bid
+module.exports = {
+    User, Sticker, Event, Ad, Game, Team, random, Op, Inventory, Warehouse, Promotion, PlayerFantasy, createTransaction, Market, Bid, PlayersGame
 }
