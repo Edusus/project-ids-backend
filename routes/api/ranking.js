@@ -1,11 +1,13 @@
-const router= require('express').Router();
-const  responses =require('../../utils/responses/responses');
+const router = require('express').Router();
+const responses = require('../../utils/responses/responses');
+const { rankingDTOPaginate } = require('../../controllers/ranking/utils');
 const { User, PlayerFantasy, Event, Op} = require('../../databases/db');
 
-router.get('/:userId', async (req,res)=>{
+router.get('/', async (req,res)=>{
+    const eventId = req.eventId;
     const event = await Event.findOne({
-        raw:true,
-        where: {id : req.params.eventId}
+        raws:true,
+        where: {id : eventId}
     });
     if (!event) {
         return responses.errorDTOResponse(res,404,"Evento no encontrado");
@@ -15,15 +17,15 @@ router.get('/:userId', async (req,res)=>{
     let options = {
         limit: +size,
         offset: (+page) * (+size),
-        raw:true,
+        raws:true,
         order: [
             ['points', 'DESC']
         ],
         attributes: {
-            exclude: ['createdAt', 'updatedAt', 'id','eventId','money']
+            exclude: ['createdAt', 'updatedAt','eventId','money']
         },
         where: { 
-            eventId:req.params.eventId 
+            eventId: eventId
         },
         include : {
             model: User,
@@ -32,28 +34,35 @@ router.get('/:userId', async (req,res)=>{
     };
 
     const { count, rows } = await PlayerFantasy.findAndCountAll(options);
-    let counter=0;
-    const user = rows.map(async function(element) {
-        counter+1;
-        const userInRanking = await PlayerFantasy.findOne({
-            raw: true,
-            where: {
-                [Op.and]: [{
-                    eventId: element.id
-                },
-                {
-                    userId: req.user.id.id
-                }]
-            }
-        });
-        if (!userInRanking) {
-            return responses.errorDTOResponse(res,400,'Usted no está participando') ;
-        }
-        return counter;
-    });
-    const users = await Promise.all(user);
+    let counter = 0;
+    const position = JSON.parse(JSON.stringify(rows));
+    const items = [];
+     for (let i = 0; i < position.length; i++) {
+         items.push(position[i]);
+     }
 
-    return responses.paginatedDTOsResponse(res, 200, 'Ranking global', users, count, page, size);
+    items.forEach(element => {
+        element.user.position = counter + 1;
+        counter++;
+    });
+
+    let myPosition = {
+        user: null,
+        points: null,
+        position: null
+    };
+        items.forEach(element => {
+            if(element.userId == req.user.id.id){
+                myPosition.user = element.user.name;
+                myPosition.points = element.points;
+                myPosition.position = element.user.position;
+            }
+    })
+
+    
+    return rankingDTOPaginate(res, 200, 'Ranking global', myPosition, items, count, page, size);
+    
 });
+
 
 module.exports = router;
