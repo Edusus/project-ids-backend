@@ -25,7 +25,7 @@ module.exports = {
                 expiresIn: authconfig.expire
               });
               const item = { user, token }
-              return responses.singleDTOReponse(res, 200, 'Usuario logueado con exito', item);
+              return responses.singleDTOResponse(res, 200, 'Usuario logueado con exito', item);
             } else {
                 //Acceso no autorizado 
                 responses.errorDTOResponse(res,400,"La contraseña es incorrecta");
