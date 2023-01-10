@@ -1,6 +1,6 @@
 const { Op } = require('sequelize');
 const { Team, Sticker, Event } = require('../../databases/db');
-
+const responses= require('../../utils/responses/responses');
 /**
  * If the resource is found, send a 200 status code with the resource in the response body. If the
  * resource is not found, send a 404 status code with a message in the response body.
@@ -10,9 +10,9 @@ const { Team, Sticker, Event } = require('../../databases/db');
  */
 const httpGetResponse = (res, resource, resourceName) => {
   if (resource) {
-    res.status(200).json(resource);
+    responses.singleDTOResponse(res,200,"se encontro con exito el equipo",resource);
   } else {
-    res.status(404).send(resourceName + ' not found');
+    responses.errorDTOResponse(res,404,resourceName + ' not found');
   }
 }
 
@@ -59,7 +59,7 @@ const find = async (req, res) => {
       }, 'teams');
   } catch (err) {
     console.error(err);
-    res.status(400).send(err.message);
+    responses.errorDTOResponse(res,400,err.message);
   }
 }
 

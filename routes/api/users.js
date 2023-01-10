@@ -6,7 +6,6 @@ const bcrypt = require('bcrypt');
 const { isAdmin } = require('../../middlewares/auth');
 const responses = require('../../utils/responses/responses');
 
-
 //endpoint para listar usuarios
 router.get('/', async (req,res)=>{
     //paginacion
@@ -68,10 +67,7 @@ router.post('/',[
             res.json({error:'No puede usar un nombre registrado'});
         }else{
             const item = await User.create(req.body);
-            res.status(200).json({
-                message:'item creado',
-                item 
-            });
+            responses.successDTOResponse(res,200,'item creado',item );
         }
     }
 });
@@ -87,10 +83,7 @@ router.put('/:userId', async (req,res) =>{
         })
          
         if (!userPut) {
-            res.status(403).json({
-                success: true,
-                message: "Usuario no encontrado"
-            })
+            responses.errorDTOResponse(res,403,"Usuario no encontrado");
         } else {
             if (name == null){
                 name = userPut.name
@@ -116,9 +109,7 @@ router.put('/:userId', async (req,res) =>{
                 selector
                )
     
-             res.status(200).json({
-                success: true, message:'Se ha actualizado'
-             });
+             responses.successDTOResponse(res,200,'Se ha actualizado');
         }
        
 });
@@ -127,7 +118,7 @@ router.delete('/:userId', async (req,res)=>{
     await User.destroy({
         where:{ id: req.params.userId}
     });
-    res.status(200).json({ success: true, message:'Se ha eliminado'});
+    responses.successDTOResponse(res,200,'Se ha eliminado');
 });
 //exportacion de usuarios
 module.exports = router;

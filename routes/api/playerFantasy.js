@@ -1,12 +1,12 @@
 const router= require('express').Router();
-
+const responses= require('../../utils/responses/responses');
 const { Event, PlayerFantasy, Op }= require('../../databases/db');
 const responses = require('../../utils/responses/responses');
 
 ////endpoint para listar eventos en los que pueda participar el usuario(en los que no esté participando)
-router.get('/', async (req,res)=>{
+router.get('/', async (req,res) => {
 
-    const eventsPublics= await Event.findAll({
+    const eventsPublics = await Event.findAll({
         attributes: {
             exclude: ['createdAt', 'updatedAt', 'status']
          },
@@ -44,10 +44,7 @@ router.get('/:eventId', async (req,res)=>{
         where: {id : req.params.eventId}
     });
     if (!event) {
-        return res.status(404).json({
-            success: false,
-            message: "Evento no encontrado"
-        })
+        return responses.errorDTOResponse(res,404,"Evento no encontrado");
     }
     const user = await PlayerFantasy.findOne({
         raw:true,
@@ -65,12 +62,9 @@ router.get('/:eventId', async (req,res)=>{
     });
 
     if (!user) {
-        return res.status(404).json({
-            success: false,
-            message: "El usuario no esta participando en ese evento"
-        })
+        return responses.errorDTOResponse(res,404,"El usuario no esta participando en ese evento");
     }
-    
+
     return res.status(200).json({
         success: true,
         points: user.points,
@@ -84,17 +78,11 @@ router.post('/:eventId/join-game', async (req,res)=>{
         where: {id : req.params.eventId}
     });
     if (!event) {
-        return res.status(404).json({
-            success: false,
-            message: "Evento no encontrado"
-        });
+        return responses.errorDTOResponse(res,404,"Evento no encontrado");
     }
 
     if(event.status == false){
-        return res.status(403).json({
-            success: false,
-            message: "Este evento no esta activo"
-        });
+        return responses.errorDTOResponse(res,403,"Este evento no esta activo");
     }
 
     const user = await PlayerFantasy.findOne({
@@ -113,10 +101,7 @@ router.post('/:eventId/join-game', async (req,res)=>{
     });
 
     if (user) {
-        return res.status(409).json({
-            success: false,
-            message: "Ya estas participando en ese evento"
-        });
+        return responses(res,409,"Ya estas participando en ese evento");
     }
     await PlayerFantasy.create({
         eventId: req.params.eventId,
@@ -125,10 +110,7 @@ router.post('/:eventId/join-game', async (req,res)=>{
         money: 0
     });
 
-    return res.status(200).json({
-        success: true,
-        message: "Felicidades te has unido al fantasy "+event.eventName
-    });
+    return responses.successDTOResponse(res,200,"Felicidades te has unido al fantasy "+event.eventName);
 });
 
 module.exports = router;

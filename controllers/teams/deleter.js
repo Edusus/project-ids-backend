@@ -1,6 +1,8 @@
-const { Team } = require('../../databases/db');
+const { Team, Game, Sticker } = require('../../databases/db');
 const { imgController, fileController } = require('../filesControllers'); 
 const path = require('path');
+const responses = require('../../utils/responses/responses');
+const getImageUrl = require('../../utils/helpers/get-image-url');
 
 /**
  * If the team exists, delete it and send a 200 response, otherwise send a 404 response.
@@ -10,22 +12,34 @@ const path = require('path');
 const destroy = async (req, res) => {
   const teamId = req.params.teamId;
   const team = await Team.findByPk(teamId);
-  if (team) {
-    const { badge: fileurl } = team;
-    const img_relative_dir = '/' + imgController.img_relative_dir.replace('\\', '/');
-    const filepath = fileurl.split(img_relative_dir)[1];
-    await Team.destroy({
-      where: { id: teamId }
-    });
-    res.status(200).send("Deleted team " + teamId);
-    fileController.deleteFile(path.join(imgController.img_dir, filepath), filepath);
-  } else {
-    res.status(404).send("team not found");
+  if (!team) {
+    return responses.errorDTOResponse(res,404,"No se encontro el equipo con el id: "+teamId +" entonces no se pudo borrar");
   }
+
+  const sticker = await Sticker.findOne({
+    raw: true,
+    where: { teamId : req.params.teamId }
+  });
+  const game = await Game.findOne({
+    raw: true,
+    where: { teamId : req.params.teamId }
+  });
+
+  if (sticker || game) {
+    return responses.errorDTOResponse(res, 400, "No se puede eliminar el equipo porque tiene jugadores o partidos asociados");
+  }
+
+  const filepath = getImageUrl(badge);
+  try {
+    await team.destroy({ where: { id: teamId } });
+    fileController.deleteFile(path.join(imgController.img_dir, filepath), filepath);
+  } catch (e) {
+    return responses.errorDTOResponse(res, 500, e.message);
+  }
+
+  return responses.successDTOResponse(res,200,"Se ha borrado con exito el equipo registrado con el id: " + teamId);
 }
 
-const deleter = {
-  destroy
-}
+const deleter = { destroy }
 
 module.exports = deleter;
