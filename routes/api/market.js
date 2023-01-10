@@ -142,7 +142,6 @@ router.get('/:auctionId', async (req,res) => {
             buyer: {
                 id: user.id, //<---- el user es el que no enccuentra
                 name: user.name //<--- el user es el que no encuentra
-
             }
         };
     }
