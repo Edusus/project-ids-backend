@@ -206,7 +206,7 @@ const posterBid = async (req, res) => {
         }
     } else {
         await Market.update({
-            initialPurchaseValue: market.initialPurchaseValue + value,
+            initialPurchaseValue: value,
         }, {
             where: {
                 [Op.and]: [{
