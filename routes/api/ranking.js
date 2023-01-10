@@ -2,6 +2,7 @@ const router = require('express').Router();
 const responses = require('../../utils/responses/responses');
 const { rankingDTOPaginate } = require('../../controllers/ranking/utils');
 const { User, PlayerFantasy, Event, Op} = require('../../databases/db');
+const Sequelize = require('sequelize');
 
 router.get('/', async (req,res)=>{
     const eventId = req.eventId;
@@ -15,17 +16,17 @@ router.get('/', async (req,res)=>{
 
     const { page = 0, size = 10 } = req.query;
     let options = {
-        limit: +size,
-        offset: (+page) * (+size),
-        raws:true,
+        raws: true,
         order: [
-            ['points', 'DESC']
+            ['points', 'DESC'],
+            ['updatedAt', 'ASC']
         ],
-        attributes: {
-            exclude: ['createdAt', 'updatedAt','eventId','money']
-        },
+        attributes: [
+            "id", "points", "userId", "eventId",
+            [Sequelize.literal('RANK() OVER (ORDER BY points DESC, updatedAt ASC)'), 'rank']
+        ],
         where: { 
-            eventId: eventId
+            eventId: eventId,
         },
         include : {
             model: User,
@@ -33,34 +34,20 @@ router.get('/', async (req,res)=>{
         }
     };
 
-    const { count, rows } = await PlayerFantasy.findAndCountAll(options);
-    let counter = 0;
-    const position = JSON.parse(JSON.stringify(rows));
-    const items = [];
-     for (let i = 0; i < position.length; i++) {
-         items.push(position[i]);
-     }
-
-    items.forEach(element => {
-        element.user.position = counter + 1;
-        counter++;
+    const { count, rows } = await PlayerFantasy.findAndCountAll({
+        limit: +size,
+        offset: (+page) * (+size),
+        ...options,
     });
 
-    let myPosition = {
-        user: null,
-        points: null,
-        position: null
-    };
-        items.forEach(element => {
-            if(element.userId == req.user.id.id){
-                myPosition.user = element.user.name;
-                myPosition.points = element.points;
-                myPosition.position = element.user.position;
-            }
-    })
+    const myPosition = await PlayerFantasy.findOne({
+        ...options,
+        having: {
+            userId: req.user.id.id
+        }
+    });
 
-    
-    return rankingDTOPaginate(res, 200, 'Ranking global', myPosition, items, count, page, size);
+    return rankingDTOPaginate(res, 200, 'Ranking global', myPosition || null, rows, count, page, size);
     
 });
 

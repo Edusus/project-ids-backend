@@ -44,8 +44,7 @@ router.get('/search', async (req, res) => {
       ads: rows
     }, 'ads');
   } catch (error) {
-    console.error(error);
-    responses(res,400,error.message);
+    responses.errorDTOResponse(res,400,error.message);
   }
 });
 

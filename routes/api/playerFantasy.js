@@ -100,7 +100,7 @@ router.post('/:eventId/join-game', async (req,res)=>{
     });
 
     if (user) {
-        return responses(res,409,"Ya estas participando en ese evento");
+        return responses.errorDTOResponse(res,409,"Ya estas participando en ese evento");
     }
     await PlayerFantasy.create({
         eventId: req.params.eventId,
