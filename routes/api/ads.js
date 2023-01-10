@@ -59,7 +59,6 @@ router.get('/watch', async (req, res) => {
     singleAd.update({ requestedQuantities: valorNuevo });
     return responses.singleDTOResponse(res,200,"se ha obtenido con exito el anuncio", singleAd );
   } else {
-    console.error('NO ADS IN DB ');
     return responses.errorDTOResponse(res,500,"No hay anuncios que mostrar");
   }
 });
