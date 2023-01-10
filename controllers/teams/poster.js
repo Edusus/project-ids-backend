@@ -1,5 +1,8 @@
+const csv = require('csvtojson');
 const { Team } = require('../../databases/db');
-const { imgController, fileController } = require('../filesControllers'); 
+const { fileController } = require('../filesControllers');
+const responses = require('../../utils/responses/responses');
+const getImageUrl = require('../../utils/helpers/get-image-url');
 
 const allowedFields = ['name', 'badge', 'idEvents'];
 
@@ -12,13 +15,8 @@ const allowedFields = ['name', 'badge', 'idEvents'];
 const post = async (req, res) => {
   try {
     const { name, idEvents: eventsid } = req.body;
-    const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/') + '/';
-    let filepath;
-    if (process.env.USINGIMGHOST == 'true') {
-      filepath = `${process.env.DOMAIN}${img_relative_dir}${req.file.filename}`;
-    } else {
-      filepath = `${process.env.DOMAIN}${img_relative_dir}${req.file.filename}`;
-    }
+    const filepath = getImageUrl(req.file.filename);
+
     let idEvents = 0;
     if (typeof eventsid == 'object') {
       idEvents = eventsid[0];
@@ -30,17 +28,48 @@ const post = async (req, res) => {
         "badge": filepath,
         "idEvents": idEvents
     }, { fields: allowedFields });
-    res.status(201).json(team);
+    return responses.singleDTOResponse(res, 201, "Equipo creado con exito", team);
   } catch (error) {
-    console.error(error);
-    if (typeof req.file !== 'undefined') {
-      fileController.deleteFile(req.file.path, req.file.filename);
-      res.status(400).send(error.message);
-   }
+    if (!req?.file) {
+      return responses.errorDTOResponse(res,400,'La imagen enviada no se pudo procesar adecuadamente o no se envió una imagen');
+    }
+
+    fileController.deleteFile(req.file.path, req.file.filename);
+    return responses.errorDTOResponse(res,400,error.message);
   }
 }
-const poster = {
-  post
-}
 
-module.exports = poster
+const headers = ['idEquipo', 'teamName', 'idEvento', 'codeEquipo'];
+
+const postMassive = async (req, res) => {
+  const csvParser = csv({
+    trim: true,
+    delimiter: [',', ';', '|', '$', '\t'],
+    noheader: false,
+    headers
+  });
+
+  const teamsFromCsv = await csvParser.fromFile(req.file.path);
+
+  try {
+    await Promise.all(teamsFromCsv.map(async (team) => {
+      return await Team.create({
+        id: +team.idEquipo,
+        name: team.teamName,
+        badge: getImageUrl(team.codeEquipo + '.png'),
+        idEvents: team.idEvento
+      });
+    }));
+  } catch (e) {
+    return responses.errorDTOResponse(res, 500, "Error al subir la mrda de equipos xP");
+  }
+
+  return responses.successDTOResponse(res, 201, 'Equipos creados con exito');
+};
+
+const poster = { 
+  post, 
+  postMassive 
+};
+
+module.exports = poster;

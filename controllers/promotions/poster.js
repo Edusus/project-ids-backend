@@ -4,7 +4,6 @@ const { fileController } = require('../filesControllers');
 const getImageUrl = require('../../utils/helpers/get-image-url');
 
 const allowedFields = ['alias', 'promotionType', 'redirecTo', 'img', 'description'];
-const mimetypes = ['image/jpeg', 'image/png'];
 
 /**
  * It creates a promotion in the database and returns a response with the created promotion.
@@ -29,7 +28,6 @@ const post = async (req, res) => {
     }, { fields: allowedFields });
     return responses.singleDTOResponse(res, 201, 'Promocion creada con exito', promotion);
   } catch (error) {
-    console.error(error);
     if (typeof req.file !== 'undefined') {
       fileController.deleteFile(req.file.path, req.file.filename);
       return responses.errorDTOResponse(res, 400, error.message);

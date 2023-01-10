@@ -1,7 +1,5 @@
-const { imgController } = require('../controllers/filesControllers');
+const getImageUrl = require('../utils/helpers/get-image-url');
 const promotiontypes = ['static', 'popup'];
-
-const img_relative_dir = '/' + imgController.img_relative_dir.replaceAll('\\', '/') + '/';
 
 module.exports = (sequelize, type) => {
 	return sequelize.define('promotion', {
@@ -46,7 +44,7 @@ module.exports = (sequelize, type) => {
 		},
 		img: { 
 			type: type.STRING,
-      defaultValue: `${process.env.DOMAIN}${img_relative_dir}offside.png`,
+      defaultValue: getImageUrl('offside.png'),
 			allowNull: false
 		},
     description: {

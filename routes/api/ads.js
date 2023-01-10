@@ -3,14 +3,13 @@ const { Ad, random, Op } = require('../../databases/db');
 const {imgController} = require('../../controllers/filesControllers');
 const controllerAd = require('../../controllers/ads/uploadAd')
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
-
-const allowedFields = ['announcer', 'adType', 'redirecTo', 'img'];
+const responses = require('../../utils/responses/responses');
 
 const httpGetResponse = (res, resource, resourceName) => {
   if (resource) {
-    res.status(200).json(resource);
+    responses.singleDTOResponse(res,200,"Se logro con exito la tarea con el anuncio",resource);
   } else {
-    res.status(404).send(resourceName + ' not found');
+    responses.errorDTOResponse(res,404,resourceName + ' no se encontro');
   }
 }
 
@@ -46,7 +45,7 @@ router.get('/search', async (req, res) => {
     }, 'ads');
   } catch (error) {
     console.error(error);
-    res.send(error.message);
+    responses(res,400,error.message);
   }
 });
 
@@ -58,13 +57,9 @@ router.get('/watch', async (req, res) => {
     let valorActual = singleAd.dataValues.requestedQuantities;
     let valorNuevo = valorActual + cont;
     singleAd.update({ requestedQuantities: valorNuevo });
-    return res.status(200).json({ success: true, ad: singleAd });
+    return responses.singleDTOResponse(res,200,"se ha obtenido con exito el anuncio", singleAd );
   } else {
-    console.error('NO ADS IN DB ');
-    return res.status(500).json({
-      success: false,
-      message: "No hay anuncios que mostrar :)"
-    });
+    return responses.errorDTOResponse(res,500,"No hay anuncios que mostrar");
   }
 });
 
@@ -80,10 +75,7 @@ router.get('/watch-detailed/:adId', async (req, res) => {
      return res.redirect(302, URL);
   } else {
     console.error('NO ADS IN DB ');
-    return res.status(500).json({
-      success: false,
-      message: "No hay anuncios que mostrar :)"
-    });
+    return responses.errorDTOResponse(res,500,"No hay anuncios que mostrar ");
   }
 });
 
@@ -103,9 +95,9 @@ router.delete('/:adId',verifyToken,isAdmin, async (req, res) => {
     await Ad.destroy({
       where: { id: req.params.adId }
     });
-    res.status(200).send('Deleted ad ' + req.params.adId);
+    responses.successDTOResponse(res,200,'Se ha eliminado con exito el anuncio de id: ' + req.params.adId);
   } else {
-    res.status(404).send('Ad not found');
+    responses.errorDTOResponse(res,404,"El anuncio de id: "+ id+" no fue encontrado entonces no se borrara");
   }
 });
 

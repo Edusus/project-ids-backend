@@ -57,6 +57,5 @@ module.exports = (sequelize, type) => {
 			allowNull: true,
 			defaultValue: 0
 		},
-
 	});
 };

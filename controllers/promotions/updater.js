@@ -44,7 +44,6 @@ const update = async (req, res) => {
       fileController.deleteFile(getImagePath(prevImgUrl), prevImgUrl.split('/')[5]);
     return responses.successDTOResponse(res, 200, 'Promocion actualizada con exito');
   } catch (error) {
-    console.error(error);
     if (typeof req.file !== 'undefined')
       fileController.deleteFile(req.file.path, req.file.filename);      
     return responses.errorDTOResponse(res, 400, error.message);

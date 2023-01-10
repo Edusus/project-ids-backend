@@ -13,7 +13,7 @@ const csvStorage = multer.diskStorage({
     let { name, ext } = path.parse(file.originalname);
     if (!ext || ext == '')
       ext = file.mimetype.split('/')[1]; 
-    cb(null, name.replaceAll(' ', '-') + '-' + uuidv4() + ext);
+    cb(null, name.replace(/\s/g, '-') + '-' + uuidv4() + ext);
   }
 });
 
@@ -24,7 +24,11 @@ const csvUploader = multer({
       cb(null, true);
       return;
     }
-    cb(new Error('Solo se aceptan archivos de tipo ' + mimetypes.join(', ')));
+    cb(null, false);
+  },
+  limits: {
+    fieldSize: 15000000,
+    fileSize: 10000000
   }
 });
 

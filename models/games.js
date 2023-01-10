@@ -5,18 +5,26 @@ module.exports = (sequelize, type) => {
       primaryKey: true,
       autoIncrement: true
     },
-    matchedAt: {
-      type: type.STRING,
+    gameDate: {
+      type: type.DATEONLY,
       allowNull: false,
       validate: {
         isDate: {
           args: true,
-          msg: "Error: matchedAt must be a date"
+          msg: "El campo gameDate esta en el formato incorrecto (formato correcto: yyyy-mm-dd)"
         },
         notEmpty: {
           args: true,
-          msg: "Error: mactchedAt must not be empty"
+          msg: "gameDate no debe estar vacio"
         }
+      }
+    }
+  }, { 
+    sequelize,
+    validate: {
+      bothTeamsNotEqual() {
+        if (this.teamOneId == this.teamTwoId)
+          throw new Error('No puedes hacer que un equipo compita contra sí mismo');
       }
     }
   })

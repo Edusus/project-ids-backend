@@ -3,6 +3,8 @@ const { check } = require('express-validator');
 const { validationResult } = require('express-validator');
 const { User }= require('../../databases/db');
 const bcrypt = require('bcrypt');
+const { isAdmin } = require('../../middlewares/auth');
+const responses = require('../../utils/responses/responses');
 
 //endpoint para listar usuarios
 router.get('/', async (req,res)=>{
@@ -26,6 +28,20 @@ router.get('/', async (req,res)=>{
         items: rows
     });
 });
+
+//endpoint para buscar user por su id
+router.get('/:userId',isAdmin, async (req,res)=>{
+    if (isNaN(req.params.userId)) {
+        return responses.errorDTOResponse(res, 400, "El ID debe ser un número");
+    }
+    const user= await User.findOne({
+        where:{id: req.params.userId}
+    });
+     if(!user){
+        return responses.errorDTOResponse(res, 404, "No existe usuario con este id");
+    }
+    return responses.singleDTOResponse(res,200,"Usuario recuperado con éxito",user);
+  });
 
 //endpoint para crear usuarios
 router.post('/',[
@@ -51,10 +67,7 @@ router.post('/',[
             res.json({error:'No puede usar un nombre registrado'});
         }else{
             const item = await User.create(req.body);
-            res.status(200).json({
-                message:'item creado',
-                item 
-            });
+            responses.successDTOResponse(res,200,'item creado',item );
         }
     }
 });
@@ -70,10 +83,7 @@ router.put('/:userId', async (req,res) =>{
         })
          
         if (!userPut) {
-            res.status(403).json({
-                success: true,
-                message: "Usuario no encontrado"
-            })
+            responses.errorDTOResponse(res,403,"Usuario no encontrado");
         } else {
             if (name == null){
                 name = userPut.name
@@ -99,19 +109,16 @@ router.put('/:userId', async (req,res) =>{
                 selector
                )
     
-             res.status(200).json({
-                success: true, message:'Se ha actualizado'
-             });
+             responses.successDTOResponse(res,200,'Se ha actualizado');
         }
        
 });
-
 
 router.delete('/:userId', async (req,res)=>{
     await User.destroy({
         where:{ id: req.params.userId}
     });
-    res.status(200).json({ success: true, message:'Se ha eliminado'});
+    responses.successDTOResponse(res,200,'Se ha eliminado');
 });
-
+//exportacion de usuarios
 module.exports = router;

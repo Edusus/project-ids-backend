@@ -1,94 +1,121 @@
 const router= require('express').Router();
+const { Team, Game, Event } = require('../../databases/db');
+const  responses =require('../../utils/responses/responses');
+const { Any } = require('typeorm');
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
-const { Event }= require('../../databases/db');
 
-//endpoint para listar eventos
+// Endpoint para listar eventos
 router.get('/', async (req,res)=>{
-    //paginacion
-    const {page = 0, size = 10} = req.query;
+    // Paginacion
+    const { page = 0, size = 10 } = req.query;
 
     let options = {
         limit: +size,
         offset: (+page) * (+size)
     };
-    const {count,rows} = await Event.findAndCountAll(options);
-    res.status(200).json({
+
+    const { count, rows } = await Event.findAndCountAll(options);
+
+    return res.status(200).json({
         success: true,
+        message: "Eventos recuperados con éxito",
         paginate:{
-            total:count,
-            page:page,
-            pages:Math.ceil(count/size),
-            perPage:size
+          total: count,
+          page,
+          pages: Math.ceil(count/size),
+          perPage: size
         },
         items: rows
     });
 });
 
-router.get('/all', async (req,res)=>{
-    const items = await Event.findAll();
-    res.status(200).json({
-        items:items
-    });
+router.get('/all', async (req, res)=>{
+    try {
+        const items = await Event.findAll();
+        responses.multipleDTOsResponse(res,200,"se han recibido con exito los eventos",items);
+    } catch (e) {
+        return responses.errorDTOResponse(res, 500, e.message);
+    }
 });
 
-////endpoint para listar eventos activos
-router.get('/active', async (req,res)=>{
-    const eventsAvailable= await Event.findAll({where:{"status":true}});
-     if(eventsAvailable==''){
-        res.json({error:'No existen eventos activos'});
-    }else{
-        res.status(200).json({
-            success: true,
-            "active items ": eventsAvailable 
-        });
+// Endpoint para listar eventos activos
+router.get('/active', async (req, res)=>{
+    try {
+        const eventsAvailable= await Event.findAll({ where:{"status":true} });
+        return responses.multipleDTOsResponse(res, 200, "Competiciones activas recuperadas con exito!", eventsAvailable);
+    } catch (e) {
+        return responses.errorDTOResponse(res, 500, e.message);
+    }
+});
+
+// Endpoint para listar eventos inactivos
+router.get('/inactive', async (req, res)=>{
+    try {
+        const eventsInactive= await Event.findAll({ where:{"status":false} });
+        return responses.multipleDTOsResponse(res, 200, "Competiciones inactivas recuperadas con exito!", eventsInactive);
+    } catch (e) {
+        return responses.errorDTOResponse(res, 500, e.message);
+    }
+});
+
+// Endpoint para obtener eventos por id
+router.get('/:eventId', isAdmin, async (req, res) => {
+    if (isNaN(req.params.eventId)) {
+        return responses.errorDTOResponse(res, 400, "El ID debe ser un número");
     }
 
-});
+    const event= await Event.findOne({
+        where:{id: req.params.eventId}
+    });
 
-////endpoint para listar eventos inactivos
-router.get('/inactive', async (req,res)=>{
-    const eventsInactive= await Event.findAll({where:{"status":false}});
-     if(eventsInactive==''){
-        res.json({error:'No existen eventos inactivos'});
-    }else{
-        res.status(200).json({
-            success: true,
-            "inactive items": eventsInactive 
-        });
+    if(!event){
+        return responses.errorDTOResponse(res, 404, "No existe evento con este id");
     }
 
+    return responses.singleDTOResponse(res,200,"Evento recuperado con éxito",event);
 });
 
-//endpoint para crear eventos
-router.post('/',isAdmin, async (req,res)=>{
-    const item = await Event.create(req.body);
-    res.json({
-        message:'item creado',
-        item 
-    });
+// Endpoint para crear eventos
+router.post('/',isAdmin, async (req, res)=>{
+    try {
+        const item = await Event.create(req.body);
+        return responses.singleDTOResponse(res, 200,"Competicion creada", item);
+    } catch (e) {
+        return responses.errorDTOResponse(res, 500, e.message);
+    }
 });
 
-//endpoint para editar eventos
-router.put('/:eventId',isAdmin, async (req,res)=>{
-    await Event.update(req.body,{
-        where:{ id: req.params.eventId}
-    });
-    res.json({ 
-        success:true,
-        message:"Modificación exitosa"
-    });
+// Endpoint para editar eventos
+router.put('/:eventId', isAdmin, async (req, res)=>{
+    try {
+        await Event.update(req.body,{
+            where:{ id: req.params.eventId }
+        });
+    } catch (e) {
+        return responses.errorDTOResponse(res, 500, e.message);
+    }
+    return responses.successDTOResponse(res,200,"Modificacion exitosa");
 });
 
-//endpoint para borrar eventos
-router.delete('/:eventId',isAdmin, async (req,res)=>{
-    await Event.destroy({
-        where:{ id: req.params.eventId}
+// Endpoint para borrar eventos
+router.delete('/:eventId', async (req, res)=>{
+    const team = await Team.findOne({
+        raw: true,
+        where: { eventId : req.params.eventId }
     });
-    res.json({ 
-        success:true,
-        message:"Eliminación exitosa"
+    const game = await Game.findOne({
+        raw: true,
+        where: { eventId : req.params.eventId }
     });
+
+    if (team || game) {
+        return responses.errorDTOResponse(res, 400, "No se puede eliminar el evento porque tiene equipos o partidos asociados");
+    }else{
+        await Event.destroy({
+            where:{ id: req.params.eventId }
+        });
+        return responses.successDTOResponse(res, 200, "Se ha eliminado con exito");
+    }
 });
 
-
-module.exports=router;
+module.exports = router;

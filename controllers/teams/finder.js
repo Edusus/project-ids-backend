@@ -1,6 +1,6 @@
 const { Op } = require('sequelize');
 const { Team, Sticker, Event } = require('../../databases/db');
-
+const responses = require('../../utils/responses/responses');
 /**
  * If the resource is found, send a 200 status code with the resource in the response body. If the
  * resource is not found, send a 404 status code with a message in the response body.
@@ -10,9 +10,9 @@ const { Team, Sticker, Event } = require('../../databases/db');
  */
 const httpGetResponse = (res, resource, resourceName) => {
   if (resource) {
-    res.status(200).json(resource);
+    responses.singleDTOResponse(res,200,"Se encontro con exito el equipo", resource);
   } else {
-    res.status(404).send(resourceName + ' not found');
+    responses.errorDTOResponse(res,404,resourceName + ' not found');
   }
 }
 
@@ -29,6 +29,9 @@ const find = async (req, res) => {
     let options = {
       limit: sizeAsNumber,
       offset: pageAsNumber * sizeAsNumber,
+      attributes: {
+        exclude: [ 'idEvents' ]
+      },
       where: {
         name: {
           [Op.regexp]: teamname
@@ -36,23 +39,29 @@ const find = async (req, res) => {
         idEvents: {
           [Op.like]: eventid
         }
+      },
+      include: {
+        model: Event,
+        attributes: ['id', 'eventName']
       }
     }
     const { count, rows } = await Team.findAndCountAll(options);
-    httpGetResponse(
-      res, {
-        success: true,
-        paginate:{
-          total: count,
-          page: pageAsNumber,
-          pages:Math.ceil(count/sizeAsNumber),
-          perPage: sizeAsNumber
-        },
-        items: rows 
-      }, 'teams');
+
+    return res.status(200).json({
+      success: true,
+      message: "Equipos recuperados con exito",
+      paginate: {
+        total: count,
+        page: pageAsNumber,
+        pages: Math.ceil(count/sizeAsNumber),
+        perPage: sizeAsNumber
+      },
+      items: rows
+    });
+
+    //return responses.multipleDTOsResponse(res, 200, 'Equipos recuperados con exito', eventUsers);
   } catch (err) {
-    console.error(err);
-    res.status(400).send(err.message);
+    responses.errorDTOResponse(res,400,err.message);
   }
 }
 
@@ -67,7 +76,7 @@ const findById = async (req, res) => {
 }
 
 /**
- * It finds all the teams and then sends them back to the client.
+ * It finds all the teams of a specific event, and then sends them back to the client.
  * @param req - The request object
  * @param res - the response object
  */
@@ -76,17 +85,15 @@ const findAll = async (req, res) => {
   const teams = await Team.findAll({
     include: [
       {
-         model: Sticker
+        model: Sticker
       },
       {
         model: Event
       }
-  ],
-  where: {
-    idEvents: eventId
-  }
+    ],
+    where: { idEvents: eventId }
   });
-  httpGetResponse(res, teams, 'teams');
+  return responses.multipleDTOsResponse(res, 200, 'Se encontraron los equipos con exito', teams);
 }
 
 module.exports = {
