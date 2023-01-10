@@ -398,8 +398,7 @@ router.get('/public-events/:eventId/album', async (req, res) => {
         }
 
     } catch (error) {
-        console.log(error);
-        responses.errorDTOResponse(res,400,error);
+        responses.errorDTOResponse(res,400,error.message);
     }
 });
 
@@ -467,16 +466,16 @@ router.get('/public-events/:eventId/album/:teamId', async (req, res) => {
                     const stickersAlbum2 = await Promise.all(stickersAlbum);
                     res.status(200).json({
                         success: true,
-                    item: {
-                        album: {
-                            currentTeam: {  
-                                id: teams.dataValues.id,
-                                name: teams.dataValues.name
-                            }
-                        },
-                       stickers: stickersAlbum2
-                    }
-                });
+                        item: {
+                            album: {
+                                currentTeam: {  
+                                    id: teams.dataValues.id,
+                                    name: teams.dataValues.name
+                                }
+                            },
+                        stickers: stickersAlbum2
+                        }
+                    });
             }
 
         }

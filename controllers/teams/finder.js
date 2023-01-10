@@ -10,7 +10,7 @@ const responses= require('../../utils/responses/responses');
  */
 const httpGetResponse = (res, resource, resourceName) => {
   if (resource) {
-    responses.singleDTOResponse(res,200,"se encontro con exito el equipo", resource);
+    responses.singleDTOResponse(res,200,"Se encontro con exito el equipo", resource);
   } else {
     responses.errorDTOResponse(res,404,resourceName + ' not found');
   }
@@ -85,17 +85,15 @@ const findAll = async (req, res) => {
   const teams = await Team.findAll({
     include: [
       {
-         model: Sticker
+        model: Sticker
       },
       {
         model: Event
       }
-  ],
-  where: {
-    idEvents: eventId
-  }
+    ],
+    where: { idEvents: eventId }
   });
-  httpGetResponse(res, teams, 'teams');
+  return responses.multipleDTOsResponse(res, 200, 'Se encontraron los equipos con exito', teams);
 }
 
 module.exports = {
