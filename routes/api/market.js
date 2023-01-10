@@ -100,7 +100,6 @@ router.get('/myBids', async(req,res) =>{
 // Endpoint para buscar subastas por su ID
 router.get('/:auctionId', async (req,res) => {
     const market = await Market.findOne({
-        raw: true,
         include: [
             {
                 model: Sticker,
@@ -131,15 +130,11 @@ router.get('/:auctionId', async (req,res) => {
     const max = Math.max.apply(Math, items.map((o) => o.value));
     const winner = items.find(item => item.value === max);
 
-    const user = await User.findOne({
-        raw: true,
-        where: {
-            id: winner.userId
-        }
-    });
-
+    
     let highestBid = null;
     if (winner) {
+        const user = await market.getUser({ raw: true });
+
         highestBid = {
             ...winner,
             id: winner.id,
@@ -177,7 +172,7 @@ router.get('/:auctionId', async (req,res) => {
         success: true,
         message: "Subasta recuperada con éxito",
         item: {
-            ...market,
+            market: market.dataValues,
             highestBid,
             myLastBid
         }
