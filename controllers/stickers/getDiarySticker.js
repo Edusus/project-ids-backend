@@ -21,10 +21,10 @@ const getDiary = async (req, res) => {
                 isAvailable: true,
                 userId: userId
             });
-           return responses.singleDTOResponse(res, 200, diary.isAvailable , "Esta disponible tu cromo diario");
+           return responses.successDTOResponse(res, 200,"Esta disponible tu cromo diario");
         } else {
             if (diary.isAvailable === 1) {
-                return responses.singleDTOResponse(res, 200, diary.isAvailable, "Esta disponible tu cromo diario");
+                return responses.successDTOResponse(res, 200,"Esta disponible tu cromo diario");
             } else {
                 return responses.errorDTOResponse(res, 200, "No esta disponible tu cromo diario");
             }

@@ -50,7 +50,7 @@ router.get('/obtain/:eventId', async (req, res) => {
    let date = Date.now();
    let timeNow = moment(new Date(date)).format('YYYY-MM-DD');
    const diary = await DiaryStatus.findOne({
-      raw: true,
+      raws: true,
       where: {
         userId: req.user.id.id,
         createdAt: {
