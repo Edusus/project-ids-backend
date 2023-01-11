@@ -20,17 +20,22 @@ const destroy = async (req, res) => {
     raw: true,
     where: { teamId : req.params.teamId }
   });
-  const game = await Game.findOne({
+  // TO-DO: Usar "OR"
+  const gameOne = await Game.findOne({
     raw: true,
-    where: { teamId : req.params.teamId }
+    where: { teamOneId : req.params.teamId }
+  });
+  const gameTwo = await Game.findOne({
+    raw: true,
+    where: { teamTwoId : req.params.teamId }
   });
 
-  if (sticker || game) {
+  if (sticker || gameOne || gameTwo) {
     return responses.errorDTOResponse(res, 400, "No se puede eliminar el equipo porque tiene jugadores o partidos asociados");
   }
 
-  const filepath = getImageUrl(badge);
   try {
+    const filepath = getImageUrl(team.dataValues.badge);
     await team.destroy();
     fileController.deleteFile(path.join(imgController.img_dir, filepath), filepath);
   } catch (e) {

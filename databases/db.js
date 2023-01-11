@@ -49,24 +49,28 @@ Event.hasMany(Team, {
 
 // Asociacion Team -> Games
 Team.hasMany(Game, {
-  as: 'teamOne',
   foreignKey: {
+    name: 'teamOneId',
     allowNull: false
   }
 });
 Team.hasMany(Game, {
-  as: 'teamTwo',
   foreignKey: {
+    name: 'teamTwoId',
     allowNull: false
   }
 });
 Game.belongsTo(Team, {
   as: 'teamOne',
-  foreignKey: { allowNull: false }
+  foreignKey: { 
+    allowNull: false 
+  }
 });
 Game.belongsTo(Team, {
   as: 'teamTwo',
-  foreignKey: { allowNull: false }
+  foreignKey: { 
+    allowNull: false 
+  }
 });
 
 // Asociacion Event -> Games
