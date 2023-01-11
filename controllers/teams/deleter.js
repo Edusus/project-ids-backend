@@ -29,8 +29,8 @@ const destroy = async (req, res) => {
     return responses.errorDTOResponse(res, 400, "No se puede eliminar el equipo porque tiene jugadores o partidos asociados");
   }
 
-  const filepath = getImageUrl(badge);
   try {
+    const filepath = getImageUrl(team.dataValues.badge);
     await team.destroy();
     fileController.deleteFile(path.join(imgController.img_dir, filepath), filepath);
   } catch (e) {
