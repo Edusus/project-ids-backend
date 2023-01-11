@@ -147,7 +147,6 @@ const poster = async (req, res) => {
             }
         });
 
-
         if (goalkeeper > 1) {
             await Warehouse.update({
                 isInLineup: false
@@ -212,13 +211,11 @@ const poster = async (req, res) => {
             });
 
             return responses.errorDTOResponse(res, 403, 'Ya tienes 3 delantero en la alineacion')
-        } else {
-            return responses.successDTOResponse(res, 200, 'Sticker agregado a la alineacion')
         }
 
+        return responses.successDTOResponse(res, 200, 'Sticker agregado a la alineacion')
     } catch (error) {
-        console.error(error);
-        responses.errorDTOResponse(res, 403, error.message);
+        return responses.errorDTOResponse(res, 403, error.message);
     }
 }
 
