@@ -50,7 +50,7 @@ router.get('/obtain/:eventId', async (req, res) => {
    let date = Date.now();
    let timeNow = moment(new Date(date)).format('YYYY-MM-DD');
    const diary = await DiaryStatus.findOne({
-      raw: true,
+      raws: true,
       where: {
         userId: req.user.id.id,
         createdAt: {
@@ -63,7 +63,7 @@ router.get('/obtain/:eventId', async (req, res) => {
       return responses.errorDTOResponse(res, 200, 'No esta disponible tu cromo diario');
     }
 
-    if (diary.isAvailable === 0) {
+    if (diary.isAvailable === false) {
       return responses.errorDTOResponse(res, 200, 'No esta disponible tu cromo diario');
     }
 
