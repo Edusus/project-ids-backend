@@ -100,27 +100,26 @@ router.get('/myBids', async(req,res) =>{
              },
              where: {
                  isFinished: false
-             }
-         },
-        {
-            model: Sticker,
-            where: {
-                playerName: {
-                    [Op.regexp]: playerName
+             },
+             include : [{
+                model: Sticker,
+                where: {
+                    playerName: {
+                        [Op.regexp]: playerName
+                    },
+                position
                 },
-            position
-            },
-            include: {
-                model: Team,
-                where : {
-                    id : {
+                include: {
+                    model: Team,
+                    where : {
                         id : {
-                            [Op.like]: teamId
-                          }
+                                [Op.like]: teamId
+                        }
                     }
                 }
-            }
-        }]
+            }]
+         }
+        ]
      };
  
      const { count, rows } = await Bid.findAndCountAll(options);
