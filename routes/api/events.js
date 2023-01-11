@@ -101,7 +101,7 @@ router.put('/:eventId', isAdmin, async (req, res)=>{
 router.delete('/:eventId', async (req, res)=>{
     const team = await Team.findOne({
         raw: true,
-        where: { eventId : req.params.eventId }
+        where: { idEvents : req.params.eventId }
     });
     const game = await Game.findOne({
         raw: true,
