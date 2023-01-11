@@ -3,6 +3,7 @@ const responses = require('../../utils/responses/responses');
 const { Sticker, random, Op, Team, Inventory, Warehouse, Event } = require('../../databases/db');
 const { imgController, csvController } = require('../../controllers/filesControllers');
 const controllerSticker = require('../../controllers/stickers/uploadStickers');
+const { getDiary } = require('../../controllers/stickers/getDiarySticker');
 const { poster } = require('../../controllers/stickersControllers');
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
 
@@ -39,6 +40,9 @@ router.get('/', async (req,res)=>{
     items: rows
   });
 });
+
+router.get('/get-diary-status', getDiary) 
+
 
 //endpoint para obtener 5 cromos al azar
 router.get('/obtain/:eventId', async (req, res) => {
