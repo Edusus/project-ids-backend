@@ -3,7 +3,6 @@ const responses = require('../../utils/responses/responses');
 const moment = require('moment');
 
 const getDiary = async (req, res) => { 
-    try {
         const userId = req.user.id.id;
         let date = Date.now();
         let timeNow = moment(new Date(date)).format('YYYY-MM-DD');
@@ -30,9 +29,7 @@ const getDiary = async (req, res) => {
                 return responses.errorDTOResponse(res, 200, "No esta disponible tu cromo diario");
             }
         }
-    } catch (error) {
-        return responses.errorDTOResponse(res, 400, error.message);
-    }
+   
     
 }
 
