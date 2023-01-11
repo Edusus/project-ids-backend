@@ -31,7 +31,6 @@ const postMassive = async (req, res) => {
       });
     }));
   } catch (e) {
-    console.log("ERROR!!!!!!!!!!!!!", e);
     return responses.errorDTOResponse(res, 500, "Error al subir la mrda xP");
   }
 

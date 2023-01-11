@@ -107,7 +107,6 @@ const post = async (req, res) => {
     if (transaction)
       await transaction.rollback();
 
-    console.error(error);
     if (typeof req.file === 'undefined')
       return responses.errorDTOResponse(res, 500, 'Error al subir / decodificar el csv');
       

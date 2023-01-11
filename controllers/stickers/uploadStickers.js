@@ -5,7 +5,7 @@ const { imgController, fileController } = require('../filesControllers');
 const getImageUrl = require('../../utils/helpers/get-image-url');
 const responses = require('../../utils/responses/responses');
 
-exports.createSticker = async (body) => {
+const createSticker = async (body) => {
   const { playerName, country, position, height, weight, appearanceRate, teamId, externalUuid, jerseyNumber } = body;
   let img = getImageUrl(body.fileName);
 
@@ -22,7 +22,7 @@ exports.createSticker = async (body) => {
     jerseyNumber
   });
 
-  return responses.singleDTOResponse(res, 200, "Se creo con exito el nuevo sticker", newSticker);
+  return newSticker;
 }
 
 //funcion de subir imagenes de los cromos
@@ -81,3 +81,5 @@ exports.uploadUpdatedFileSticker = async (req, res) => {
     return responses.errorDTOResponse(res, 500, e.message);
   }
 };
+
+exports.createSticker = createSticker;
