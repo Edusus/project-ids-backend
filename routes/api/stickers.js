@@ -59,6 +59,10 @@ router.get('/obtain/:eventId', async (req, res) => {
       }
     })
 
+    if ( (diary === null) || (diary === undefined) || (diary.length === 0) ) {
+      return responses.errorDTOResponse(res, 200, 'No esta disponible tu cromo diario');
+    }
+
     if (diary.isAvailable === 0) {
       return responses.errorDTOResponse(res, 200, 'No esta disponible tu cromo diario');
     }
