@@ -5,7 +5,7 @@ const { Market,Bid,Op, Sticker, Team, User, Event, PlayerFantasy } = require('..
 const responses = require('../../utils/responses/responses');
 
 router.get('/', async(req,res)=>{
-    let {page = 0, size = 10, myAuction = false} = req.query;
+    let {page = 0, size = 10, myAuction = false, teamId = '%', playername: playerName = '.*', position = ['goalkeeper', 'defender', 'forward', 'midfielder'] } = req.query;
     const [ pageAsNumber, sizeAsNumber ] = [ Number.parseInt(page), Number.parseInt(size) ];
      if (myAuction === 'true') {
         let options = {
@@ -13,8 +13,19 @@ router.get('/', async(req,res)=>{
             offset: pageAsNumber * sizeAsNumber,
             include: {
                 model: Sticker,
+                where: {
+                    playerName: {
+                      [Op.regexp]: playerName
+                    },
+                    position
+                  },
                 include: {
-                    model: Team
+                    model: Team,
+                    where : {
+                        id : {
+                            [Op.like]: teamId
+                          }
+                    }
                 }
             },
             order: [
@@ -34,8 +45,19 @@ router.get('/', async(req,res)=>{
             offset: pageAsNumber * sizeAsNumber,
             include: {
                 model: Sticker,
+                where: {
+                    playerName: {
+                      [Op.regexp]: playerName
+                    },
+                    position
+                  },
                 include: {
-                    model: Team
+                    model: Team,
+                    where : {
+                        id : {
+                            [Op.like]: teamId
+                          }
+                    }
                 }
             },
             order: [
@@ -56,7 +78,7 @@ router.get('/', async(req,res)=>{
 });
 
 router.get('/myBids', async(req,res) =>{ 
-    let {page = 0, size = 10} = req.query;
+    let {page = 0, size = 10, myAuction = false, teamId = '%', playername: playerName = '.*', position = ['goalkeeper', 'defender', 'forward', 'midfielder'] } = req.query;
     const [ pageAsNumber, sizeAsNumber ] = [ Number.parseInt(page), Number.parseInt(size) ];
      let options = {
          limit: sizeAsNumber,
@@ -78,8 +100,26 @@ router.get('/myBids', async(req,res) =>{
              },
              where: {
                  isFinished: false
-             }
-         }]
+             },
+             include : [{
+                model: Sticker,
+                where: {
+                    playerName: {
+                        [Op.regexp]: playerName
+                    },
+                position
+                },
+                include: {
+                    model: Team,
+                    where : {
+                        id : {
+                                [Op.like]: teamId
+                        }
+                    }
+                }
+            }]
+         }
+        ]
      };
  
      const { count, rows } = await Bid.findAndCountAll(options);
