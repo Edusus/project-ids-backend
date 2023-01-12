@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const responses = require('../../utils/responses/responses');
-const { Sticker, random, Op, Team, Inventory, Warehouse, Event, DiaryStatus  } = require('../../databases/db');
+const { Sticker, random, Op, Team, Inventory, Warehouse, Event, DiaryStatus } = require('../../databases/db');
 const { imgController, csvController } = require('../../controllers/filesControllers');
 const controllerSticker = require('../../controllers/stickers/uploadStickers');
 const { getDiary } = require('../../controllers/stickers/getDiarySticker');

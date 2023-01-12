@@ -106,7 +106,7 @@ router.post('/:eventId/join-game', async (req,res)=>{
         eventId: req.params.eventId,
         userId: req.user.id.id,
         points: 0,
-        money: 0
+        money: 500 //Dinero inicial
     });
 
     return responses.successDTOResponse(res,200,"Felicidades te has unido al fantasy "+event.eventName);

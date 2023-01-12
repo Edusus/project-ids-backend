@@ -22,9 +22,9 @@ router.get('/', async(req,res)=>{
                 include: {
                     model: Team,
                     where : {
-                        id : {
-                            [Op.like]: teamId
-                          }
+                      id : {
+                        [Op.like]: teamId
+                      }
                     }
                 }
             },
@@ -56,7 +56,7 @@ router.get('/', async(req,res)=>{
                     where : {
                         id : {
                             [Op.like]: teamId
-                          }
+                        }
                     }
                 }
             },
@@ -133,7 +133,7 @@ router.get('/myBids', async(req,res) =>{
                     model: Team,
                     where : {
                         id : {
-                                [Op.like]: teamId
+                            [Op.like]: teamId
                         }
                     }
                 }
