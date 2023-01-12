@@ -1,17 +1,14 @@
 module.exports = (sequelize, type) => {
-	return sequelize.define('warehouse', {
+  return sequelize.define('gamePrize', {
     id: {
       type: type.INTEGER,
       primaryKey: true,
       autoIncrement: true
     },
-    isInLineup: {
+    isAwarded: {
       type: type.BOOLEAN,
       defaultValue: false,
-    },
-    quantity: {
-      type: type.INTEGER,
-      defaultValue: 0,
-     }
-  });
+      allowNull: false
+    }
+  })
 }

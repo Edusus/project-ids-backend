@@ -9,7 +9,7 @@ const find = async (req, res) => {
 
         let existe = await Warehouse.findOne({
             where: {
-                eventId: eventId
+              eventId
             }
         });
 
@@ -20,8 +20,8 @@ const find = async (req, res) => {
 
         const lineup = await Warehouse.findAll({
             where: {
-                userId: userId,
-                eventId: eventId,
+                userId,
+                eventId,
                 isInLineup: true
               },
             include: {
@@ -43,7 +43,7 @@ const find = async (req, res) => {
         responses.singleDTOResponse(res, 200, 'Alineacion recuperado con exito', items)
     } catch (error) {
         console.error(error);
-        responses.errorDTOResponse(res, 400, err.message);
+        responses.errorDTOResponse(res, 400, error.message);
     }
 }
 
