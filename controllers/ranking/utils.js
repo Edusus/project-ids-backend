@@ -8,10 +8,10 @@ const rankingDTOPaginate = (res, status, message, myPosition, items, total, page
     success: true,
     message,
     paginate: {
-      total,
-      page,
-      pages,
-      perPage
+      total: +total,
+      page: +page,
+      pages: +pages,
+      perPage: +perPage
     },
     myPosition,
     items

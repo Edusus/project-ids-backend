@@ -34,10 +34,10 @@ const paginatedDTOsResponse = (res, status, message, items, total, page, perPage
     success: true,
     message,
     paginate: {
-      total,
-      page,
-      pages,
-      perPage
+      total: +total,
+      page: +page,
+      pages: +pages,
+      perPage: +perPage
     },
     items
   });
