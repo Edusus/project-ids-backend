@@ -280,9 +280,7 @@ Bid.belongsTo(Market);
 //Relaciones para formar la tabla de get diary status
 User.hasMany(DiaryStatus, {
   foreignKey: {
-    foreignKey: {
-      unique: false
-    }
+    unique: false
   }
 });
 DiaryStatus.belongsTo(User, {
@@ -316,5 +314,5 @@ const createTransaction = () => {
 const { Op } = Sequelize;
 
 module.exports = {
-    User, Sticker, Event, Ad, Game, Team, random, Op, Inventory, Warehouse, Promotion, PlayerFantasy, createTransaction, Market, Bid, PlayersGame, sequelize
+    User, Sticker, Event, Ad, Game, Team, random, Op, Inventory, Warehouse, Promotion, PlayerFantasy, createTransaction, Market, Bid, PlayersGame, sequelize, DiaryStatus
 }
