@@ -5,7 +5,7 @@ const { Market,Bid,Op, Sticker, Team, User, Event, PlayerFantasy } = require('..
 const responses = require('../../utils/responses/responses');
 
 router.get('/', async(req,res)=>{
-    let {page = 0, size = 10, myAuction = false, teamId = '%', playername: playerName = '.*', position = ['goalkeeper', 'defender', 'forward', 'midfielder'] } = req.query;
+    const {page = 0, size = 10, myAuction = false, teamId = '%', playername: playerName = '.*', position = ['goalkeeper', 'defender', 'forward', 'midfielder'] } = req.query;
     const [ pageAsNumber, sizeAsNumber ] = [ Number.parseInt(page), Number.parseInt(size) ];
      if (myAuction === 'true') {
         let options = {
@@ -39,7 +39,7 @@ router.get('/', async(req,res)=>{
         const { count, rows } = await Market.findAndCountAll(options);
         return responses.paginatedDTOsResponse(res, 200, 'Subastas recuperadas con exito', rows, count, pageAsNumber, sizeAsNumber);
 
-     } else {    
+     } else { 
         let options = {
             limit: sizeAsNumber,
             offset: pageAsNumber * sizeAsNumber,
@@ -67,12 +67,32 @@ router.get('/', async(req,res)=>{
                 isFinished: false,
                 userId: {
                     [Op.not]: Number.parseInt(req.user.id.id)
-                }
+                },
+
             }
         };
      
         const { count, rows } = await Market.findAndCountAll(options);
-        return responses.paginatedDTOsResponse(res, 200, 'Subastas recuperadas con exito', rows, count, pageAsNumber, sizeAsNumber);
+        const myBids = rows.map(async function(element) {
+            const bid = await Bid.findOne({
+                raw: true,
+                where: {
+                    userId: req.user.id.id,
+                    marketId: element.id
+                },
+                attributes: ['id','value', 'isDirectPurchase', 'userId', 'marketId'],
+            });
+
+            if (bid) {
+                element.dataValues.myLastBid = bid
+            } else {
+                element.dataValues.myLastBid = false;
+            }
+            return element;
+        });
+        const myBids2 = await Promise.all(myBids);
+
+        return responses.paginatedDTOsResponse(res, 200, 'Subastas recuperadas con exito', myBids2, count, pageAsNumber, sizeAsNumber);
     }
     
 });
