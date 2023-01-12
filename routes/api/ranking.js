@@ -28,36 +28,42 @@ router.get('/', async (req,res)=>{
         where: { eventId: eventId }
     };
 
-    const { count, rows } = await PlayerFantasy.findAndCountAll({
-        limit: +size,
-        offset: (+page) * (+size),
-        ...options,
-        include : {
-            model: User,
-            attributes: ['name']
-        }
-    });
+    try {
 
-    const queryInterfaceSequelize = await sequelize.getQueryInterface();
-    
-    const rankingTableSubQuery = queryInterfaceSequelize.queryGenerator.selectQuery(
-        PlayerFantasy.getTableName(),
-        {
+        const { count, rows } = await PlayerFantasy.findAndCountAll({
+            limit: +size,
+            offset: (+page) * (+size),
             ...options,
-        },
-        PlayerFantasy
-    ).replace(';','');
-
-    const myPosition = await sequelize.query(
-        `SELECT * FROM
-        (${rankingTableSubQuery}) rankingRable WHERE userId = ${req.user.id.id};`, 
-    {
-        raw: true,
-        type: Sequelize.QueryTypes.SELECT
-    });
-
-    return rankingDTOPaginate(res, 200, 'Ranking global', myPosition[0] || null, rows, count, page, size);
+            include : {
+                model: User,
+                attributes: ['name']
+            }
+        });
     
+        const queryInterfaceSequelize = await sequelize.getQueryInterface();
+        
+        const rankingTableSubQuery = queryInterfaceSequelize.queryGenerator.selectQuery(
+            PlayerFantasy.getTableName(),
+            {
+                ...options,
+            },
+            PlayerFantasy
+        ).replace(';','');
+    
+        const myPosition = await sequelize.query(
+            `SELECT * FROM
+            (${rankingTableSubQuery}) rankingRable WHERE userId = ${req.user.id.id};`, 
+        {
+            raw: true,
+            type: Sequelize.QueryTypes.SELECT
+        });
+    
+        return rankingDTOPaginate(res, 200, 'Ranking global', myPosition[0] || null, rows, count, page, size);    
+
+    } catch (e) {
+        return responses.errorDTOResponse(res,500,"Error del servidor al obtener el ranking global");
+    }
+
 });
 
 
