@@ -17,7 +17,9 @@ const DiaryStatusModel = require('../models/diaryStatus');
 
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD,{
     host: process.env.DBHOST,
-    dialect:'mysql'
+    dialect:'mysql',
+    // disable logging; default: console.log
+    //logging: false
 });
 
 const User = UserModel(sequelize,Sequelize);
@@ -312,5 +314,5 @@ const createTransaction = () => {
 const { Op } = Sequelize;
 
 module.exports = {
-    User, Sticker, Event, Ad, Game, Team, random, Op, Inventory, Warehouse, Promotion, PlayerFantasy, createTransaction, Market, Bid, PlayersGame, DiaryStatus
+  User, Sticker, Event, Ad, Game, Team, random, Op, Inventory, Warehouse, Promotion, PlayerFantasy, createTransaction, Market, Bid, PlayersGame, sequelize, DiaryStatus
 }
