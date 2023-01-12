@@ -16,7 +16,6 @@ const getDiary = async (req, res) => {
             }
         })
 
-        console.log(diary);
     
         if ( (diary === null) || (diary === undefined) || (diary.length === 0) ) {
             await DiaryStatus.create({
