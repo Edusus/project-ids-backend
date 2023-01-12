@@ -16,14 +16,14 @@ const getDiary = async (req, res) => {
         }
     })
     if (diary) {
-    const time = diary.createdAt;
-    console.log(time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds());
+        const time = diary.createdAt;
+        console.log(time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds());
     }
 
     if ( (diary === null) || (diary === undefined) || (diary.length === 0) ) {
         await DiaryStatus.create({
             isAvailable: true,
-            userId: userId,
+            userId
         });
        return responses.successDTOResponse(res, 200,"Esta disponible tu cromo diario");
     } else {
