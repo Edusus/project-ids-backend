@@ -1,10 +1,12 @@
 const router = require('express').Router();
 const responses = require('../../utils/responses/responses');
-const { Sticker, random, Op, Team, Inventory, Warehouse, Event } = require('../../databases/db');
+const { Sticker, random, Op, Team, Inventory, Warehouse, Event, DiaryStatus,  } = require('../../databases/db');
 const { imgController, csvController } = require('../../controllers/filesControllers');
 const controllerSticker = require('../../controllers/stickers/uploadStickers');
+const { getDiary } = require('../../controllers/stickers/getDiarySticker');
 const { poster } = require('../../controllers/stickersControllers');
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
+const moment = require('moment');
 
 //endpoint para listar cromos
 router.get('/', async (req,res)=>{  
@@ -40,8 +42,31 @@ router.get('/', async (req,res)=>{
   });
 });
 
+router.get('/get-diary-status', getDiary) 
+
+
 //endpoint para obtener 5 cromos al azar
 router.get('/obtain/:eventId', async (req, res) => {
+   let date = Date.now();
+   let timeNow = moment(new Date(date)).format('YYYY-MM-DD');
+   const diary = await DiaryStatus.findOne({
+      raws: true,
+      where: {
+        userId: req.user.id.id,
+        createdAt: {
+          [Op.gte]: timeNow
+        }
+      }
+    })
+
+    if ( (diary === null) || (diary === undefined) || (diary.length === 0) ) {
+      return responses.errorDTOResponse(res, 200, 'No esta disponible tu cromo diario');
+    }
+
+    if (diary.isAvailable === false) {
+      return responses.errorDTOResponse(res, 200, 'No esta disponible tu cromo diario');
+    }
+
   if (await Sticker.findOne()) {
     const stickers = [];
     const idUser = req.user.id.id;
@@ -78,6 +103,15 @@ router.get('/obtain/:eventId', async (req, res) => {
                 stickerId: singleSticker.dataValues.id,
                 eventId: req.params.eventId
                });
+
+               await DiaryStatus.update({
+                isAvailable: false
+                }, {
+                where: {
+                  userId: idUser
+                }
+               });
+
          } else {
             const quant = inventorys.dataValues.Quantity;
               await Inventory.update({
@@ -87,6 +121,15 @@ router.get('/obtain/:eventId', async (req, res) => {
                 [Op.and]: [{stickerId: singleSticker.dataValues.id},{userId : idUser},{eventId: req.params.eventId}]
                }
             })
+
+            await DiaryStatus.update({
+              isAvailable: false
+              }, {
+              where: {
+                userId: idUser
+              }
+             });
+
           }
     });
 
