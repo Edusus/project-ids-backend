@@ -8,7 +8,7 @@ const { poster } = require('../../controllers/stickersControllers');
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
 const moment = require('moment');
 
-//endpoint para listar cromos
+//endpoint para listar cromoss
 router.get('/', async (req,res)=>{  
   //paginacion
   let {page = 0, size = 10 } = req.query;
