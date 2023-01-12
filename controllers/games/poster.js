@@ -51,8 +51,6 @@ const post = async (req, res) => {
       }
     });
 
-    console.log(playersIds);
-
     if (foundPlayers.length < playersIds.length)
       return responses.errorDTOResponse(res, 404, 'No se ha encontrado a uno de los jugadores especificados');
 
