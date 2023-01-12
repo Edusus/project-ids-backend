@@ -9,7 +9,7 @@ const getDiary = async (req, res) => {
     const diary = await DiaryStatus.findOne({
         raw: true,
         where: {
-            userId: req.user.id.id,
+            userId,
             createdAt: {
                 [Op.gte]: timeNow
             }
