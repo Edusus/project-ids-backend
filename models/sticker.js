@@ -37,20 +37,20 @@ module.exports=(sequelize,type)=>{
         externalUuid:{
             type: type.UUID,
             allowNull: false,
-            unique: true,
+            //unique: true,
             validate: {
                 notEmpty: {
                   args: true,
-                  msg: 'Un externalUUID vacio no esta permitido'
+                  msg: 'Un externalUuid vacio no esta permitido'
                 },
                 notNull: {
                   args: true,
-                  msg: "Un externalUUID nulo no esta permitido"
+                  msg: "Un externalUuid nulo no esta permitido"
                 },
-                isUUID: {
+                /*isUUID: {
                   args: 4,
-                  msg: "Un externalUUID que no sea un UUID no está permitido"
-                }
+                  msg: "Un externalUuid que no sea un UUID no está permitido"
+                }*/
             }
         },
         jerseyNumber:{
