@@ -147,6 +147,10 @@ const posterBid = async (req, res) => {
         }
     })
 
+    if (isDirectPurchase) {
+        value = market.immediatePurchaseValue;
+    }
+
     if (bidTrue) {
         return responses.errorDTOResponse(res, 403, 'Ya has ofertado en esta subasta use el metodo PUT')
     }
@@ -166,8 +170,8 @@ const posterBid = async (req, res) => {
     if (value < market.initialPurchaseValue) {
         return responses.errorDTOResponse(res, 403, 'El valor de la oferta debe ser mayor al valor inicial')
     }
-    if (value >= market.immediatePurchaseValue-1) {
-        return responses.errorDTOResponse(res, 403, 'El valor de la oferta puede ser como maximo ' + (market.immediatePurchaseValue-1) + ' si deseas superarlo, obta por una compra directa.')
+    if (!isDirectPurchase && value >= market.immediatePurchaseValue) {
+        return responses.errorDTOResponse(res, 403, 'El valor de la oferta puede ser como maximo ' + (market.immediatePurchaseValue) + ' si deseas superarlo, obta por una compra directa.')
     }
     if (market.userId == userId) {
         return responses.errorDTOResponse(res, 403, 'No puedes ofertar en tu propia subasta')
