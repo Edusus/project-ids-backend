@@ -29,10 +29,6 @@ const getDiary = async (req, res) => {
             return responses.errorDTOResponse(res, 200, "No esta disponible tu cromo diario");
         }
     }
-
-
 }
 
-module.exports = {
-    getDiary
-}
+module.exports = { getDiary }
