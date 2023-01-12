@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const responses = require('../../utils/responses/responses');
-const { Sticker, random, Op, Team, Inventory, Warehouse, Event, DiaryStatus,  } = require('../../databases/db');
+const { Sticker, random, Op, Team, Inventory, Warehouse, Event, DiaryStatus  } = require('../../databases/db');
 const { imgController, csvController } = require('../../controllers/filesControllers');
 const controllerSticker = require('../../controllers/stickers/uploadStickers');
 const { getDiary } = require('../../controllers/stickers/getDiarySticker');
@@ -8,7 +8,7 @@ const { poster } = require('../../controllers/stickersControllers');
 const { verifyToken, isAdmin } = require('../../middlewares/auth');
 const moment = require('moment');
 
-//endpoint para listar cromos
+//endpoint para listar cromoss
 router.get('/', async (req,res)=>{  
   //paginacion
   let {page = 0, size = 10 } = req.query;

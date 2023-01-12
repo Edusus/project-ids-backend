@@ -278,7 +278,13 @@ Market.hasMany(Bid);
 Bid.belongsTo(Market);
 
 //Relaciones para formar la tabla de get diary status
-User.hasMany(DiaryStatus);
+User.hasMany(DiaryStatus, {
+  foreignKey: {
+    foreignKey: {
+      unique: false
+    }
+  }
+});
 DiaryStatus.belongsTo(User, {
   foreignKey: {
     unique: false
