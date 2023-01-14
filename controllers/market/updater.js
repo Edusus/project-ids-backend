@@ -76,7 +76,10 @@ const bidUpdate = async (req, res) => {
     }
 
     if (isDirectPurchase) {
-            value = market.immediatePurchaseValue;
+            const directValue = market.immediatePurchaseValue;
+             if (player.money < directValue) {
+                return responses.errorDTOResponse(res, 400, 'No tienes suficiente dinero para comprar directamente');
+            }
             await PlayerFantasy.update({
                 money: player.money - value
             }, {
