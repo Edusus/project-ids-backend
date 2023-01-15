@@ -26,6 +26,9 @@ const find = async (req, res) => {
         eventId,
         quantity: { [Op.ne]: 0 }
       },
+      order : [
+        ['isInLineup', 'DESC']
+      ],
       include: {
         model: Sticker,
         attributes: ['id', 'playerName', 'position', 'img', 'createdAt', 'updatedAt'],
