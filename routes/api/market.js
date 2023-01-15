@@ -50,7 +50,7 @@ router.get('/', async(req,res)=>{
         let options = {
             limit: sizeAsNumber,
             offset: pageAsNumber * sizeAsNumber,
-            include: {
+            include: [{
                 model: Sticker,
                 where: {
                     playerName: {
@@ -66,7 +66,12 @@ router.get('/', async(req,res)=>{
                         }
                     }
                 }
-            },
+            }, {
+                model: Bid,
+                where: {
+                    userId: req.user.id.id
+                }
+            }],
             order: [
                 ['createdAt', 'DESC']
             ],
