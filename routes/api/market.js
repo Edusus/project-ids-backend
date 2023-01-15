@@ -2,7 +2,6 @@ const router = require('express').Router();
 const { poster, posterBid } = require('../../controllers/market/poster');
 const { bidUpdate } = require('../../controllers/market/updater');
 const { Market,Bid,Op, Sticker, Team, User, Event, PlayerFantasy } = require('../../databases/db');
-const bids = require('../../models/bids');
 const responses = require('../../utils/responses/responses');
 
 router.get('/', async(req,res)=>{
@@ -12,7 +11,7 @@ router.get('/', async(req,res)=>{
         let options = {
             limit: sizeAsNumber,
             offset: pageAsNumber * sizeAsNumber,
-            include: [{
+            include: {
                 model: Sticker,
                 where: {
                     playerName: {
@@ -27,13 +26,9 @@ router.get('/', async(req,res)=>{
                         [Op.like]: teamId
                       }
                     }
-                },
-            }, {
-                model: Bid,
-                where: {
-                    userId: req.user.id.id
                 }
-            }],
+            
+            },
             
             order: [
                 ['createdAt', 'DESC']
@@ -50,7 +45,7 @@ router.get('/', async(req,res)=>{
         let options = {
             limit: sizeAsNumber,
             offset: pageAsNumber * sizeAsNumber,
-            include: [{
+            include: {
                 model: Sticker,
                 where: {
                     playerName: {
@@ -66,12 +61,7 @@ router.get('/', async(req,res)=>{
                         }
                     }
                 }
-            }, {
-                model: Bid,
-                where: {
-                    userId: req.user.id.id
-                }
-            }],
+            },
             order: [
                 ['createdAt', 'DESC']
             ],
