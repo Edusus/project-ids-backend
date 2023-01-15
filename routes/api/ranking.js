@@ -28,6 +28,7 @@ router.get('/', async (req,res)=>{
         where: { eventId: eventId }
     };
 
+    try {
 
         const { count, rows } = await PlayerFantasy.findAndCountAll({
             limit: +size,
@@ -59,7 +60,9 @@ router.get('/', async (req,res)=>{
     
         return rankingDTOPaginate(res, 200, 'Ranking global', myPosition[0] || null, rows, count, page, size);    
 
-   
+    } catch (e) {
+        return responses.errorDTOResponse(res,500,"Error del servidor al obtener el ranking global");
+    }
 
 });
 
