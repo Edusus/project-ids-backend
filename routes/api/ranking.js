@@ -19,7 +19,7 @@ router.get('/', async (req,res)=>{
         raws: true,
         order: [
             ['points', 'DESC'],
-            ['updatedAt', 'ASC']
+            [Sequelize.literal(`${PlayerFantasy.getTableName()}.updatedAt`), 'ASC']
         ],
         attributes: [
             "id", "points", "userId", "eventId",
