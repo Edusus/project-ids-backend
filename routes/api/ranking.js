@@ -19,7 +19,7 @@ router.get('/', async (req,res)=>{
         raws: true,
         order: [
             ['points', 'DESC'],
-            [Sequelize.literal(`${PlayerFantasy.getTableName()}.updatedAt`), 'ASC']
+            [`updatedAt`, `ASC`]
         ],
         attributes: [
             "id", "points", "userId", "eventId",
@@ -61,6 +61,7 @@ router.get('/', async (req,res)=>{
         return rankingDTOPaginate(res, 200, 'Ranking global', myPosition[0] || null, rows, count, page, size);    
 
     } catch (e) {
+        console.log('ERROR EN LINEA', e);
         return responses.errorDTOResponse(res,500,"Error del servidor al obtener el ranking global");
     }
 
