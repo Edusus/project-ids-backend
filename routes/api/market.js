@@ -3,6 +3,8 @@ const { poster, posterBid } = require('../../controllers/market/poster');
 const { bidUpdate } = require('../../controllers/market/updater');
 const { Market,Bid,Op, Sticker, Team, User, Event, PlayerFantasy } = require('../../databases/db');
 const responses = require('../../utils/responses/responses');
+const Sequelize = require('sequelize');
+
 
 router.get('/', async(req,res)=>{
     let {page = 0, size = 10, myAuction = false, teamId = '%', playername: playerName = '.*', position = ['goalkeeper', 'defender', 'forward', 'midfielder'] } = req.query;
@@ -67,10 +69,18 @@ router.get('/', async(req,res)=>{
             ],
             where: {
                 isFinished: false,
+                id: {
+                      [Op.notIn]: Sequelize.literal(`
+                      (SELECT markets.id
+                      FROM markets
+                      INNER JOIN bids
+                      ON markets.id = bids.marketId
+                      WHERE bids.userId = ${req.user.id.id})
+                    `)     
+                    },
                 userId: {
-                    [Op.not]: Number.parseInt(req.user.id.id)
-                },
-
+                        [Op.not]: Number.parseInt(req.user.id.id)
+                    }
             }
         };
      
