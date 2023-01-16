@@ -23,7 +23,7 @@ router.get('/', async (req,res)=>{
         ],
         attributes: [
             "id", "points", "userId", "eventId",
-            [Sequelize.literal(`RANK() OVER (ORDER BY points DESC, ${PlayerFantasy.getTableName()}.updatedAt ASC)`), 'rank']
+            [Sequelize.literal(`RANK() OVER (ORDER BY points DESC, '${PlayerFantasy.getTableName()}'.'updatedAt' ASC)`), 'rank']
         ],
         where: { eventId: eventId }
     };
