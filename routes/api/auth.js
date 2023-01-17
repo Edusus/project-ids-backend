@@ -9,7 +9,7 @@ router.post('/login', authcontroller.signIn);
 
 router.post('/register', authcontroller.signUp);
 
-router.post('/forgot-password', authcontroller.forgotPassword);
+router.put('/forgot-password', authcontroller.forgotPassword);
 
 router.put('/new-password', (req, res) => {
     console.log(req.headers);
