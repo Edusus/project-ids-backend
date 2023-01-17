@@ -1,27 +1,45 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('warehouses', {
+  return sequelize.define('markets', {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
-    isInLineup: {
+    initialPurchaseValue: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: 0
+    },
+    immediatePurchaseValue: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: 0
+    },
+    finishDate: {
+      type: DataTypes.DATE,
+      allowNull: false
+    },
+    isFinished: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
       defaultValue: 0
     },
-    quantity: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      defaultValue: 0
-    },
-    userId: {
+    undefined: {
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
         model: 'users',
+        key: 'id'
+      },
+      unique: "markets_ibfk_1"
+    },
+    eventId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'events',
         key: 'id'
       }
     },
@@ -33,17 +51,17 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     },
-    eventId: {
+    userId: {
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
-        model: 'events',
+        model: 'users',
         key: 'id'
       }
     }
   }, {
     sequelize,
-    tableName: 'warehouses',
+    tableName: 'markets',
     timestamps: true,
     indexes: [
       {
@@ -55,12 +73,18 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
-        name: "warehouses_stickerId_userId_unique",
+        name: "markets___unique",
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "userId" },
-          { name: "stickerId" },
+          { name: "undefined" },
+        ]
+      },
+      {
+        name: "eventId",
+        using: "BTREE",
+        fields: [
+          { name: "eventId" },
         ]
       },
       {
@@ -71,10 +95,10 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
-        name: "eventId",
+        name: "userId",
         using: "BTREE",
         fields: [
-          { name: "eventId" },
+          { name: "userId" },
         ]
       },
     ]

@@ -1,24 +1,32 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('events', {
+  return sequelize.define('teams', {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
-    eventName: {
+    name: {
       type: DataTypes.STRING(255),
       allowNull: false
     },
-    status: {
-      type: DataTypes.BOOLEAN,
+    badge: {
+      type: DataTypes.STRING(255),
       allowNull: false,
-      defaultValue: 0
+      defaultValue: "undefined\/uploads\/offside.png"
+    },
+    idEvents: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'events',
+        key: 'id'
+      }
     }
   }, {
     sequelize,
-    tableName: 'events',
+    tableName: 'teams',
     timestamps: true,
     indexes: [
       {
@@ -27,6 +35,13 @@ module.exports = function(sequelize, DataTypes) {
         using: "BTREE",
         fields: [
           { name: "id" },
+        ]
+      },
+      {
+        name: "idEvents",
+        using: "BTREE",
+        fields: [
+          { name: "idEvents" },
         ]
       },
     ]

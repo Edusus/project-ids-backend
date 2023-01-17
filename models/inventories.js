@@ -1,35 +1,49 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('playersgames', {
+  return sequelize.define('inventories', {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
-    points: {
-      type: DataTypes.INTEGER,
-      allowNull: false
+    isInAlbum: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      defaultValue: 0
     },
-    playerId: {
+    Quantity: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
+      defaultValue: 0
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'users',
+        key: 'id'
+      }
+    },
+    stickerId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
       references: {
         model: 'stickers',
         key: 'id'
       }
     },
-    gameId: {
+    eventId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: {
-        model: 'games',
+        model: 'events',
         key: 'id'
       }
     }
   }, {
     sequelize,
-    tableName: 'playersgames',
+    tableName: 'inventories',
     timestamps: true,
     indexes: [
       {
@@ -41,19 +55,26 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
-        name: "playersGames_gameId_playerId_unique",
+        name: "inventories_stickerId_userId_unique",
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "playerId" },
-          { name: "gameId" },
+          { name: "userId" },
+          { name: "stickerId" },
         ]
       },
       {
-        name: "gameId",
+        name: "stickerId",
         using: "BTREE",
         fields: [
-          { name: "gameId" },
+          { name: "stickerId" },
+        ]
+      },
+      {
+        name: "eventId",
+        using: "BTREE",
+        fields: [
+          { name: "eventId" },
         ]
       },
     ]

@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('playersgames', {
+  return sequelize.define('playerfantasies', {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -9,27 +9,33 @@ module.exports = function(sequelize, DataTypes) {
     },
     points: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      defaultValue: 0
     },
-    playerId: {
+    money: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      defaultValue: 0
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
       references: {
-        model: 'stickers',
+        model: 'users',
         key: 'id'
       }
     },
-    gameId: {
+    eventId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: {
-        model: 'games',
+        model: 'events',
         key: 'id'
       }
     }
   }, {
     sequelize,
-    tableName: 'playersgames',
+    tableName: 'playerfantasies',
     timestamps: true,
     indexes: [
       {
@@ -41,19 +47,19 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
-        name: "playersGames_gameId_playerId_unique",
+        name: "playerFantasies_eventId_userId_unique",
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "playerId" },
-          { name: "gameId" },
+          { name: "userId" },
+          { name: "eventId" },
         ]
       },
       {
-        name: "gameId",
+        name: "eventId",
         using: "BTREE",
         fields: [
-          { name: "gameId" },
+          { name: "eventId" },
         ]
       },
     ]
