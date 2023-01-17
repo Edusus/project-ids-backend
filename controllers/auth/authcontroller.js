@@ -94,7 +94,7 @@ module.exports = {
             let mailOptions = {
               from: process.env.GMAIL,
               to: user.email,
-              subject: 'Offside_recovery',
+              subject: 'Recuperacion de contraseña playoffside.online',
               text: mensaje
             };
 
@@ -107,7 +107,7 @@ module.exports = {
               console.log('Email enviado: ' + info.response);
 
               const item = { user, token }
-              return responses.singleDTOResponse(res,250,'Correo enviado',item);
+              return responses.singleDTOResponse(res,250,'Correo enviado');
             });
         }).catch(err => {
             return responses.errorDTOResponse(res,500,err.message);
