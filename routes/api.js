@@ -42,7 +42,7 @@ router.use('/public-events',auth.verifyToken, moneyRouter);
 router.use('/public-events/:eventId/squad', auth.verifyToken, passEventId, benchesRouter);
 router.use('/public-events/:eventId/squad', auth.verifyToken, passEventId, squadsRouter);
 router.use('/public-events/:eventId/market', auth.verifyToken, passEventId, marketRouter); // vuelve a la vida
-router.use('/prizes', auth.verifyToken, auth.isAdmin, gamesPrizesRouter);
+router.use('/prizes', gamesPrizesRouter);
 router.use('/public-events/:eventId/ranking', auth.verifyToken, passEventId, rankingRouter);
 
 module.exports = router;

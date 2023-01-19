@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { Warehouse, Sticker, Team, Game, PlayersGame } = require('../../databases/db');
+const { Warehouse, Sticker, Team, Game, PlayersGame, GamePrize } = require('../../databases/db');
 const responses = require('../../utils/responses/responses');
 
 
@@ -56,14 +56,19 @@ const find = async (req, res) => {
       warehouse.isInLineup = rows[i].isInLineup;
       let playersGame = await PlayersGame.findOne({
         where: {
-          playerId: rows[i].sticker.id
+          playerId: rows[i].sticker.id,
+          '$Game.GamePrize.isAwarded$': true
         },
         attributes: ['points'],
         include: {
           model: Game,
-          attributes: []
+          attributes: [],
+          include: {
+            model: GamePrize,
+            attributes: [],
+          }
         },
-        order: [ [Game, 'gameDate', 'DESC'] ]
+        order: [ [Game, 'gameDate', 'DESC'] ],
       });
       warehouse.latestPoints = playersGame?.points || 0;
       items.push(warehouse);

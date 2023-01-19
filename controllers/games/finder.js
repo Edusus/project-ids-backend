@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { Game, PlayersGame, Team, Sticker, Event } = require('../../databases/db');
+const { Game, PlayersGame, Team, Sticker, Event, GamePrize } = require('../../databases/db');
 const responses = require('../../utils/responses/responses');
 
 const minimunDate = new Date(0);
@@ -113,6 +113,10 @@ const find = async (req, res) => {
               ]
             }
           }
+        },
+        {
+          model: GamePrize,
+          attributes: ['isAwarded']
         }
       ]
     }
@@ -137,6 +141,7 @@ const find = async (req, res) => {
         event: gamesAsJSON[i].event,
         teamOne: gamesAsJSON[i].teamOne,
         teamTwo: gamesAsJSON[i].teamTwo,
+        isAwarded: gamesAsJSON[i].gamePrize.isAwarded,
         players,
       }
       items.push(item);
@@ -175,6 +180,10 @@ const findById = async (req, res) => {
         model: Team,
         as: 'teamTwo',
         attributes: ['id', 'name', 'badge']
+      },
+      {
+        model: GamePrize,
+        attributes: ['isAwarded']
       }
     ]
   });
@@ -195,6 +204,7 @@ const findById = async (req, res) => {
       event: gameAsJSON.event,
       teamOne: gameAsJSON.teamOne,
       teamTwo: gameAsJSON.teamTwo,
+      isAwarded: gameAsJSON.gamePrize.isAwarded,
       players,
     }
 
@@ -231,6 +241,10 @@ const findAll = async (req, res) => {
         model: Team,
         as: 'teamTwo',
         attributes: ['id', 'name', 'badge']
+      },
+      {
+        model: GamePrize,
+        attributes: ['isAwarded']
       }
     ]
   });
@@ -253,6 +267,7 @@ const findAll = async (req, res) => {
       event: gamesAsJSON[i].event,
       teamOne: gamesAsJSON[i].teamOne,
       teamTwo: gamesAsJSON[i].teamTwo,
+      isAwarded: gamesAsJSON[i].gamePrize.isAwarded,
       players,
     }
     items.push(item);
