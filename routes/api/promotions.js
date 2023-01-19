@@ -6,6 +6,9 @@ const { verifyToken, isAdmin } = require('../../middlewares/auth');
 
 const promotionsRouter = Router();
 
+promotionsRouter.get('/report/:promotionId', finder.exportReportPDF);
+
+
 /**
  * Route to get a page of promotions, can be filtered by a regexp of the alias of the announcement
  * and by promotiontype.

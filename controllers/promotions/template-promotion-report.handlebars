@@ -1,0 +1,49 @@
+<center><h1>Reporte del anuncio #{{promotion.id}}!</h1></center>
+
+<img src="uploads/offside.png"/>
+<div class="table-container">
+    <table class="table-report">
+        <tr>
+            <th>Titulo</th>
+            <th>Vistas</th>
+            <th>Clicks</th>
+            <th>Taza conversion</th>
+        </tr>
+        <tr >
+            <td>{{promotion.alias}}</td>
+            <td>{{promotion.requestedQuantities}}</td>
+            <td>{{promotion.clickedQuantities}}</td>
+            <td>{{promotion.performancePercentage}}%</td>
+        </tr>
+    </table>
+</div>
+
+<style>
+    * {
+        font-size: sans-serif, arial;
+    }
+    .table-container {
+        width: 100%;
+        justify-content: center;
+        display: flex;
+    }
+    table
+    {
+        width:100%;
+        table-layout: fixed;
+        overflow-wrap: break-word;
+    }
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    .table-report td, .table-report th {
+        padding: 5px;
+    }
+    .table-report td {
+        text-align: center;
+    }
+    .w-250 {
+        max-width: 250px;
+    }
+</style>
