@@ -76,9 +76,10 @@ const bidUpdate = async (req, res) => {
     }
 
     if (isDirectPurchase) {
-        if (value != market.immediatePurchaseValue) {
-            return responses.errorDTOResponse(res, 403, 'El valor de la oferta debe ser igual al valor de compra directa')
-        } else {
+            const directValue = market.immediatePurchaseValue;
+             if (player.money < directValue) {
+                return responses.errorDTOResponse(res, 400, 'No tienes suficiente dinero para comprar directamente');
+            }
             await PlayerFantasy.update({
                 money: player.money - value
             }, {
@@ -95,7 +96,7 @@ const bidUpdate = async (req, res) => {
 
             await finishAuction(market.id);
             return responses.singleDTOResponse(res, 200, 'Compra realizada con exito');
-        }
+        
     } else {
         if (newValue > market.initialPurchaseValue ) {
             await Bid.update({

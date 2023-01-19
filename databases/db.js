@@ -13,10 +13,13 @@ const PlayerFantasyModel = require('../models/playerFantasy');
 const MarketModel = require('../models/market');
 const BidsModel = require('../models/bids');
 const PlayersGamesModel = require('../models/playersGames');
+const DiaryStatusModel = require('../models/diaryStatus');
 
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD,{
     host: process.env.DBHOST,
-    dialect:'mysql'
+    dialect:'mysql',
+    // disable logging; default: console.log
+    //logging: false
 });
 
 const User = UserModel(sequelize,Sequelize);
@@ -32,6 +35,7 @@ const PlayersGame = PlayersGamesModel(sequelize, Sequelize);
 const PlayerFantasy= PlayerFantasyModel(sequelize,Sequelize);
 const Market = MarketModel(sequelize, Sequelize);
 const Bid = BidsModel(sequelize, Sequelize);
+const DiaryStatus = DiaryStatusModel(sequelize, Sequelize);
 
 /* Defining associations */
 // Asociacion Event -> Teams
@@ -273,6 +277,18 @@ Bid.belongsTo(User);
 Market.hasMany(Bid);
 Bid.belongsTo(Market);
 
+//Relaciones para formar la tabla de get diary status
+User.hasMany(DiaryStatus, {
+  foreignKey: {
+    unique: false
+  }
+});
+DiaryStatus.belongsTo(User, {
+  foreignKey: {
+    unique: false
+  }
+});
+
 sequelize.authenticate()
     .then(()=>{
         console.log('Connection has been established successfully.');
@@ -298,5 +314,5 @@ const createTransaction = () => {
 const { Op } = Sequelize;
 
 module.exports = {
-    User, Sticker, Event, Ad, Game, Team, random, Op, Inventory, Warehouse, Promotion, PlayerFantasy, createTransaction, Market, Bid, PlayersGame
+  User, Sticker, Event, Ad, Game, Team, random, Op, Inventory, Warehouse, Promotion, PlayerFantasy, createTransaction, Market, Bid, PlayersGame, sequelize, DiaryStatus
 }
