@@ -7,6 +7,8 @@ const uploads_dir = path.join(root_dir, 'uploads');
 const uploads_relative_dir = path.relative(root_dir, uploads_dir);
 const img_dir = path.join(uploads_dir, 'img');
 const img_relative_dir = path.relative(root_dir, img_dir);
+const pdf_dir = path.join(uploads_dir, 'pdf');
+const pdf_relative_dir = path.relative(root_dir, pdf_dir);
 const csv_dir = path.join(uploads_dir, 'csv');
 const csv_relative_dir = path.relative(root_dir, csv_dir);
 
@@ -22,6 +24,14 @@ fse.ensureDir(uploads_dir)
 fse.ensureDir(img_dir)
 .then(() => {
   console.log("uploads/img created!");
+})
+.catch(err => {
+  console.error(err);
+});
+
+fse.ensureDir(pdf_dir)
+.then(() => {
+  console.log("uploads/pdf created!");
 })
 .catch(err => {
   console.error(err);
@@ -46,5 +56,5 @@ const deleteFile = async (path, filename) => {
 
 module.exports = {
   deleteFile, uploads_relative_dir, img_relative_dir, csv_relative_dir,
-  uploads_dir, img_dir, csv_dir
+  uploads_dir, img_dir, csv_dir, pdf_dir, pdf_relative_dir
 }
