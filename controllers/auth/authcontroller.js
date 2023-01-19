@@ -69,6 +69,7 @@ module.exports = {
         }
 
         User.findOne({
+            raws: true,
             where: { email }
         }).then(async user => {
             if (!user){
@@ -91,16 +92,21 @@ module.exports = {
 
             const codeDB = await Code.findOne({
               where: {
-                userId: user.id.id
+                userId: user.id
               }
-            })
+            });
 
-            await Code.create({
-              verificationCode: code, isAvailable: true });
-
+            if (codeDB){
+              await Code.update({ verificationCode: code, isAvailable: true }, {
+                where: {
+                  userId: user.id
+                }
+              });
+            } else {
+              await Code.create({ verificationCode: code, isAvailable: true, userId: user.id });
+            }
 
             let mensaje = 'El codigo de recuperacion de contraseña es : ' + code;
-
 
             let mailOptions = {
               from: process.env.GMAIL,
