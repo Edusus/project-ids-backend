@@ -1,5 +1,5 @@
 const csv = require('csvtojson');
-const { Game, PlayersGame, Team, Event, Sticker, createTransaction } = require('../../databases/db');
+const { Game, GamePrize, PlayersGame, Team, Event, Sticker, createTransaction } = require('../../databases/db');
 const { fileController } = require('../filesControllers');
 const responses = require('../../utils/responses/responses');
 
@@ -72,6 +72,12 @@ const post = async (req, res) => {
       teamTwoId,
       gameDate,
       eventId
+    }, {
+      transaction
+    });
+
+    await GamePrize.create({
+      gameId: game.id
     }, {
       transaction
     });
