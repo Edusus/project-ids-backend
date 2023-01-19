@@ -54,22 +54,25 @@ const find = async (req, res) => {
     for (let i = 0; i < rows.length; i++) {
       let warehouse = rows[i].sticker.toJSON();
       warehouse.isInLineup = rows[i].isInLineup;
-      let playersGame = await PlayersGame.findOne({
-        where: {
-          playerId: rows[i].sticker.id,
-          '$Game.GamePrize.isAwarded$': true
-        },
-        attributes: ['points'],
-        include: {
-          model: Game,
-          attributes: [],
+      let playersGame = undefined;
+      if ((await Game.findOne())) {
+        playersGame = await PlayersGame.findOne({
+          where: {
+            playerId: rows[i].sticker.id,
+            '$Game.GamePrize.isAwarded$': true
+          },
+          attributes: ['points'],
           include: {
-            model: GamePrize,
+            model: Game,
             attributes: [],
-          }
-        },
-        order: [ [Game, 'gameDate', 'DESC'] ],
-      });
+            include: {
+              model: GamePrize,
+              attributes: [],
+            }
+          },
+          order: [ [Game, 'gameDate', 'DESC'] ],
+        });
+      }
       warehouse.latestPoints = playersGame?.points || 0;
       items.push(warehouse);
     }
