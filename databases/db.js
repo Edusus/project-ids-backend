@@ -288,13 +288,15 @@ Game.hasOne(GamePrize, {
 GamePrize.belongsTo(Game, {
   foreignKey: {
     allowNull: false
-
+  }
+});
 //Relaciones para formar la tabla de get diary status
 User.hasMany(DiaryStatus, {
   foreignKey: {
     unique: false
   }
 });
+
 DiaryStatus.belongsTo(User, {
   foreignKey: {
     unique: false
