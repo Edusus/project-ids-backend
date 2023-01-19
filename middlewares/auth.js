@@ -13,7 +13,7 @@ exports.verifyToken = (req, res, next) => {
 
         // Comrpobar la validez de este token
         let token = req.headers.authorization.split(" ")[1];
-
+        
         // Comprobar la validez de este token
         jwt.verify(token, authConfig.secret, (err, decoded) => {
             if(err) {

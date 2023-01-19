@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { Warehouse, Sticker, Team } = require('../../databases/db');
+const { Warehouse, Sticker, Team, Game, PlayersGame } = require('../../databases/db');
 const responses = require('../../utils/responses/responses');
 
 
@@ -50,11 +50,22 @@ const find = async (req, res) => {
       }
     }
     const { count, rows } = await Warehouse.findAndCountAll(options);
-    const warehouses = JSON.parse(JSON.stringify(rows));
     const items = [];
-    for (let i = 0; i < warehouses.length; i++) {
-      let warehouse = warehouses[i].sticker;
-      warehouse.isInLineup = warehouses[i].isInLineup;
+    for (let i = 0; i < rows.length; i++) {
+      let warehouse = rows[i].sticker.toJSON();
+      warehouse.isInLineup = rows[i].isInLineup;
+      let playersGame = await PlayersGame.findOne({
+        where: {
+          playerId: rows[i].sticker.id
+        },
+        attributes: ['points'],
+        include: {
+          model: Game,
+          attributes: []
+        },
+        order: [ [Game, 'gameDate', 'DESC'] ]
+      });
+      warehouse.latestPoints = playersGame?.points || 0;
       items.push(warehouse);
     }
 
