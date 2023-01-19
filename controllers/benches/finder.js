@@ -55,7 +55,7 @@ const find = async (req, res) => {
       let warehouse = rows[i].sticker.toJSON();
       warehouse.isInLineup = rows[i].isInLineup;
       let playersGame = undefined;
-      if ((await Game.findOne())) {
+      if ((await PlayersGame.findOne({ where: { playerId: rows[i].sticker.id } }))) {
         playersGame = await PlayersGame.findOne({
           where: {
             playerId: rows[i].sticker.id,
