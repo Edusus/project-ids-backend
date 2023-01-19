@@ -162,7 +162,6 @@ Game.hasMany(PlayersGame, {
   onUpdate: 'CASCADE'
 });
 PlayersGame.belongsTo(Game, {
-  as: 'game',
   foreignKey: {
     name: 'gameId',
     allowNull: false
@@ -299,6 +298,7 @@ User.hasMany(DiaryStatus, {
     unique: false
   }
 });
+
 DiaryStatus.belongsTo(User, {
   foreignKey: {
     unique: false
