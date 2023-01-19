@@ -1,8 +1,9 @@
-const { User } = require('../../databases/db');
+const { User, Code } = require('../../databases/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const authconfig = require('../../config/auth');
 const nodemailer = require('nodemailer');
+const randomstring = require("randomstring");
 const responses = require('../../utils/responses/responses');
 
 module.exports = {
@@ -69,7 +70,7 @@ module.exports = {
 
         User.findOne({
             where: { email }
-        }).then(user => {
+        }).then(async user => {
             if (!user){
               return responses.errorDTOResponse(res, 404, "Usuario con este correo no encontrado");
             }
@@ -83,13 +84,23 @@ module.exports = {
               }
             });
 
-            //Creando el token de recuperacion
-            let token = jwt.sign({id: user}, authconfig.secret, {
-              expiresIn: '10m'
+            const code = randomstring.generate({
+              length: 5,
+              charset: 'alphanumeric'
             });
 
-            const linkVerification = `${process.env.DOMAIN}/new-password/${token}`
-            let mensaje = 'Ingrese al link '+ linkVerification;
+            const codeDB = await Code.findOne({
+              where: {
+                userId: user.id.id
+              }
+            })
+
+            await Code.create({
+              verificationCode: code, isAvailable: true });
+
+
+            let mensaje = 'El codigo de recuperacion de contraseña es : ' + code;
+
 
             let mailOptions = {
               from: process.env.GMAIL,
@@ -106,7 +117,6 @@ module.exports = {
 
               console.log('Email enviado: ' + info.response);
 
-              const item = { user, token }
               return responses.singleDTOResponse(res,250,'Correo enviado');
             });
         }).catch(err => {
