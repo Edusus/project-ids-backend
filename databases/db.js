@@ -14,10 +14,13 @@ const MarketModel = require('../models/market');
 const BidsModel = require('../models/bids');
 const PlayersGamesModel = require('../models/playersGames');
 const GamePrizeModel = require('../models/gamePrizes');
+const DiaryStatusModel = require('../models/diaryStatus');
 
 const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.env.DBPASSWORD,{
     host: process.env.DBHOST,
-    dialect:'mysql'
+    dialect:'mysql',
+    // disable logging; default: console.log
+    //logging: false
 });
 
 const User = UserModel(sequelize,Sequelize);
@@ -34,6 +37,7 @@ const PlayerFantasy= PlayerFantasyModel(sequelize,Sequelize);
 const Market = MarketModel(sequelize, Sequelize);
 const Bid = BidsModel(sequelize, Sequelize);
 const GamePrize = GamePrizeModel(sequelize, Sequelize);
+const DiaryStatus = DiaryStatusModel(sequelize, Sequelize);
 
 /* Defining associations */
 // Asociacion Event -> Teams
@@ -284,6 +288,16 @@ Game.hasOne(GamePrize, {
 GamePrize.belongsTo(Game, {
   foreignKey: {
     allowNull: false
+
+//Relaciones para formar la tabla de get diary status
+User.hasMany(DiaryStatus, {
+  foreignKey: {
+    unique: false
+  }
+});
+DiaryStatus.belongsTo(User, {
+  foreignKey: {
+    unique: false
   }
 });
 
@@ -313,5 +327,5 @@ const { Op } = Sequelize;
 
 module.exports = {
     User, Sticker, Event, Ad, Game, Team, random, Op, Inventory, Warehouse, Promotion, 
-    PlayerFantasy, createTransaction, Market, Bid, PlayersGame, GamePrize
+    PlayerFantasy, createTransaction, Market, Bid, PlayersGame, GamePrize, sequelize, DiaryStatus
 }

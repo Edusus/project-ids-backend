@@ -15,6 +15,8 @@ const squadsRouter = require('./api/squad');
 const marketRouter = require('./api/market');
 const moneyRouter =require('./api/playerFantasy');
 const gamesPrizesRouter = require('./api/gamesPrizes');
+const adminRouter = require('./api/admin');
+const rankingRouter = require('./api/ranking');
 const { uploads_dir } = require('../controllers/filesControllers');
 
 const auth = require('../middlewares/auth');
@@ -24,7 +26,6 @@ const passEventId = (req, res, next) => {
   req.eventId = Number.parseInt(req.params.eventId);
   next();
 }
-
 router.use('/users', auth.verifyToken, auth.isAdmin, apiUsersRouter);
 router.use('/stickers',auth.verifyToken, apiStickerRouter);
 router.use('/auth',apiAuthRouter);
@@ -36,11 +37,12 @@ router.use('/games', gamesEndpoints);
 router.use('/teams',auth.verifyToken, teamsRouter);
 router.use('/uploads', static(uploads_dir));
 router.use('/inventory',auth.verifyToken, inventoryRouter);
+router.use('/admin', auth.verifyToken, auth.isAdmin, adminRouter);
 router.use('/public-events',auth.verifyToken, moneyRouter);
 router.use('/public-events/:eventId/squad', auth.verifyToken, passEventId, benchesRouter);
 router.use('/public-events/:eventId/squad', auth.verifyToken, passEventId, squadsRouter);
 router.use('/public-events/:eventId/market', auth.verifyToken, passEventId, marketRouter); // vuelve a la vida
 router.use('/prizes', auth.verifyToken, auth.isAdmin, gamesPrizesRouter);
-
+router.use('/public-events/:eventId/ranking', auth.verifyToken, passEventId, rankingRouter);
 
 module.exports = router;

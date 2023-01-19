@@ -3,9 +3,11 @@ const { poster, posterBid } = require('../../controllers/market/poster');
 const { bidUpdate } = require('../../controllers/market/updater');
 const { Market,Bid,Op, Sticker, Team, User, Event, PlayerFantasy } = require('../../databases/db');
 const responses = require('../../utils/responses/responses');
+const Sequelize = require('sequelize');
+
 
 router.get('/', async(req,res)=>{
-    let {page = 0, size = 10, myAuction = false} = req.query;
+    const {page = 0, size = 10, myAuction = false, teamId = '%', playername: playerName = '.*', position = ['goalkeeper', 'defender', 'forward', 'midfielder'] } = req.query;
     const [ pageAsNumber, sizeAsNumber ] = [ Number.parseInt(page), Number.parseInt(size) ];
      if (myAuction === 'true') {
         let options = {
@@ -13,8 +15,19 @@ router.get('/', async(req,res)=>{
             offset: pageAsNumber * sizeAsNumber,
             include: {
                 model: Sticker,
+                where: {
+                    playerName: {
+                      [Op.regexp]: playerName
+                    },
+                    position
+                  },
                 include: {
-                    model: Team
+                    model: Team,
+                    where : {
+                      id : {
+                        [Op.like]: teamId
+                      }
+                    }
                 }
             },
             order: [
@@ -28,14 +41,25 @@ router.get('/', async(req,res)=>{
         const { count, rows } = await Market.findAndCountAll(options);
         return responses.paginatedDTOsResponse(res, 200, 'Subastas recuperadas con exito', rows, count, pageAsNumber, sizeAsNumber);
 
-     } else {    
+     } else { 
         let options = {
             limit: sizeAsNumber,
             offset: pageAsNumber * sizeAsNumber,
             include: {
                 model: Sticker,
+                where: {
+                    playerName: {
+                      [Op.regexp]: playerName
+                    },
+                    position
+                  },
                 include: {
-                    model: Team
+                    model: Team,
+                    where : {
+                        id : {
+                            [Op.like]: teamId
+                        }
+                    }
                 }
             },
             order: [
@@ -43,20 +67,48 @@ router.get('/', async(req,res)=>{
             ],
             where: {
                 isFinished: false,
+                id: {
+                      [Op.notIn]: Sequelize.literal(`
+                      (SELECT markets.id
+                      FROM markets
+                      INNER JOIN bids
+                      ON markets.id = bids.marketId
+                      WHERE bids.userId = ${req.user.id.id})
+                    `)     
+                    },
                 userId: {
-                    [Op.not]: Number.parseInt(req.user.id.id)
-                }
+                        [Op.not]: Number.parseInt(req.user.id.id)
+                    }
             }
         };
      
         const { count, rows } = await Market.findAndCountAll(options);
-        return responses.paginatedDTOsResponse(res, 200, 'Subastas recuperadas con exito', rows, count, pageAsNumber, sizeAsNumber);
+        const myBids = rows.map(async function(element) {
+            const bid = await Bid.findOne({
+                raw: true,
+                where: {
+                    userId: req.user.id.id,
+                    marketId: element.id
+                },
+                attributes: ['id','value', 'isDirectPurchase', 'userId', 'marketId'],
+            });
+
+            if (bid) {
+                element.dataValues.myLastBid = bid
+            } else {
+                element.dataValues.myLastBid = false;
+            }
+            return element;
+        });
+        const myBids2 = await Promise.all(myBids);
+
+        return responses.paginatedDTOsResponse(res, 200, 'Subastas recuperadas con exito', myBids2, count, pageAsNumber, sizeAsNumber);
     }
     
 });
 
 router.get('/myBids', async(req,res) =>{ 
-    let {page = 0, size = 10} = req.query;
+    let {page = 0, size = 10, myAuction = false, teamId = '%', playername: playerName = '.*', position = ['goalkeeper', 'defender', 'forward', 'midfielder'] } = req.query;
     const [ pageAsNumber, sizeAsNumber ] = [ Number.parseInt(page), Number.parseInt(size) ];
      let options = {
          limit: sizeAsNumber,
@@ -78,8 +130,26 @@ router.get('/myBids', async(req,res) =>{
              },
              where: {
                  isFinished: false
-             }
-         }]
+             },
+             include : [{
+                model: Sticker,
+                where: {
+                    playerName: {
+                        [Op.regexp]: playerName
+                    },
+                position
+                },
+                include: {
+                    model: Team,
+                    where : {
+                        id : {
+                            [Op.like]: teamId
+                        }
+                    }
+                }
+            }]
+         }
+        ]
      };
  
      const { count, rows } = await Bid.findAndCountAll(options);

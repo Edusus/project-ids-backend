@@ -91,6 +91,9 @@ const findAll = async (req, res) => {
         model: Event
       }
     ],
+    order : [
+      ['name', 'ASC']
+    ],
     where: { idEvents: eventId }
   });
   return responses.multipleDTOsResponse(res, 200, 'Se encontraron los equipos con exito', teams);

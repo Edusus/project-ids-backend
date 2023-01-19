@@ -58,7 +58,7 @@ exports.uploadUpdatedFileSticker = async (req, res) => {
       const prevFilepath = prevFileurl.split(img_relative_dir)[1];
       fileController.deleteFile(path.join(imgController.img_dir, prevFilepath), prevFilepath);
       const {playerName, country, position, height, weight, appearanceRate, teamId, externalUuid, jerseyNumber } = req.body;
-      const filepath = `${proess.env.DOMAIN}${img_relative_dir}/${req.file.filename}`;
+      const filepath = `${process.env.DOMAIN}${img_relative_dir}/${req.file.filename}`;
       await Sticker.update({
             playerName,
             country,
