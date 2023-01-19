@@ -11,7 +11,7 @@ const generatePromotionReport = require('./generate-promotion-report');
  */
 const exportReportPDF = async (req, res) => {
   const promotion = await Promotion.findByPk(req.params.promotionId);
-  if (!promotion) return res.status(404).text('Promocion no encontrada');
+  if (!promotion) return responses.errorDTOResponse(res, 404, 'Promocion no encontrada');
 
   const pdfStream = await generatePromotionReport(promotion);
   res.setHeader('Content-Type', 'application/pdf');
