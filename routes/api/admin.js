@@ -9,7 +9,7 @@ router.get('/countAll', async (req, res) => {
         let {count: count3} = await Event.findAndCountAll();
         let {count: count4} = await Promotion.findAndCountAll();
         let {count: count5} = await Team.findAndCountAll();
-        let {count: count6} = await Game.count();
+        let {count: count6} = await Game.findAndCountAll();
         let data = {
             User:count,
             Sticker:count2,
@@ -18,7 +18,6 @@ router.get('/countAll', async (req, res) => {
             Team:count5,
             Game:count6
         }
-        console.log(data);
         return responses.singleDTOResponse(res,200,'Cantidad total', data);  
     } catch (error) {
         return responses.errorDTOResponse(res,500,'Ha ocurrido un problema', error);  
