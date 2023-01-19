@@ -1,6 +1,31 @@
 const { Op } = require('sequelize');
 const { Promotion, random } = require('../../databases/db');
 const responses = require('../../utils/responses/responses');
+const generatePromotionReport = require('./generate-promotion-report');
+
+/**
+ * Find all promotions and return them in a response object
+ * @param req - The request object.
+ * @param res - The response object
+ * @returns the response of the function findAll.
+ */
+const exportReportPDF = async (req, res) => {
+  const promotion = await Promotion.findByPk(req.params.promotionId);
+  if (!promotion) return res.status(404).text('Promocion no encontrada');
+
+  const pdfStream = await generatePromotionReport(promotion);
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', 'attachment; filename=report-promotion.pdf');
+  // send a status code of 200 OK
+  res.statusCode = 200             
+  // once we are done reading end the response
+  pdfStream.on('end', () => {
+    // done reading
+    return res.end()
+  })
+  // pipe the contents of the PDF directly to the response
+  pdfStream.pipe(res);
+}
 
 /**
  * Find all promotions and return them in a response object
@@ -84,6 +109,7 @@ const finder = {
   find,
   findById,
   findAll,
+  exportReportPDF,
   findOneToWatch,
   findAndRedirectById
 }
