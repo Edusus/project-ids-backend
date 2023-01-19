@@ -13,18 +13,22 @@ const exportReportPDF = async (req, res) => {
   const promotion = await Promotion.findByPk(req.params.promotionId);
   if (!promotion) return responses.errorDTOResponse(res, 404, 'Promocion no encontrada');
 
-  const pdfStream = await generatePromotionReport(promotion);
-  res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader('Content-Disposition', 'attachment; filename=report-promotion.pdf');
-  // send a status code of 200 OK
-  res.statusCode = 200             
-  // once we are done reading end the response
-  pdfStream.on('end', () => {
-    // done reading
-    return res.end()
-  })
-  // pipe the contents of the PDF directly to the response
-  pdfStream.pipe(res);
+  try {
+    const pdfStream = await generatePromotionReport(promotion);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename=report-promotion.pdf');
+    // send a status code of 200 OK
+    res.statusCode = 200             
+    // once we are done reading end the response
+    pdfStream.on('end', () => {
+      // done reading
+      return res.end()
+    })
+    // pipe the contents of the PDF directly to the response
+    pdfStream.pipe(res);
+  } catch (e) {
+    return responses.errorDTOResponse(res, 500, 'Error desconocido del serivdor al generar promocion');
+  }
 }
 
 /**
