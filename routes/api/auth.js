@@ -11,6 +11,24 @@ router.post('/register', authcontroller.signUp);
 
 router.put('/forgot-password', authcontroller.forgotPassword);
 
+router.post('/code', async (req, res) => {
+    const {code} = req.body;
+    const verifityCode = await Code.findOne({
+        raws: true,
+        where: {
+            verificationCode: code,
+            isAvailable: true
+        }
+    });
+
+    if(!verifityCode){
+        return responses.errorDTOResponse(res, 404, 'El codigo no se encuentra o es incorrecto');
+    }
+
+    return responses.successDTOResponse(res,200,'El codigo es correcto');
+    
+});
+
 router.put('/new-password', async (req, res) => {
         let {code, password} = req.body;
         const verifityCode = await Code.findOne({
