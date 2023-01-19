@@ -17,8 +17,11 @@ const getDiary = async (req, res) => {
     })
     if (diary) {
         const time = diary.createdAt;
-        console.log(time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds());
+        console.log(time.get+ ":" +time.getHours() + ":" + time.getMinutes() + ":" + time.getSeconds());
+        console.log(time);
     }
+
+    console.log(timeNow)
 
     if ( (diary === null) || (diary === undefined) || (diary.length === 0) ) {
         await DiaryStatus.create({

@@ -7,7 +7,7 @@ const Sequelize = require('sequelize');
 
 
 router.get('/', async(req,res)=>{
-    const {page = 0, size = 10, myAuction = false, teamId = '%', playername: playerName = '.*', position = ['goalkeeper', 'defender', 'forward', 'midfielder'] } = req.query;
+    let {page = 0, size = 10, myAuction = false, teamId = '%', playername: playerName = '.*', position = ['goalkeeper', 'defender', 'forward', 'midfielder'] } = req.query;
     const [ pageAsNumber, sizeAsNumber ] = [ Number.parseInt(page), Number.parseInt(size) ];
      if (myAuction === 'true') {
         let options = {
@@ -29,7 +29,9 @@ router.get('/', async(req,res)=>{
                       }
                     }
                 }
+            
             },
+            
             order: [
                 ['createdAt', 'DESC']
             ],
