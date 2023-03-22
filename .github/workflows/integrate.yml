@@ -5,15 +5,14 @@ on:
     tags: 
      - stage
 jobs:
-   server: 
+   Connection: 
       runs-on: ubuntu-latest
-      steps:
-      - host: 66.94.96.31:16671
-        with:
-         username: ${{ secrets.CONTABO_USERNAME }}
-         password: ${{ secrets.CONTABO_PASSWORD }}
-         repository: Edusus/project-ids-backend
-         tag_with_ref: true
-         tag_with_sha: true
+      deploy:
+        stages:
+          - deploy
+      script:
+       - apt-get update
+       - apt-get install -y sshpass
+       - sshpass -p $CONTABO_PASSWORD ssh -o StrictHostKeyChecking=no $CONTABO_USERNAME@$CONTABO_IP "echo 'Conexión SSH establecida'"
 
           
