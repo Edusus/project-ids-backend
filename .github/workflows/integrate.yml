@@ -7,9 +7,11 @@ on:
 jobs:
    Connection: 
       runs-on: ubuntu-latest
-      deploy:
-        stages:
-          - deploy
+      steps:
+        - name: checkout file
+          uses: actions/checkout@v2
+
+        - name: deploy
       script:
        - apt-get update
        - apt-get install -y sshpass
