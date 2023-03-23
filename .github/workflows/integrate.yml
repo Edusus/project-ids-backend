@@ -11,4 +11,11 @@ jobs:
           host: ${{ secrets.CONTABO_IP }}
           username: ${{ secrets.CONTABO_USERNAME }}
           password: ${{ secrets.CONTABO_PASSWORD }}
-          
+  prueba: 
+   runs-on: ubuntu-latest
+    steps:
+      - name: server
+        uses: actions/checkout@v3
+        with:
+          ls
+
