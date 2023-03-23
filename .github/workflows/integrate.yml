@@ -11,5 +11,4 @@ jobs:
           host: ${{ secrets.CONTABO_IP }}
           username: ${{ secrets.CONTABO_USERNAME }}
           password: ${{ secrets.CONTABO_PASSWORD }}
-          key: ${{ secrets.PRIVATE_KEY }}
           
