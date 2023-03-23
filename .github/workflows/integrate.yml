@@ -1,20 +1,15 @@
-name: backend
-run-name: ${{ github.actor }} usando github accion como los cracks
-on:
-  push: 
-    tags: 
-     - stage
+name: learn-github-actions
+run-name: ${{ github.actor }} is learning GitHub Actions
+on: [push]
 jobs:
-   Connection: 
-      runs-on: ubuntu-latest
-      steps:
-        - name: checkout file
-          uses: actions/checkout@v2
-
-        - name: deploy
-      script:
-       - apt-get update
-       - apt-get install -y sshpass
-       - sshpass -p $CONTABO_PASSWORD ssh -o StrictHostKeyChecking=no $CONTABO_USERNAME@$CONTABO_IP "echo 'Conexión SSH establecida'"
-
+  connection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Connect to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.CONTABO_IP }}
+          username: ${{ secrets.CONTABO_USERNAME }}
+          password: ${{ secrets.CONTABO_PASSWORD }}
+          key: ${{ secrets.PRIVATE_KEY }}
           
